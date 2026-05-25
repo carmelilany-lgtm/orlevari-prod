@@ -210,6 +210,10 @@ export function StillsMasonryGallery() {
     searchParams.get("editCollage") === "1" ||
     searchParams.get("editCollage") === "true";
 
+  const visualEditFromQuery =
+    searchParams.get("visualEdit") === "1" ||
+    searchParams.get("visualEdit") === "true";
+
   const collageCopy = t.works.collage;
 
   const editMode =
@@ -217,6 +221,7 @@ export function StillsMasonryGallery() {
     (!adminLoading &&
       isAdmin &&
       editFromQuery &&
+      !visualEditFromQuery &&
       sortedStills.length > 0);
 
   const layoutDraft =
@@ -293,7 +298,11 @@ export function StillsMasonryGallery() {
 
   return (
     <div aria-label={t.works.stillsSectionLabel}>
-      {isAdmin && !adminLoading && sortedStills.length > 0 && !editMode && (
+      {isAdmin &&
+        !adminLoading &&
+        sortedStills.length > 0 &&
+        !editMode &&
+        !visualEditFromQuery && (
         <div className="mb-4 flex justify-end">
           <button
             type="button"

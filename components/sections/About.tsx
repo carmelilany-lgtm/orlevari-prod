@@ -1,10 +1,11 @@
 "use client";
 
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { EditableSectionHeading } from "@/components/visual-editor/EditableSectionHeading";
+import { EditableText } from "@/components/visual-editor/EditableText";
 import { useLanguage } from "@/lib/i18n/context";
 
 export function About() {
-  const { t, cms } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <section
@@ -13,9 +14,10 @@ export function About() {
       className="section-padding section-surface border-t border-blue-900/25"
     >
       <div className="container-narrow">
-        <SectionHeading
+        <EditableSectionHeading
           id="about-heading"
-          title={cms("about_title", t.about.title)}
+          titleKey="about_title"
+          titleFallback={t.about.title}
         />
         <div className="grid items-center gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:gap-10 lg:gap-12">
           <div
@@ -30,9 +32,12 @@ export function About() {
             />
           </div>
           <div className="flex flex-col justify-center">
-            <p className="text-lg leading-relaxed text-slate-300 sm:text-xl">
-              {cms("about_text", t.about.body)}
-            </p>
+            <EditableText
+              as="p"
+              contentKey="about_text"
+              fallback={t.about.body}
+              className="text-lg leading-relaxed text-slate-300 sm:text-xl"
+            />
           </div>
         </div>
       </div>

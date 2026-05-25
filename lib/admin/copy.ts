@@ -35,6 +35,7 @@ export const adminCopy = {
     view: "צפייה",
     viewAll: "הצג הכל",
     viewSite: "חזרה לאתר",
+    visualEditor: "מעבר לעורך החזותי",
     copySiteLink: "העתקת קישור לאתר",
     linkCopied: "הקישור הועתק",
     copyLinkFailed: "לא ניתן להעתיק את הקישור",

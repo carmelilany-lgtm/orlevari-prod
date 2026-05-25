@@ -1,5 +1,7 @@
 "use client";
 
+import { EditableText } from "@/components/visual-editor/EditableText";
+import { useVisualEditorActive } from "@/components/visual-editor/VisualEditorProvider";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
@@ -15,8 +17,12 @@ const cellGradients = [
   "from-teal-900/20 via-blue-950/70 to-[#050a12]",
 ];
 
+const heroButtonClass =
+  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-medium transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400";
+
 export function Hero() {
-  const { t, cms } = useLanguage();
+  const { t } = useLanguage();
+  const visualEdit = useVisualEditorActive();
 
   return (
     <section
@@ -37,20 +43,67 @@ export function Hero() {
             id="hero-title"
             className="font-display text-4xl font-semibold leading-tight tracking-tight text-slate-50 sm:text-5xl lg:text-6xl"
           >
-            <span className="gradient-text">
-              {cms("hero_title", t.hero.title)}
+            <span className="gradient-text block">
+              <EditableText
+                as="span"
+                contentKey="hero_title"
+                fallback={t.hero.title}
+                className="font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
+              />
             </span>
           </h1>
-          <p className="mt-6 text-lg leading-relaxed text-slate-300 sm:text-xl">
-            {cms("hero_subtitle", t.hero.subtitle)}
-          </p>
+          <EditableText
+            as="p"
+            contentKey="hero_subtitle"
+            fallback={t.hero.subtitle}
+            className="mt-6 text-lg leading-relaxed text-slate-300 sm:text-xl"
+          />
           <div className="mt-10 flex flex-wrap gap-4">
-            <Button asChild href="#works" variant="primary">
-              {cms("hero_primary_button", t.hero.ctaWorks)}
-            </Button>
-            <Button asChild href="#contact" variant="secondary">
-              {cms("hero_secondary_button", t.hero.ctaContact)}
-            </Button>
+            {visualEdit ? (
+              <>
+                <span
+                  className={cn(
+                    heroButtonClass,
+                    "border border-blue-400/20 bg-blue-600 text-white shadow-lg shadow-blue-900/40",
+                  )}
+                >
+                  <EditableText
+                    as="span"
+                    contentKey="hero_primary_button"
+                    fallback={t.hero.ctaWorks}
+                  />
+                </span>
+                <span
+                  className={cn(
+                    heroButtonClass,
+                    "border border-blue-500/30 bg-blue-950/40 text-slate-100",
+                  )}
+                >
+                  <EditableText
+                    as="span"
+                    contentKey="hero_secondary_button"
+                    fallback={t.hero.ctaContact}
+                  />
+                </span>
+              </>
+            ) : (
+              <>
+                <Button asChild href="#works" variant="primary">
+                  <EditableText
+                    as="span"
+                    contentKey="hero_primary_button"
+                    fallback={t.hero.ctaWorks}
+                  />
+                </Button>
+                <Button asChild href="#contact" variant="secondary">
+                  <EditableText
+                    as="span"
+                    contentKey="hero_secondary_button"
+                    fallback={t.hero.ctaContact}
+                  />
+                </Button>
+              </>
+            )}
           </div>
         </div>
 

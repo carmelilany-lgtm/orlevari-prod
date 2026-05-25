@@ -227,7 +227,34 @@ Summary:
 
 ---
 
-## H. Stills gallery (upload + live collage)
+## H. Visual text editor (homepage)
+
+Admins can edit public homepage copy inline while logged in. The existing **תוכן האתר** page at `/admin/content` remains for SEO, contact details, WhatsApp, and other fields.
+
+### Entry
+
+1. Sign in to the admin panel (Hebrew RTL).
+2. In the header, click **מעבר לעורך החזותי** (opens `/?visualEdit=1` in the same tab).
+3. Or open `/?visualEdit=1` directly when already signed in as admin.
+
+Non-admins opening `/?visualEdit=1` see the normal site with no editor UI.
+
+### Editing
+
+- A sticky toolbar shows **שמירה**, **ביטול**, and **חזרה לממשק ניהול**.
+- Only the **active public language** (EN/HE toggle on the site) is edited per save; switch language on the site to edit the other locale.
+- Changes are written to Supabase `site_content` via an admin-protected server action (allow-listed keys only).
+- **שמירה** persists; **ביטול** reverts unsaved edits on the page.
+
+Editable homepage fields: hero title/subtitle/buttons, about title/text, works title, services title, contact title/intro.
+
+### Collage editor
+
+Text visual mode (`visualEdit=1`) and stills collage mode (`editCollage=1`) are separate. Collage auto-edit from the query param is disabled while `visualEdit=1` is active.
+
+---
+
+## I. Stills gallery (upload + live collage)
 
 ### Upload multiple images
 

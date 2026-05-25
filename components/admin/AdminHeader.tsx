@@ -101,6 +101,9 @@ export function AdminHeader({ email, publicSiteUrl, onMenuToggle }: Props) {
                 : adminCopy.actions.copySiteLink}
           </button>
         )}
+        <Link href="/?visualEdit=1" className={adminBtnSecondary}>
+          {adminCopy.actions.visualEditor}
+        </Link>
         <Link href="/" className={adminBtnSecondary} target="_blank" rel="noopener noreferrer">
           {adminCopy.actions.viewSite}
         </Link>

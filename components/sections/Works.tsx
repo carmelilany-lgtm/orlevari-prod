@@ -1,16 +1,19 @@
 "use client";
 
+import { EditableSectionHeading } from "@/components/visual-editor/EditableSectionHeading";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { StillsMasonryGallery } from "@/components/works/StillsMasonryGallery";
 import { VideoWorkGrid } from "@/components/works/VideoWorkGrid";
 import { WorkFilters } from "@/components/works/WorkFilters";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
+import { useVisualEditorActive } from "@/components/visual-editor/VisualEditorProvider";
 import { useLanguage } from "@/lib/i18n/context";
 import type { WorkFilter } from "@/types/works";
 import { Suspense, useState } from "react";
 
 export function Works() {
   const { t, cms } = useLanguage();
+  const visualEdit = useVisualEditorActive();
   const { videoWorks, stills, isLiveData } = useSiteData();
   const [filter, setFilter] = useState<WorkFilter>("all");
 
@@ -30,11 +33,19 @@ export function Works() {
         aria-hidden
       />
       <div className="container-wide relative">
-        <SectionHeading
-          id="works-heading"
-          title={cms("works_title", t.works.title)}
-          subtitle={t.works.subtitle}
-        />
+        {visualEdit ? (
+          <EditableSectionHeading
+            id="works-heading"
+            titleKey="works_title"
+            titleFallback={t.works.title}
+          />
+        ) : (
+          <SectionHeading
+            id="works-heading"
+            title={cms("works_title", t.works.title)}
+            subtitle={t.works.subtitle}
+          />
+        )}
         {portfolioEmpty ? (
           <p className="text-center text-lg text-slate-400">
             {t.works.emptyPortfolio}

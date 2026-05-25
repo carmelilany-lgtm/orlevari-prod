@@ -1,6 +1,7 @@
 "use client";
 
 import { SiteDataProvider } from "@/components/providers/SiteDataProvider";
+import { VisualEditorShell } from "@/components/visual-editor/VisualEditorShell";
 import { LanguageProvider } from "@/lib/i18n/context";
 import type { SitePortfolioData } from "@/lib/data/site-data";
 import type { SiteContentMap } from "@/types/content";
@@ -24,7 +25,9 @@ export function AppProviders({
       isLiveData={siteData?.isLiveData ?? false}
       whatsappEnvFallback={whatsappEnvFallback}
     >
-      <SiteDataProvider data={siteData}>{children}</SiteDataProvider>
+      <VisualEditorShell>
+        <SiteDataProvider data={siteData}>{children}</SiteDataProvider>
+      </VisualEditorShell>
     </LanguageProvider>
   );
 }
