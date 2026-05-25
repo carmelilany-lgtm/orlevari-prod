@@ -142,8 +142,7 @@ export const adminCopy = {
       "גוררים, מעלים, מסדרים — בלי לפתוח קבוצת תמיכה עם כרמל.",
     uploadTitle: "העלאת תמונות",
     uploadChoose: "בחר תמונות",
-    uploadMultiHint: "ניתן לבחור עד 40 תמונות יחד",
-    uploadTooMany: "ניתן להעלות עד 40 תמונות בכל פעם.",
+    uploadMultiHint: "ניתן לבחור כמה תמונות יחד",
     uploadProgress: (current: number, total: number) =>
       `מעלה ${current} מתוך ${total}`,
     uploadingMany: "מעלה תמונות…",

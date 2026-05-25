@@ -51,9 +51,9 @@ After admin login, open **/admin/integrations** for in-app readiness checks.
 
 ### Admin stills (summary)
 
-- Bulk upload: up to **40** images per batch (JPG/PNG/WebP, 10MB each).
+- Bulk upload: multiple JPG/PNG/WebP files per batch (10MB each), uploaded sequentially.
 - Hero/header: random published gallery images; **אל תציג בהדר** excludes a still from the hero only.
-- Collage editor (`/?editCollage=1#works`): drag/resize plus preset size buttons on desktop.
+- Collage editor (`/?editCollage=1#works`): drag and resize tiles on desktop, then save.
 
 ## Contact form & Resend (Step 4)
 

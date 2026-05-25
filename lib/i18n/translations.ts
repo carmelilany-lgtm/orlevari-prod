@@ -47,19 +47,11 @@ export type TranslationKeys = {
       cancel: string;
       reset: string;
       hint: string;
-      resizeHint: string;
       mobileWarning: string;
       resetConfirm: string;
       collageSaved: string;
       collageSaveFailed: string;
       collageResetDone: string;
-      selectedImage: string;
-      sizeLabel: string;
-      sizeSmall: string;
-      sizeMedium: string;
-      sizeWide: string;
-      sizeTall: string;
-      sizeLarge: string;
     };
   };
   services: {
@@ -159,20 +151,12 @@ const en: TranslationKeys = {
       saving: "Saving…",
       cancel: "Cancel",
       reset: "Reset layout",
-      hint: "Drag to move images. Resize from a corner or pick a size below, then save.",
-      resizeHint: "Drag an image to move. Drag a corner to resize.",
+      hint: "Drag images, resize them, then save",
       mobileWarning: "Collage editing works best on a desktop computer.",
       resetConfirm: "Reset the collage layout?",
       collageSaved: "Layout saved successfully.",
       collageSaveFailed: "Failed to save layout.",
       collageResetDone: "Collage layout was reset.",
-      selectedImage: "Selected image",
-      sizeLabel: "Size:",
-      sizeSmall: "Small",
-      sizeMedium: "Regular",
-      sizeWide: "Wide",
-      sizeTall: "Tall",
-      sizeLarge: "Large",
     },
   },
   services: {
@@ -273,21 +257,12 @@ const he: TranslationKeys = {
       saving: "שומר…",
       cancel: "ביטול",
       reset: "איפוס פריסה",
-      hint: "הזז תמונות בגרירה. להגדלה או הקטנה אפשר לגרור מהפינה או לבחור גודל מהכפתורים.",
-      resizeHint:
-        "גרור תמונה כדי להזיז. גרור מהפינה כדי להגדיל או להקטין.",
+      hint: "גרור תמונות, שנה גודל ולחץ שמירה",
       mobileWarning: "עריכת קולאז׳ מומלצת ממחשב.",
       resetConfirm: "האם לאפס את פריסת הקולאז׳?",
       collageSaved: "הפריסה נשמרה בהצלחה.",
       collageSaveFailed: "שמירת הפריסה נכשלה.",
       collageResetDone: "פריסת הקולאז׳ אופסה.",
-      selectedImage: "תמונה נבחרה",
-      sizeLabel: "גודל:",
-      sizeSmall: "קטן",
-      sizeMedium: "רגיל",
-      sizeWide: "רחב",
-      sizeTall: "גבוה",
-      sizeLarge: "גדול",
     },
   },
   services: {

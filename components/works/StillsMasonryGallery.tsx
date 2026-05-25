@@ -10,18 +10,12 @@ import {
   saveStillsLiveCollageLayout,
 } from "@/lib/admin/actions/stills-collage";
 import { useLanguage } from "@/lib/i18n/context";
-import {
-  applySizeToLayoutItem,
-  stillsToGridLayout,
-} from "@/lib/stills/collage-grid";
+import { stillsToGridLayout } from "@/lib/stills/collage-grid";
 import {
   collageSpansForViewport,
-  COLLAGE_SIZE_ORDER,
   hasCustomCollageLayout,
   hasPositionalCollageLayout,
   parseCollageLayout,
-  sizeFromLayout,
-  type CollageSize,
 } from "@/lib/stills/collage-layout";
 import { cn } from "@/lib/utils";
 import {
@@ -231,30 +225,8 @@ export function StillsMasonryGallery() {
       !visualEditFromQuery &&
       sortedStills.length > 0);
 
-  const baseEditLayout = useMemo(
-    () => stillsToGridLayout(sortedStills),
-    [sortedStills],
-  );
-
-  const layoutDraft = draftLayout ?? (editMode ? baseEditLayout : null);
-
-  const selectedLayoutItem = layoutDraft?.find((item) => item.i === selectedId);
-  const selectedSize: CollageSize | null = selectedLayoutItem
-    ? sizeFromLayout(
-        parseCollageLayout({
-          w: selectedLayoutItem.w,
-          h: selectedLayoutItem.h,
-        }),
-      )
-    : null;
-
-  const applySizePreset = useCallback(
-    (size: CollageSize) => {
-      if (!selectedId || !layoutDraft) return;
-      setDraftLayout(applySizeToLayoutItem(layoutDraft, selectedId, size));
-    },
-    [selectedId, layoutDraft],
-  );
+  const layoutDraft =
+    draftLayout ?? (editMode ? stillsToGridLayout(sortedStills) : null);
 
   const exitEditMode = useCallback(() => {
     setEditModeActive(false);
@@ -352,51 +324,7 @@ export function StillsMasonryGallery() {
         >
           <p className="text-sm font-semibold text-cyan-100">{collageCopy.modeLabel}</p>
           <p className="text-xs text-slate-400">{collageCopy.hint}</p>
-          <p className="hidden text-xs text-slate-500 md:block">
-            {collageCopy.resizeHint}
-          </p>
           <p className="text-xs text-amber-200/90 md:hidden">{collageCopy.mobileWarning}</p>
-          {selectedId && layoutDraft && (
-            <div
-              className="flex flex-wrap items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-950/30 px-3 py-2"
-              role="toolbar"
-              aria-label={collageCopy.selectedImage}
-            >
-              <span className="text-xs font-medium text-blue-100">
-                {collageCopy.selectedImage}
-              </span>
-              <span className="text-xs text-slate-400">{collageCopy.sizeLabel}</span>
-              {COLLAGE_SIZE_ORDER.map((size) => {
-                const label =
-                  size === "small"
-                    ? collageCopy.sizeSmall
-                    : size === "medium"
-                      ? collageCopy.sizeMedium
-                      : size === "wide"
-                        ? collageCopy.sizeWide
-                        : size === "tall"
-                          ? collageCopy.sizeTall
-                          : collageCopy.sizeLarge;
-                const active = selectedSize === size;
-                return (
-                  <button
-                    key={size}
-                    type="button"
-                    className={cn(
-                      "rounded-md px-2.5 py-1 text-xs font-medium transition",
-                      active
-                        ? "bg-blue-500 text-white"
-                        : "border border-slate-600 bg-slate-800/80 text-slate-200 hover:border-blue-400/50",
-                    )}
-                    aria-pressed={active}
-                    onClick={() => applySizePreset(size)}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          )}
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -473,10 +401,9 @@ export function StillsMasonryGallery() {
             key={sortedStills.map((s) => s.id).join("-")}
             items={sortedStills}
             locale={locale}
-            layout={layoutDraft ?? baseEditLayout}
             selectedId={selectedId}
             onSelect={setSelectedId}
-            onLayoutChange={setDraftLayout}
+            onLayoutDraftChange={setDraftLayout}
           />
           <div className="masonry-columns md:hidden opacity-60 pointer-events-none">
             {sortedStills.map((item) => (

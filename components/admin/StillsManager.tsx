@@ -26,11 +26,6 @@ import {
   isAllowedImageType,
   MAX_STILL_UPLOAD_BYTES,
 } from "@/lib/images/get-image-dimensions";
-import {
-  MAX_BULK_STILL_UPLOAD_FILES,
-  STILL_UPLOAD_CONCURRENCY,
-} from "@/lib/images/still-upload-constants";
-import { mapWithConcurrency } from "@/lib/images/upload-batch";
 import { adminCopy, adminErrors } from "@/lib/admin/copy";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -94,12 +89,6 @@ export function StillsManager({ initialStills }: Props) {
     const files = Array.from(fileList);
     if (files.length === 0) return;
 
-    if (files.length > MAX_BULK_STILL_UPLOAD_FILES) {
-      setError(adminCopy.stills.uploadTooMany);
-      if (fileRef.current) fileRef.current.value = "";
-      return;
-    }
-
     setError("");
     setSuccess("");
     setFileErrors([]);
@@ -135,7 +124,7 @@ export function StillsManager({ initialStills }: Props) {
       );
       return;
     }
-    const nextSortOrder = sortBaseResult.data;
+    let nextSortOrder = sortBaseResult.data;
     const batchTimestamp = Date.now();
 
     setUploading(true);
@@ -151,45 +140,43 @@ export function StillsManager({ initialStills }: Props) {
     const uploadErrors: string[] = [...skipped];
 
     try {
-      const outcomes = await mapWithConcurrency(
-        validFiles,
-        STILL_UPLOAD_CONCURRENCY,
-        async (file, i) => {
-          let width: number | null = null;
-          let height: number | null = null;
-          let aspectRatio: number | null = null;
+      for (let i = 0; i < validFiles.length; i++) {
+        const file = validFiles[i];
+        setUploadProgress({
+          current: i + 1,
+          total: validFiles.length,
+          succeeded,
+          failed,
+        });
 
-          try {
-            const dims = await getImageDimensionsFromFile(file);
-            width = dims.width;
-            height = dims.height;
-            aspectRatio = dims.aspectRatio;
-          } catch {
-            // Upload without dimensions when detection fails
-          }
+        let width: number | null = null;
+        let height: number | null = null;
+        let aspectRatio: number | null = null;
 
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("batch_timestamp", String(batchTimestamp));
-          formData.append("file_index", String(i));
-          if (width != null) formData.append("width", String(width));
-          if (height != null) formData.append("height", String(height));
-          if (aspectRatio != null) {
-            formData.append("aspect_ratio", String(aspectRatio));
-          }
-          formData.append("alt_en", altEn);
-          formData.append("alt_he", altHe);
-          formData.append("sort_order", String(nextSortOrder + i));
-          formData.append("is_published", published ? "true" : "false");
+        try {
+          const dims = await getImageDimensionsFromFile(file);
+          width = dims.width;
+          height = dims.height;
+          aspectRatio = dims.aspectRatio;
+        } catch {
+          // Upload without dimensions when detection fails
+        }
 
-          const result = await uploadStillImage(formData);
-          return { file, result };
-        },
-      );
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("batch_timestamp", String(batchTimestamp));
+        formData.append("file_index", String(i));
+        if (width != null) formData.append("width", String(width));
+        if (height != null) formData.append("height", String(height));
+        if (aspectRatio != null) {
+          formData.append("aspect_ratio", String(aspectRatio));
+        }
+        formData.append("alt_en", altEn);
+        formData.append("alt_he", altHe);
+        formData.append("sort_order", String(nextSortOrder));
+        formData.append("is_published", published ? "true" : "false");
 
-      let completed = 0;
-      for (const { file, result } of outcomes) {
-        completed += 1;
+        const result = await uploadStillImage(formData);
         if (!result.success) {
           failed += 1;
           uploadErrors.push(
@@ -197,13 +184,8 @@ export function StillsManager({ initialStills }: Props) {
           );
         } else {
           succeeded += 1;
+          nextSortOrder += 1;
         }
-        setUploadProgress({
-          current: completed,
-          total: validFiles.length,
-          succeeded,
-          failed,
-        });
       }
 
       setFileErrors(uploadErrors);
@@ -383,7 +365,7 @@ export function StillsManager({ initialStills }: Props) {
           <input
             ref={fileRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp,image/*"
+            accept="image/*"
             multiple
             onChange={handleFileSelect}
             disabled={uploading}

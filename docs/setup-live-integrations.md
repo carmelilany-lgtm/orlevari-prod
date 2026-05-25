@@ -304,17 +304,16 @@ ON CONFLICT (key) DO NOTHING;
 
 ### Upload multiple images
 
-1. Admin → **גלריית תמונות** → choose up to **40** JPG/PNG/WebP files at once (≤ 10MB each).
-2. Selecting more than 40 is rejected with `ניתן להעלות עד 40 תמונות בכל פעם.`
-3. Optional alt text and sort order apply to the whole batch; uploads run with limited concurrency (4 at a time).
-4. Per-file errors appear in the list; valid files still upload. Summary e.g. `הועלו 37 מתוך 40 תמונות`.
+1. Admin → **גלריית תמונות** → choose one or more JPG/PNG/WebP files (≤ 10MB each).
+2. Optional alt text and sort order apply to the whole batch.
+3. Per-file errors appear in the list; a partial batch shows e.g. `הועלו 7 מתוך 8 תמונות`.
 
 ### Edit collage on the public site
 
 1. Sign in as admin (same browser session as the public site).
 2. Open the homepage **#works** section, or use **עריכת קולאז׳** (admin-only button).
 3. Or open `/?editCollage=1#works` from admin → **גלריית תמונות** → **עריכת קולאז׳**.
-4. Drag and resize tiles on desktop (corner handles), or select a tile and use size buttons (**קטן** / **רגיל** / **רחב** / **גבוה** / **גדול**), then **שמירה**.
+4. Drag and resize tiles on desktop, then **שמירה**.
 5. Lightbox is disabled while edit mode is active.
 6. **איפוס פריסה** clears saved layout and returns to automatic masonry.
 

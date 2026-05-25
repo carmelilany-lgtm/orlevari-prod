@@ -9,11 +9,6 @@ import {
   isAllowedImageType,
   MAX_STILL_UPLOAD_BYTES,
 } from "@/lib/images/get-image-dimensions";
-import {
-  MAX_BULK_STILL_UPLOAD_FILES,
-  STILL_UPLOAD_CONCURRENCY,
-} from "@/lib/images/still-upload-constants";
-import { mapWithConcurrency } from "@/lib/images/upload-batch";
 import { visualUploadMessages } from "@/lib/images/visual-upload-messages";
 import type { Locale } from "@/types/i18n";
 import { useCallback, useState } from "react";
@@ -24,11 +19,6 @@ export type StillBatchUploadProgress = {
   succeeded: number;
   failed: number;
 } | null;
-
-const tooManyMessage: Record<Locale, string> = {
-  he: "ניתן להעלות עד 40 תמונות בכל פעם.",
-  en: "You can upload up to 40 images at a time.",
-};
 
 export function useStillBatchUpload(locale: Locale) {
   const copy = visualUploadMessages(locale);
@@ -41,11 +31,6 @@ export function useStillBatchUpload(locale: Locale) {
     async (fileList: FileList | File[]) => {
       const files = Array.from(fileList);
       if (files.length === 0) return { succeeded: 0, failed: 0 };
-
-      if (files.length > MAX_BULK_STILL_UPLOAD_FILES) {
-        setError(tooManyMessage[locale]);
-        return { succeeded: 0, failed: files.length };
-      }
 
       setError("");
       setSuccess("");
@@ -79,7 +64,7 @@ export function useStillBatchUpload(locale: Locale) {
         return { succeeded: 0, failed: validFiles.length };
       }
 
-      const nextSortOrder = sortBaseResult.data;
+      let nextSortOrder = sortBaseResult.data;
       const batchTimestamp = Date.now();
 
       setUploading(true);
@@ -95,45 +80,43 @@ export function useStillBatchUpload(locale: Locale) {
       const uploadErrors: string[] = [...skipped];
 
       try {
-        const outcomes = await mapWithConcurrency(
-          validFiles,
-          STILL_UPLOAD_CONCURRENCY,
-          async (file, i) => {
-            let width: number | null = null;
-            let height: number | null = null;
-            let aspectRatio: number | null = null;
+        for (let i = 0; i < validFiles.length; i++) {
+          const file = validFiles[i];
+          setProgress({
+            current: i + 1,
+            total: validFiles.length,
+            succeeded,
+            failed,
+          });
 
-            try {
-              const dims = await getImageDimensionsFromFile(file);
-              width = dims.width;
-              height = dims.height;
-              aspectRatio = dims.aspectRatio;
-            } catch {
-              // Allow upload without dimensions
-            }
+          let width: number | null = null;
+          let height: number | null = null;
+          let aspectRatio: number | null = null;
 
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("batch_timestamp", String(batchTimestamp));
-            formData.append("file_index", String(i));
-            if (width != null) formData.append("width", String(width));
-            if (height != null) formData.append("height", String(height));
-            if (aspectRatio != null) {
-              formData.append("aspect_ratio", String(aspectRatio));
-            }
-            formData.append("alt_en", "");
-            formData.append("alt_he", "");
-            formData.append("sort_order", String(nextSortOrder + i));
-            formData.append("is_published", "true");
+          try {
+            const dims = await getImageDimensionsFromFile(file);
+            width = dims.width;
+            height = dims.height;
+            aspectRatio = dims.aspectRatio;
+          } catch {
+            // Allow upload without dimensions
+          }
 
-            const result = await uploadStillImage(formData);
-            return { file, result };
-          },
-        );
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("batch_timestamp", String(batchTimestamp));
+          formData.append("file_index", String(i));
+          if (width != null) formData.append("width", String(width));
+          if (height != null) formData.append("height", String(height));
+          if (aspectRatio != null) {
+            formData.append("aspect_ratio", String(aspectRatio));
+          }
+          formData.append("alt_en", "");
+          formData.append("alt_he", "");
+          formData.append("sort_order", String(nextSortOrder));
+          formData.append("is_published", "true");
 
-        let completed = 0;
-        for (const { file, result } of outcomes) {
-          completed += 1;
+          const result = await uploadStillImage(formData);
           if (!result.success) {
             failed += 1;
             uploadErrors.push(
@@ -141,13 +124,8 @@ export function useStillBatchUpload(locale: Locale) {
             );
           } else {
             succeeded += 1;
+            nextSortOrder += 1;
           }
-          setProgress({
-            current: completed,
-            total: validFiles.length,
-            succeeded,
-            failed,
-          });
         }
 
         if (succeeded > 0 && failed === 0 && skipped.length === 0) {
@@ -155,12 +133,7 @@ export function useStillBatchUpload(locale: Locale) {
         } else if (succeeded > 0) {
           setSuccess(copy.uploadSummary(succeeded, validFiles.length));
           if (failed > 0 || skipped.length > 0) {
-            const failCount = failed + skipped.length;
-            setError(
-              locale === "he"
-                ? `${failCount} תמונות לא הועלו. ניתן לנסות שוב.`
-                : `${failCount} image(s) failed. You can try again.`,
-            );
+            setError(uploadErrors[0] ?? copy.uploadFailed);
           }
         } else {
           setError(uploadErrors[0] ?? copy.uploadFailed);
@@ -175,7 +148,7 @@ export function useStillBatchUpload(locale: Locale) {
         setProgress(null);
       }
     },
-    [copy, locale],
+    [copy],
   );
 
   return {
