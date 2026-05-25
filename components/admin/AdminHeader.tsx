@@ -71,6 +71,11 @@ export function AdminHeader({ email, publicSiteUrl, onMenuToggle }: Props) {
             {adminCopy.brand.headerBadge}
           </p>
           <h1 className="text-xl font-semibold text-white">{title}</h1>
+          {pathname === "/admin" && (
+            <p className="mt-1 max-w-xl text-sm text-slate-500">
+              {adminCopy.dashboard.pageHelper}
+            </p>
+          )}
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-3">

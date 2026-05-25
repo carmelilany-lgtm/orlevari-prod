@@ -73,6 +73,7 @@ export function ContentEditor({ initialContent }: Props) {
 
   return (
     <form onSubmit={handleSave} className="space-y-8 text-right">
+      <p className="text-sm text-slate-500">{adminCopy.content.pageHelper}</p>
       <AdminAlert variant="error" message={error} />
       <AdminAlert variant="success" message={success} />
 

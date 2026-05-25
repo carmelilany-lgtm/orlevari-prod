@@ -69,6 +69,8 @@ export const adminCopy = {
     signOutFailed: "לא ניתן להתנתק. נסו שוב.",
   },
   dashboard: {
+    pageHelper:
+      "כאן אפשר לעדכן תוכן, סרטונים ותמונות לבד — כרמל לא חייב לקבל הודעה על כל פסיק.",
     publishedVideos: "סרטונים מפורסמים",
     videoCategories: "קטגוריות וידאו",
     stillImages: "תמונות סטילס",
@@ -135,6 +137,8 @@ export const adminCopy = {
   },
   stills: {
     collageLink: "עריכת קולאז׳",
+    uploadHelper:
+      "גוררים, מעלים, מסדרים — בלי לפתוח קבוצת תמיכה עם כרמל.",
     uploadTitle: "העלאת תמונות",
     uploadChoose: "בחר תמונות",
     uploadMultiHint: "ניתן לבחור כמה תמונות יחד",
@@ -182,6 +186,8 @@ export const adminCopy = {
     tableIcon: "אייקון",
   },
   content: {
+    pageHelper:
+      "ערכת טקסט? לחצת שמירה? האתר מתעדכן. כרמל יכול להמשיך לשתות קפה.",
     intro:
       "עריכת תוכן דו-לשוני ב-Supabase. כשערך ריק, האתר הציבורי משתמש בתרגומים המובנים.",
     saved:
