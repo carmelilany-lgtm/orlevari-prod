@@ -1,0 +1,211 @@
+# Live integrations setup — Lev Ari Productions
+
+Step-by-step guide to connect a real Supabase project and Resend account before production deploy (Step 5).
+
+**Do not commit `.env.local`.** Never put `SUPABASE_SERVICE_ROLE_KEY` or `RESEND_API_KEY` in `NEXT_PUBLIC_*` variables.
+
+---
+
+## A. Supabase project creation
+
+1. Create a project at [https://supabase.com/dashboard](https://supabase.com/dashboard).
+2. Open **Settings → API** and copy:
+   - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
+   - **anon public** key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - **service_role** key → `SUPABASE_SERVICE_ROLE_KEY` (server only)
+3. In the app root:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. Paste the three Supabase values into `.env.local`.
+
+5. Verify presence only (no secret values printed):
+
+   ```bash
+   npm run check:env
+   ```
+
+---
+
+## B. Run database migration
+
+### Option A — Supabase CLI (recommended)
+
+```bash
+cd /Users/carmelilany/Projects/lev-ari-productions
+supabase login
+supabase link --project-ref YOUR_PROJECT_REF
+supabase db push
+```
+
+### Option B — SQL Editor
+
+1. Dashboard → **SQL Editor** → New query.
+2. Paste and run the full file: `supabase/migrations/001_initial_schema.sql`.
+3. Confirm no errors (tables, RLS, storage buckets `stills`, `covers`, `about`).
+
+---
+
+## C. Run seed file
+
+After migration succeeds:
+
+```bash
+supabase db execute --file supabase/seed.sql
+```
+
+Or paste `supabase/seed.sql` into the SQL Editor and run.
+
+**Confirm in Table Editor:**
+
+| Table | Expected |
+|-------|----------|
+| `video_categories` | 9 rows (corporate, events, family, …) |
+| `services` | 6 rows |
+| `site_content` | Keys: `hero_title`, `contact_title`, `seo_title_en`, etc. |
+
+Re-running seed is safe: categories and `site_content` upsert on conflict; services upsert on `icon_key`.
+
+---
+
+## D. Storage buckets
+
+Migration `001_initial_schema.sql` creates public buckets:
+
+| Bucket | Purpose |
+|--------|---------|
+| `stills` | Masonry gallery |
+| `covers` | Custom video covers |
+| `about` | About section image |
+
+**Policies (from migration):**
+
+- **Public read** on all three buckets.
+- **Admin write** (insert/update/delete) only when `public.is_admin()` is true (email in `admin_users`).
+
+If buckets are missing (partial migration), create them in **Storage → New bucket** with **Public** enabled, then re-run the storage policy section from the migration file.
+
+---
+
+## E. Create first admin user
+
+### 1. Auth user (Dashboard)
+
+1. **Authentication → Users → Add user**.
+2. Email + password (e.g. `admin@yourdomain.com`).
+3. Enable **Email** provider under **Authentication → Providers** if not already on.
+
+### 2. Allow-list in database
+
+**Option A — SQL (service role / SQL Editor as postgres):**
+
+```sql
+INSERT INTO public.admin_users (email)
+VALUES ('admin@yourdomain.com')
+ON CONFLICT (email) DO NOTHING;
+```
+
+**Option B — Env bootstrap on first login**
+
+Add to `.env.local`:
+
+```
+ADMIN_ALLOWED_EMAILS=admin@yourdomain.com
+SUPABASE_SERVICE_ROLE_KEY=...   # required for auto-insert into admin_users
+```
+
+On first successful login, the app calls `ensureAdminUserInDatabase()` and upserts the email into `admin_users` when it matches `ADMIN_ALLOWED_EMAILS`.
+
+### 3. Auth redirect URLs
+
+**Authentication → URL configuration:**
+
+- Site URL: `http://localhost:3000` (local) and production URL later.
+- Redirect URLs: `http://localhost:3000/**`, production `https://yourdomain.com/**`
+
+---
+
+## F. Resend setup
+
+1. Sign up at [https://resend.com](https://resend.com).
+2. **Domains** → add and verify your sending domain (DNS records).
+3. **API Keys** → create key → `RESEND_API_KEY` in `.env.local`.
+4. Set verified sender:
+
+   ```
+   EMAIL_FROM=Lev Ari Productions <noreply@yourdomain.com>
+   ```
+
+5. Set internal inbox for new leads:
+
+   ```
+   CONTACT_NOTIFICATION_EMAIL=or@yourdomain.com
+   ```
+
+6. Run `npm run check:env` — Resend vars should show **present**.
+
+**Note:** Without Resend, the contact form still saves leads when Supabase is configured; emails are skipped with a server warning.
+
+---
+
+## G. Local test flow
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 1 | Sign in at `/admin/login` | Dashboard loads |
+| 2 | `/admin/integrations` | Env flags yes; operational checks pass when configured |
+| 3 | `/admin/categories` | List seeded categories; create/edit works |
+| 4 | `/admin/videos` | Add YouTube URL; published video on public site |
+| 5 | `/admin/stills` | Upload JPG/PNG/WebP; appears in works stills |
+| 6 | `/admin/services` | Edit seeded service |
+| 7 | `/admin/content` | Edit hero/contact copy |
+| 8 | Public contact form (EN) | Success message; lead in `/admin/leads` |
+| 9 | Public contact form (HE) | RTL confirmation email if Resend on |
+| 10 | Inbox | Internal notification + customer confirmation |
+
+**Manual email test:** Use the public contact form (no arbitrary test recipient). Optional: send integration test only via documented Resend dashboard if needed.
+
+---
+
+## H. Production notes (Vercel)
+
+1. **Environment variables** (Vercel project → Settings → Environment Variables): copy all vars from `.env.local` for Production (and Preview if needed).
+2. **Resend:** Verify production domain; use production `EMAIL_FROM`.
+3. **`NEXT_PUBLIC_SITE_URL`:** Set to `https://your-production-domain.com`.
+4. **Supabase:** Run the same migration + seed on the **production** Supabase project (or use CLI linked to prod).
+5. **Auth:** Add production URL to Supabase redirect allow-list.
+6. Deploy; smoke-test `/admin/login`, one upload, one contact submission.
+
+---
+
+## Quick diagnostics
+
+| Command / page | Purpose |
+|----------------|---------|
+| `npm run check:env` | Terminal: present/missing for each var (no values) |
+| `/admin/integrations` | In-app readiness after admin login |
+| `npm run build` | Production build sanity |
+| `npm run lint` | ESLint |
+
+---
+
+## Troubleshooting
+
+| Symptom | Check |
+|---------|--------|
+| Admin login → access denied | Email in `admin_users` or `ADMIN_ALLOWED_EMAILS`; service role for bootstrap |
+| Upload fails | Buckets exist; user is admin; file type JPG/PNG/WebP ≤ 10MB |
+| Lead not saved | `NEXT_PUBLIC_SUPABASE_*` set; RLS `leads_insert_public`; privacy checkbox |
+| No emails | `RESEND_API_KEY`, `EMAIL_FROM` (verified), `CONTACT_NOTIFICATION_EMAIL` |
+| Public site empty | Seed ran; categories `is_published = true` |
+| `is_admin()` false | JWT email must match `admin_users.email` exactly (lowercase in DB) |
+
+See also [supabase/README.md](../supabase/README.md) and [README.md](../README.md).

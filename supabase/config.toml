@@ -1,0 +1,11 @@
+# Minimal Supabase CLI config — link with: supabase link --project-ref <ref>
+project_id = "lev-ari-productions"
+
+[db]
+major_version = 15
+
+[api]
+enabled = true
+
+[storage]
+enabled = true
