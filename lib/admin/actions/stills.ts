@@ -12,6 +12,26 @@ export type StillImageRow = Database["public"]["Tables"]["still_images"]["Row"];
 
 const STILLS_BUCKET = "stills";
 
+/** Next sort_order for a new still (max + 1). */
+export async function getNextStillSortOrder(): Promise<ActionResult<number>> {
+  const ctx = await requireAdmin();
+  if (!("supabase" in ctx)) return ctx;
+
+  const { data, error } = await ctx.supabase
+    .from("still_images")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) return actionError(error.message);
+
+  const max = data?.sort_order;
+  const next =
+    typeof max === "number" && Number.isFinite(max) ? max + 1 : 0;
+  return actionOk(next);
+}
+
 export async function listStillImages(): Promise<ActionResult<StillImageRow[]>> {
   const ctx = await requireAdmin();
   if (!("supabase" in ctx)) return ctx;
@@ -83,9 +103,12 @@ export async function uploadStillImage(formData: FormData): Promise<
   const sortOrder = Number(formData.get("sort_order") ?? 0);
   const isPublished = formData.get("is_published") === "true";
 
-  const timestamp = Date.now();
+  const batchTimestamp = Number(formData.get("batch_timestamp"));
+  const fileIndex = Number(formData.get("file_index") ?? 0);
+  const timestamp = Number.isFinite(batchTimestamp) ? batchTimestamp : Date.now();
+  const index = Number.isFinite(fileIndex) ? fileIndex : 0;
   const safeName = sanitizeFileName(file.name);
-  const storagePath = `${timestamp}-${safeName}`;
+  const storagePath = `${timestamp}-${index}-${safeName}`;
 
   const arrayBuffer = await file.arrayBuffer();
   const { error: uploadError } = await ctx.supabase.storage
@@ -96,7 +119,11 @@ export async function uploadStillImage(formData: FormData): Promise<
     });
 
   if (uploadError) {
-    return actionError(adminErrors.uploadFailed(uploadError.message));
+    return actionError(
+      uploadError.message
+        ? adminErrors.uploadFailed(uploadError.message)
+        : adminErrors.stillUploadFailed,
+    );
   }
 
   const {

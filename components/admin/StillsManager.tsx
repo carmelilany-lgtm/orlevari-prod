@@ -14,6 +14,7 @@ import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import { PublishToggle } from "@/components/admin/PublishToggle";
 import {
   deleteStillImage,
+  getNextStillSortOrder,
   saveStillImageMeta,
   toggleStillPublished,
   uploadStillImage,
@@ -39,6 +40,13 @@ export function StillsManager({ initialStills }: Props) {
   const stills = initialStills;
   const [editing, setEditing] = useState<StillImageRow | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{
+    current: number;
+    total: number;
+    succeeded: number;
+    failed: number;
+  } | null>(null);
+  const [fileErrors, setFileErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -62,61 +70,164 @@ export function StillsManager({ initialStills }: Props) {
   }, [stills, query]);
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+    const files = e.target.files;
+    if (!files?.length) return;
+
     if (previewUrl) URL.revokeObjectURL(previewUrl);
-    if (file) {
-      setPreviewUrl(URL.createObjectURL(file));
+    if (files.length === 1) {
+      setPreviewUrl(URL.createObjectURL(files[0]));
     } else {
       setPreviewUrl(null);
     }
-    void handleUpload(e);
+    void handleUpload(files);
+    e.target.value = "";
   }
 
-  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function handleUpload(fileList: FileList) {
+    const files = Array.from(fileList);
+    if (files.length === 0) return;
 
     setError("");
     setSuccess("");
+    setFileErrors([]);
 
-    if (!isAllowedImageType(file.type)) {
-      setError(adminErrors.invalidImageType);
-      return;
-    }
-    if (file.size > MAX_STILL_UPLOAD_BYTES) {
-      setError(adminErrors.imageTooLarge);
-      return;
-    }
+    const validFiles: File[] = [];
+    const skipped: string[] = [];
 
-    setUploading(true);
-    try {
-      const dims = await getImageDimensionsFromFile(file);
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("width", String(dims.width));
-      formData.append("height", String(dims.height));
-      formData.append("aspect_ratio", String(dims.aspectRatio));
-      formData.append("alt_en", altEn);
-      formData.append("alt_he", altHe);
-      formData.append("sort_order", String(sortOrder));
-      formData.append("is_published", published ? "true" : "false");
-
-      const result = await uploadStillImage(formData);
-      if (!result.success) {
-        setError(result.error);
-        return;
+    for (const file of files) {
+      if (!isAllowedImageType(file.type)) {
+        skipped.push(`${file.name}: ${adminErrors.invalidImageType}`);
+        continue;
       }
-      setSuccess(adminCopy.stills.uploaded);
+      if (file.size > MAX_STILL_UPLOAD_BYTES) {
+        skipped.push(`${file.name}: ${adminErrors.imageTooLarge}`);
+        continue;
+      }
+      validFiles.push(file);
+    }
+
+    if (validFiles.length === 0) {
+      setFileErrors(skipped);
+      setError(skipped[0] ?? adminErrors.noImageFile);
       if (fileRef.current) fileRef.current.value = "";
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
-      router.refresh();
+      return;
+    }
+
+    const sortBaseResult = await getNextStillSortOrder();
+    if (!sortBaseResult.success || sortBaseResult.data == null) {
+      setError(
+        sortBaseResult.success ? adminErrors.processUploadFailed : sortBaseResult.error,
+      );
+      return;
+    }
+    let nextSortOrder = sortBaseResult.data;
+    const batchTimestamp = Date.now();
+
+    setUploading(true);
+    setUploadProgress({
+      current: 0,
+      total: validFiles.length,
+      succeeded: 0,
+      failed: 0,
+    });
+
+    let succeeded = 0;
+    let failed = 0;
+    const uploadErrors: string[] = [...skipped];
+
+    try {
+      for (let i = 0; i < validFiles.length; i++) {
+        const file = validFiles[i];
+        setUploadProgress({
+          current: i + 1,
+          total: validFiles.length,
+          succeeded,
+          failed,
+        });
+
+        let width: number | null = null;
+        let height: number | null = null;
+        let aspectRatio: number | null = null;
+
+        try {
+          const dims = await getImageDimensionsFromFile(file);
+          width = dims.width;
+          height = dims.height;
+          aspectRatio = dims.aspectRatio;
+        } catch {
+          // Upload without dimensions when detection fails
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("batch_timestamp", String(batchTimestamp));
+        formData.append("file_index", String(i));
+        if (width != null) formData.append("width", String(width));
+        if (height != null) formData.append("height", String(height));
+        if (aspectRatio != null) {
+          formData.append("aspect_ratio", String(aspectRatio));
+        }
+        formData.append("alt_en", altEn);
+        formData.append("alt_he", altHe);
+        formData.append("sort_order", String(nextSortOrder));
+        formData.append("is_published", published ? "true" : "false");
+
+        const result = await uploadStillImage(formData);
+        if (!result.success) {
+          failed += 1;
+          uploadErrors.push(
+            `${file.name}: ${result.error || adminErrors.stillUploadFailed}`,
+          );
+        } else {
+          succeeded += 1;
+          nextSortOrder += 1;
+        }
+      }
+
+      setFileErrors(uploadErrors);
+
+      if (succeeded > 0 && failed === 0 && skipped.length === 0) {
+        setSuccess(
+          succeeded === 1
+            ? adminCopy.stills.uploaded
+            : adminCopy.stills.uploadedMany(succeeded),
+        );
+      } else if (succeeded > 0) {
+        setSuccess(
+          `${adminCopy.stills.uploadSummary(succeeded, validFiles.length)}${
+            failed > 0 ? `. ${adminCopy.stills.uploadFailedCount(failed)}` : ""
+          }`,
+        );
+        if (failed > 0 || skipped.length > 0) {
+          setError(
+            failed > 0
+              ? adminCopy.stills.uploadFailedCount(failed + skipped.length)
+              : skipped[0] ?? "",
+          );
+        }
+      } else {
+        setError(
+          uploadErrors[0] ??
+            `${adminErrors.stillUploadFailed} ${adminCopy.stills.uploadFailedHint}`,
+        );
+      }
+
+      if (fileRef.current) fileRef.current.value = "";
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+
+      if (succeeded > 0) {
+        router.refresh();
+      }
     } catch {
       setError(
         `${adminErrors.processUploadFailed} ${adminCopy.stills.uploadFailedHint}`,
       );
     } finally {
       setUploading(false);
+      setUploadProgress(null);
     }
   }
 
@@ -226,26 +337,67 @@ export function StillsManager({ initialStills }: Props) {
             className="max-h-40 rounded-lg border border-blue-900/40 object-contain"
           />
         )}
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          onChange={handleFileSelect}
-          disabled={uploading}
-          aria-busy={uploading}
-          className="text-sm text-slate-400 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:text-white"
-        />
-        {uploading && (
+        <p className="text-sm text-slate-400">{adminCopy.stills.uploadMultiHint}</p>
+        <label className="inline-block">
+          <span className="sr-only">{adminCopy.stills.uploadChoose}</span>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileSelect}
+            disabled={uploading}
+            aria-busy={uploading}
+            className="text-sm text-slate-400 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:text-white"
+          />
+        </label>
+        <p className="text-xs text-slate-500">{adminCopy.stills.uploadChoose}</p>
+        {uploading && uploadProgress && (
           <div className="space-y-2" role="status" aria-live="polite">
-            <p className="text-sm text-blue-300">{adminCopy.stills.uploading}</p>
+            <p className="text-sm text-blue-300">
+              {adminCopy.stills.uploadingMany}
+            </p>
+            <p className="text-sm text-slate-300">
+              {adminCopy.stills.uploadProgress(
+                uploadProgress.current,
+                uploadProgress.total,
+              )}
+            </p>
+            <p className="text-xs text-slate-500">
+              {adminCopy.stills.uploadSummary(
+                uploadProgress.succeeded,
+                uploadProgress.total,
+              )}
+              {uploadProgress.failed > 0
+                ? ` · ${adminCopy.stills.uploadFailedCount(uploadProgress.failed)}`
+                : ""}
+            </p>
             <div
               className="h-1.5 w-full overflow-hidden rounded-full bg-blue-950"
               role="progressbar"
-              aria-valuetext={adminCopy.stills.uploading}
+              aria-valuenow={uploadProgress.current}
+              aria-valuemin={0}
+              aria-valuemax={uploadProgress.total}
+              aria-valuetext={adminCopy.stills.uploadProgress(
+                uploadProgress.current,
+                uploadProgress.total,
+              )}
             >
-              <div className="h-full w-1/3 animate-pulse rounded-full bg-blue-500" />
+              <div
+                className="h-full rounded-full bg-blue-500 transition-all duration-300"
+                style={{
+                  width: `${(uploadProgress.current / uploadProgress.total) * 100}%`,
+                }}
+              />
             </div>
           </div>
+        )}
+        {fileErrors.length > 0 && !uploading && (
+          <ul className="list-inside list-disc space-y-1 text-sm text-amber-400/90">
+            {fileErrors.map((msg) => (
+              <li key={msg}>{msg}</li>
+            ))}
+          </ul>
         )}
       </div>
 

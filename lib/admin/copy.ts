@@ -136,7 +136,15 @@ export const adminCopy = {
   },
   stills: {
     collageLink: "עריכת קולאז׳",
-    uploadTitle: "העלאת תמונה",
+    uploadTitle: "העלאת תמונות",
+    uploadChoose: "בחר תמונות",
+    uploadMultiHint: "ניתן לבחור כמה תמונות יחד",
+    uploadProgress: (current: number, total: number) =>
+      `מעלה ${current} מתוך ${total}`,
+    uploadingMany: "מעלה תמונות…",
+    uploadSummary: (ok: number, total: number) =>
+      `הועלו ${ok} מתוך ${total} תמונות`,
+    uploadFailedCount: (n: number) => `${n} תמונות נכשלו בהעלאה`,
     editTitle: "עריכת תמונה",
     altEn: "טקסט חלופי באנגלית",
     altHe: "טקסט חלופי בעברית",
@@ -145,6 +153,7 @@ export const adminCopy = {
     emptyDesc:
       "העלו קבצי JPG, PNG או WebP. יחסי התמונה המקוריים נשמרים לגלריה.",
     uploaded: "התמונה הועלתה בהצלחה.",
+    uploadedMany: (n: number) => `${n} תמונות הועלו בהצלחה.`,
     updated: "התמונה עודכנה.",
     dimensionsUnknown: "מידות לא ידועות",
     ratio: (n: number) => `יחס ${n.toFixed(2)}`,
@@ -296,8 +305,9 @@ export const adminErrors = {
   categoryDeleteBlocked:
     "לא ניתן למחוק קטגוריה שיש בה סרטונים. יש להעביר או למחוק את הסרטונים קודם.",
   noImageFile: "לא נבחר קובץ תמונה.",
-  invalidImageType: "סוג קובץ לא תקין. השתמשו ב-JPG, PNG או WebP.",
-  imageTooLarge: "הקובץ גדול מדי. הגודל המקסימלי הוא 10MB.",
+  invalidImageType: "סוג הקובץ לא נתמך",
+  imageTooLarge: "הקובץ גדול מדי",
+  stillUploadFailed: "העלאת התמונה נכשלה",
   uploadFailed: (msg: string) => `ההעלאה נכשלה: ${msg}`,
   storageDeleteFailed: (msg: string) => `לא ניתן למחוק מהאחסון: ${msg}`,
   saveContentFailed: (key: string, msg: string) =>

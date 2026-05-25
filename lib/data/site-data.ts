@@ -26,12 +26,17 @@ export interface SitePortfolioData {
 /** Server-only bundle for homepage sections */
 export async function loadSitePortfolioData(): Promise<SitePortfolioData> {
   const isLiveData = isSupabaseConfigured();
-  const [categories, videoWorks, stills, services] = await Promise.all([
+  const [allCategories, videoWorks, stills, services] = await Promise.all([
     getLegacyVideoCategories(),
     getPublishedVideoWorkItems(),
     getPublishedStillImages(),
     getPublishedServiceItems(),
   ]);
+
+  // Public site: only categories that have at least one published video
+  const categories = allCategories.filter((category) =>
+    videoWorks.some((work) => work.categoryId === category.id),
+  );
 
   return { categories, videoWorks, stills, services, isLiveData };
 }
