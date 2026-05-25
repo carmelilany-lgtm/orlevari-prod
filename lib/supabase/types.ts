@@ -130,6 +130,7 @@ export interface Database {
           aspect_ratio: number | null;
           sort_order: number;
           is_published: boolean;
+          collage_layout: import("@/lib/stills/collage-layout").CollageLayout | null;
           created_at: string;
           updated_at: string;
         };
@@ -144,6 +145,7 @@ export interface Database {
           aspect_ratio?: number | null;
           sort_order?: number;
           is_published?: boolean;
+          collage_layout?: import("@/lib/stills/collage-layout").CollageLayout | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -158,6 +160,7 @@ export interface Database {
           aspect_ratio?: number | null;
           sort_order?: number;
           is_published?: boolean;
+          collage_layout?: import("@/lib/stills/collage-layout").CollageLayout | null;
           created_at?: string;
           updated_at?: string;
         };

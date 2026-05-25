@@ -21,6 +21,7 @@ import {
   toggleCategoryPublished,
   type VideoCategoryRow,
 } from "@/lib/admin/actions/categories";
+import { categoryAdminPrimary, categoryAdminSecondary } from "@/lib/admin/category-label";
 import { adminCopy } from "@/lib/admin/copy";
 import { slugifyTitle } from "@/lib/admin/slug";
 import { useRouter } from "next/navigation";
@@ -233,7 +234,7 @@ export function CategoriesManager({ initialCategories }: Props) {
           <table className={adminTableClass}>
             <thead>
               <tr>
-                <th className={adminThClass}>{adminCopy.categories.tableTitleEn}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableTitle}</th>
                 <th className={adminThClass}>{adminCopy.categories.tableSlug}</th>
                 <th className={adminThClass}>{adminCopy.categories.tableOrder}</th>
                 <th className={adminThClass}>{adminCopy.categories.tableVisible}</th>
@@ -244,7 +245,16 @@ export function CategoriesManager({ initialCategories }: Props) {
             <tbody>
               {categories.map((row) => (
                 <tr key={row.id}>
-                  <td className={adminTdClass}>{row.title_en}</td>
+                  <td className={adminTdClass}>
+                    <span className="block font-medium text-white">
+                      {categoryAdminPrimary(row)}
+                    </span>
+                    {categoryAdminSecondary(row) ? (
+                      <span className="mt-0.5 block text-xs text-slate-500" dir="ltr">
+                        {categoryAdminSecondary(row)}
+                      </span>
+                    ) : null}
+                  </td>
                   <td className={adminTdClass}>{row.slug}</td>
                   <td className={adminTdClass}>{row.sort_order}</td>
                   <td className={adminTdClass}>{row.initial_visible_count}</td>

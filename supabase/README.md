@@ -36,7 +36,8 @@ supabase db push
 
 1. Open **SQL Editor** in the dashboard.
 2. Paste and run `supabase/migrations/001_initial_schema.sql`.
-3. Paste and run `supabase/seed.sql`.
+3. Paste and run `supabase/migrations/002_stills_collage_layout.sql`.
+4. Paste and run `supabase/seed.sql`.
 
 ## 3. Seed data
 
@@ -80,7 +81,7 @@ If buckets were not created (older project), create them in **Storage → New bu
 | `admin_users` | Allow-list of admin emails |
 | `video_categories` | Portfolio video sections |
 | `video_works` | YouTube portfolio items |
-| `still_images` | Stills gallery metadata |
+| `still_images` | Stills gallery metadata (`collage_layout` JSONB for admin grid editor) |
 | `services` | Services section |
 | `site_content` | Key/value bilingual CMS strings |
 | `leads` | Contact form submissions (private) |

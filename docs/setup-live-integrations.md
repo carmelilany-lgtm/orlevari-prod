@@ -44,7 +44,8 @@ supabase db push
 
 1. Dashboard → **SQL Editor** → New query.
 2. Paste and run the full file: `supabase/migrations/001_initial_schema.sql`.
-3. Confirm no errors (tables, RLS, storage buckets `stills`, `covers`, `about`).
+3. Paste and run `supabase/migrations/002_stills_collage_layout.sql` (adds `still_images.collage_layout`).
+4. Confirm no errors (tables, RLS, storage buckets `stills`, `covers`, `about`).
 
 ---
 

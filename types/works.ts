@@ -1,3 +1,5 @@
+import type { CollageLayout } from "@/lib/stills/collage-layout";
+
 export type WorkFilter = "all" | "video" | "stills";
 
 export type VideoCategoryId =
@@ -35,6 +37,7 @@ export interface StillWorkItem {
   aspect_ratio?: number;
   sort_order?: number;
   published?: boolean;
+  collage_layout?: CollageLayout | null;
   /** Mock-only: gradient variant for placeholders without image_url */
   variant?: number;
 }

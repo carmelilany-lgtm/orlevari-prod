@@ -10,6 +10,7 @@ const NAV: { href: string; label: string; exact?: boolean }[] = [
   { href: "/admin/categories", label: adminCopy.nav.categories },
   { href: "/admin/videos", label: adminCopy.nav.videos },
   { href: "/admin/stills", label: adminCopy.nav.stills },
+  { href: "/admin/stills/collage", label: adminCopy.nav.stillsCollage },
   { href: "/admin/services", label: adminCopy.nav.services },
   { href: "/admin/content", label: adminCopy.nav.content },
   { href: "/admin/leads", label: adminCopy.nav.leads },
@@ -20,8 +21,17 @@ type Props = {
   onNavigate?: () => void;
 };
 
+function activeNavHref(pathname: string): string | undefined {
+  const matches = NAV.filter((item) => {
+    if (item.exact) return pathname === item.href;
+    return pathname === item.href || pathname.startsWith(`${item.href}/`);
+  });
+  return matches.sort((a, b) => b.href.length - a.href.length)[0]?.href;
+}
+
 export function AdminSidebar({ onNavigate }: Props) {
   const pathname = usePathname();
+  const current = activeNavHref(pathname);
 
   return (
     <nav
@@ -29,9 +39,7 @@ export function AdminSidebar({ onNavigate }: Props) {
       aria-label="ניווט ניהול"
     >
       {NAV.map((item) => {
-        const active = item.exact
-          ? pathname === item.href
-          : pathname.startsWith(item.href);
+        const active = current === item.href;
 
         return (
           <Link

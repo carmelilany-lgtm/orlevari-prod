@@ -13,6 +13,7 @@ export const adminCopy = {
     categories: "קטגוריות וידאו",
     videos: "סרטונים",
     stills: "גלריית תמונות",
+    stillsCollage: "קולאז׳ תמונות",
     services: "שירותים",
     content: "תוכן האתר",
     leads: "פניות",
@@ -99,7 +100,8 @@ export const adminCopy = {
     updated: "הקטגוריה עודכנה.",
     deleteTitle: "למחוק את הקטגוריה?",
     deleteMessage:
-      "לא ניתן לבטל פעולה זו. לא ניתן למחוק קטגוריה שיש לה סרטונים משויכים.",
+      "לא ניתן לבטל פעולה זו. לא ניתן למחוק קטגוריה שיש בה סרטונים — יש להעביר או למחוק את הסרטונים קודם.",
+    tableTitle: "כותרת",
     tableTitleEn: "כותרת (EN)",
     tableSlug: "Slug",
     tableOrder: "סדר",
@@ -133,6 +135,7 @@ export const adminCopy = {
     noPreview: "אין תצוגה מקדימה",
   },
   stills: {
+    collageLink: "עריכת קולאז׳",
     uploadTitle: "העלאת תמונה",
     editTitle: "עריכת תמונה",
     altEn: "טקסט חלופי באנגלית",
@@ -149,6 +152,31 @@ export const adminCopy = {
     deleteMessage: "הרשומה יימחקו מהמסד, וקובץ האחסון יוסר אם אפשר.",
     uploading: "מעלה תמונה…",
     uploadFailedHint: "בדקו את סוג הקובץ (JPG, PNG, WebP) וגודל (עד 10MB).",
+  },
+  collage: {
+    pageTitle: "עריכת קולאז׳ תמונות",
+    intro:
+      "סידור גודל ומיקום תמונות בגלריית הסטילס באתר. במכשירים ניידים האתר משתמש בפריסת בטיחות אוטומטית.",
+    save: "שמירת פריסה",
+    reset: "איפוס פריסה",
+    resetTitle: "לאפס את פריסת הקולאז׳?",
+    resetMessage:
+      "כל הגדרות הגודל והסדר המותאמות יימחקו. האתר יחזור לפריסת Masonry אוטומטית.",
+    preview: "תצוגה מקדימה",
+    back: "חזרה לגלריית תמונות",
+    saved: "פריסת הקולאז׳ נשמרה.",
+    resetDone: "פריסת הקולאז׳ אופסה.",
+    emptyTitle: "אין תמונות לעריכה.",
+    emptyDesc: "העלו תמונות בגלריית התמונות לפני עריכת הקולאז׳.",
+    currentSize: "גודל נוכחי",
+    sizeSmall: "קטן",
+    sizeMedium: "בינוני",
+    sizeWide: "רחב",
+    sizeTall: "גבוה",
+    sizeLarge: "גדול",
+    moveUp: "למעלה",
+    moveDown: "למטה",
+    order: "סדר",
   },
   services: {
     intro: "ניהול שירותים דו-לשוניים המוצגים באתר.",
@@ -265,8 +293,8 @@ export const adminErrors = {
   youtubeInvalid:
     "קישור YouTube לא תקין. השתמשו בקישור watch, youtu.be, embed או shorts.",
   youtubeParseFailed: "לא ניתן לזהות את מזהה סרטון YouTube.",
-  categoryDeleteBlocked: (count: number) =>
-    `לא ניתן למחוק: ${count} סרטונים משויכים לקטגוריה. העבירו או מחקו אותם קודם.`,
+  categoryDeleteBlocked:
+    "לא ניתן למחוק קטגוריה שיש בה סרטונים. יש להעביר או למחוק את הסרטונים קודם.",
   noImageFile: "לא נבחר קובץ תמונה.",
   invalidImageType: "סוג קובץ לא תקין. השתמשו ב-JPG, PNG או WebP.",
   imageTooLarge: "הקובץ גדול מדי. הגודל המקסימלי הוא 10MB.",
@@ -282,6 +310,7 @@ export const adminPageTitles: Record<string, string> = {
   "/admin/categories": adminCopy.nav.categories,
   "/admin/videos": adminCopy.nav.videos,
   "/admin/stills": adminCopy.nav.stills,
+  "/admin/stills/collage": adminCopy.collage.pageTitle,
   "/admin/services": adminCopy.nav.services,
   "/admin/content": adminCopy.nav.content,
   "/admin/leads": adminCopy.nav.leads,

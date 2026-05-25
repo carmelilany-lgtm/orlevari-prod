@@ -3,6 +3,7 @@
 import type { ActionResult } from "@/lib/admin/action-result";
 import { actionError, actionOk } from "@/lib/admin/action-result";
 import { adminErrors } from "@/lib/admin/copy";
+import { revalidatePath } from "next/cache";
 import { revalidatePublicSite } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import type { Database } from "@/lib/supabase/types";
@@ -73,6 +74,7 @@ export async function saveVideoCategory(
 
     if (error) return actionError(error.message);
     revalidatePublicSite();
+    revalidatePath("/admin/categories");
     return actionOk({ id: data.id });
   }
 
@@ -84,6 +86,7 @@ export async function saveVideoCategory(
 
   if (error) return actionError(error.message);
   revalidatePublicSite();
+  revalidatePath("/admin/categories");
   return actionOk({ id: data.id });
 }
 
@@ -100,7 +103,7 @@ export async function deleteVideoCategory(
 
   if (countError) return actionError(countError.message);
   if (count && count > 0) {
-    return actionError(adminErrors.categoryDeleteBlocked(count));
+    return actionError(adminErrors.categoryDeleteBlocked);
   }
 
   const { error } = await ctx.supabase
@@ -110,6 +113,7 @@ export async function deleteVideoCategory(
 
   if (error) return actionError(error.message);
   revalidatePublicSite();
+  revalidatePath("/admin/categories");
   return actionOk();
 }
 
@@ -127,6 +131,7 @@ export async function toggleCategoryPublished(
 
   if (error) return actionError(error.message);
   revalidatePublicSite();
+  revalidatePath("/admin/categories");
   return actionOk();
 }
 

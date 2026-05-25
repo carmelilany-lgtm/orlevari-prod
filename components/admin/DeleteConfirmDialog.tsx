@@ -9,6 +9,7 @@ type Props = {
   title: string;
   message: string;
   loading?: boolean;
+  confirmLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
 };
@@ -18,6 +19,7 @@ export function DeleteConfirmDialog({
   title,
   message,
   loading,
+  confirmLabel,
   onConfirm,
   onCancel,
 }: Props) {
@@ -59,7 +61,9 @@ export function DeleteConfirmDialog({
             onClick={onConfirm}
             disabled={loading}
           >
-            {loading ? adminCopy.actions.deleting : adminCopy.actions.delete}
+            {loading
+              ? adminCopy.actions.deleting
+              : (confirmLabel ?? adminCopy.actions.delete)}
           </button>
         </div>
       </div>

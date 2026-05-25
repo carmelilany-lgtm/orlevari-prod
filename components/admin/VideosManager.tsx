@@ -28,6 +28,10 @@ import {
   youtubeThumbnailUrl,
 } from "@/lib/youtube/client";
 import type { VideoCategoryRow } from "@/lib/admin/actions/categories";
+import {
+  categoryAdminLabel,
+  categoryAdminPrimary,
+} from "@/lib/admin/category-label";
 import { adminCopy } from "@/lib/admin/copy";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -62,7 +66,7 @@ export function VideosManager({ initialVideos, categories }: Props) {
   const [query, setQuery] = useState("");
 
   const categoryMap = useMemo(
-    () => new Map(categories.map((c) => [c.id, c.title_en])),
+    () => new Map(categories.map((c) => [c.id, c])),
     [categories],
   );
 
@@ -74,13 +78,14 @@ export function VideosManager({ initialVideos, categories }: Props) {
     const q = query.trim().toLowerCase();
     if (!q) return videos;
     return videos.filter((row) => {
-      const category = row.category_id
-        ? categoryMap.get(row.category_id) ?? ""
+      const cat = row.category_id ? categoryMap.get(row.category_id) : undefined;
+      const categoryHaystack = cat
+        ? `${cat.title_he} ${cat.title_en}`
         : "";
       const haystack = [
         row.title_en,
         row.title_he,
-        category,
+        categoryHaystack,
         row.youtube_url,
         row.youtube_id ?? "",
       ]
@@ -230,7 +235,7 @@ export function VideosManager({ initialVideos, categories }: Props) {
                   { value: "", label: adminCopy.actions.none },
                   ...categories.map((c) => ({
                     value: c.id,
-                    label: c.title_en,
+                    label: categoryAdminLabel(c),
                   })),
                 ]}
               />
@@ -339,7 +344,12 @@ export function VideosManager({ initialVideos, categories }: Props) {
                   <td className={adminTdClass}>{row.title_en}</td>
                   <td className={adminTdClass}>
                     {row.category_id
-                      ? categoryMap.get(row.category_id) ?? "—"
+                      ? categoryAdminPrimary(
+                          categoryMap.get(row.category_id) ?? {
+                            title_he: "—",
+                            title_en: "",
+                          },
+                        )
                       : "—"}
                   </td>
                   <td className={adminTdClass}>{row.sort_order}</td>

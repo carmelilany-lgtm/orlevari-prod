@@ -3,6 +3,10 @@
 import { StillsLightboxPlaceholder } from "@/components/works/StillsLightboxPlaceholder";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
 import { useLanguage } from "@/lib/i18n/context";
+import {
+  collageSpansForViewport,
+  hasCustomCollageLayout,
+} from "@/lib/stills/collage-layout";
 import { cn } from "@/lib/utils";
 import {
   stillAlt,
@@ -57,11 +61,17 @@ function StillTile({
   locale,
   openLabel,
   onSelect,
+  collageTile = false,
+  colSpan = 1,
+  rowSpan = 1,
 }: {
   item: StillWorkItem;
   locale: "en" | "he";
   openLabel: string;
   onSelect: (item: StillWorkItem) => void;
+  collageTile?: boolean;
+  colSpan?: number;
+  rowSpan?: number;
 }) {
   const variant = item.variant ?? 0;
   const gradient = variantOverlays[variant % variantOverlays.length];
@@ -74,18 +84,26 @@ function StillTile({
         ? { aspectRatio: ratio }
         : { aspectRatio: "4 / 3" };
 
+  const spanStyle = collageTile
+    ? ({
+        ["--col-span" as string]: colSpan,
+        ["--row-span" as string]: rowSpan,
+      } as React.CSSProperties)
+    : undefined;
+
   return (
     <button
       type="button"
       onClick={() => onSelect(item)}
       aria-label={`${openLabel}: ${label}`}
+      style={spanStyle}
       className={cn(
         "still-mosaic-item group cursor-pointer",
+        collageTile && "stills-collage-tile h-full min-h-0",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-cyan-400",
       )}
     >
       {item.image_url ? (
-        // Native img preserves natural aspect ratio; next/image fill+object-cover is avoided
         // eslint-disable-next-line @next/next/no-img-element -- Supabase uploads, lazy + async decode
         <img
           src={item.image_url}
@@ -101,6 +119,7 @@ function StillTile({
           className={cn(
             "still-placeholder relative block w-full bg-gradient-to-br",
             gradient,
+            collageTile && "h-full min-h-[5rem]",
           )}
           style={aspectStyle}
         >
@@ -130,33 +149,80 @@ export function StillsMasonryGallery() {
   const { stills } = useSiteData();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  const visibleStills = useMemo(() => {
-    const sorted = stills.filter((item) => item.published !== false).sort(
-      (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0),
-    );
-    return interleaveForMasonry(sorted);
+  const sortedStills = useMemo(() => {
+    return stills
+      .filter((item) => item.published !== false)
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
   }, [stills]);
+
+  const useCollageLayout = useMemo(
+    () => hasCustomCollageLayout(sortedStills),
+    [sortedStills],
+  );
+
+  const visibleStills = useMemo(() => {
+    if (useCollageLayout) return sortedStills;
+    return interleaveForMasonry(sortedStills);
+  }, [sortedStills, useCollageLayout]);
+
+  const openLightbox = (item: StillWorkItem) => {
+    const idx = visibleStills.findIndex((s) => s.id === item.id);
+    if (idx >= 0 && item.image_url) setActiveIndex(idx);
+  };
 
   return (
     <div aria-label={t.works.stillsSectionLabel}>
-      <div className="masonry-columns">
-        {visibleStills.map((item) => (
-          <StillTile
-            key={item.id}
-            item={item}
-            locale={locale}
-            openLabel={t.works.openStill}
-            onSelect={(item) => {
-              const idx = visibleStills.findIndex((s) => s.id === item.id);
-              if (idx >= 0 && item.image_url) setActiveIndex(idx);
-            }}
-          />
-        ))}
-      </div>
+      {useCollageLayout ? (
+        <>
+          <div className="stills-collage-grid hidden md:grid">
+            {sortedStills.map((item) => {
+              const desktop = collageSpansForViewport(
+                item.collage_layout,
+                "desktop",
+              );
+              return (
+                <StillTile
+                  key={item.id}
+                  item={item}
+                  locale={locale}
+                  openLabel={t.works.openStill}
+                  onSelect={openLightbox}
+                  collageTile
+                  colSpan={desktop.col}
+                  rowSpan={desktop.row}
+                />
+              );
+            })}
+          </div>
+          <div className="masonry-columns md:hidden">
+            {sortedStills.map((item) => (
+              <StillTile
+                key={item.id}
+                item={item}
+                locale={locale}
+                openLabel={t.works.openStill}
+                onSelect={openLightbox}
+              />
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="masonry-columns">
+          {visibleStills.map((item) => (
+            <StillTile
+              key={item.id}
+              item={item}
+              locale={locale}
+              openLabel={t.works.openStill}
+              onSelect={openLightbox}
+            />
+          ))}
+        </div>
+      )}
 
       <StillsLightboxPlaceholder
         open={activeIndex !== null}
-        images={visibleStills}
+        images={useCollageLayout ? sortedStills : visibleStills}
         index={activeIndex ?? 0}
         locale={locale}
         closeLabel={t.works.close}

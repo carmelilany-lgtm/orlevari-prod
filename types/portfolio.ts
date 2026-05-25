@@ -1,4 +1,5 @@
 import type { Language } from "@/types/language";
+import type { CollageLayout } from "@/lib/stills/collage-layout";
 
 /** DB row — video_categories */
 export interface VideoCategory {
@@ -62,6 +63,7 @@ export interface StillImage {
   aspect_ratio: number | null;
   sort_order: number;
   is_published: boolean;
+  collage_layout?: CollageLayout | null;
   created_at?: string;
   updated_at?: string;
 }

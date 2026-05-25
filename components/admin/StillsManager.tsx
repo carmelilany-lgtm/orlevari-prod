@@ -25,6 +25,7 @@ import {
   MAX_STILL_UPLOAD_BYTES,
 } from "@/lib/images/get-image-dimensions";
 import { adminCopy, adminErrors } from "@/lib/admin/copy";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 
@@ -173,6 +174,12 @@ export function StillsManager({ initialStills }: Props) {
 
   return (
     <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-end gap-3">
+        <Link href="/admin/stills/collage" className={adminBtnSecondary}>
+          {adminCopy.stills.collageLink}
+        </Link>
+      </div>
+
       <AdminAlert variant="error" message={error} />
       <AdminAlert variant="success" message={success} />
 
