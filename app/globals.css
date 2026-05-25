@@ -212,3 +212,18 @@ html[lang="he"] body {
   width: 100%;
   height: auto;
 }
+
+/* Custom pickers — thin scrollbar, no OS menu chrome */
+.select-list-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(59, 130, 246, 0.45) transparent;
+}
+
+.select-list-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.select-list-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.45);
+}

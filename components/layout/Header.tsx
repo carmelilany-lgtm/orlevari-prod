@@ -5,8 +5,6 @@ import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
-const NAV_IDS = ["about", "works", "services", "contact"] as const;
-
 export function Header() {
   const { t, dir } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -36,10 +34,10 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
+        "fixed inset-x-0 top-0 z-50 isolate transition-[background-color,box-shadow] duration-300",
         scrolled
-          ? "border-b border-blue-900/30 bg-[#070b14]/92 backdrop-blur-md"
-          : "bg-transparent",
+          ? "bg-[#070b14]/95 shadow-[0_1px_0_0_#050a12] backdrop-blur-md supports-[backdrop-filter]:bg-[#070b14]/90"
+          : "bg-transparent shadow-[0_1px_0_0_transparent]",
       )}
     >
       <a

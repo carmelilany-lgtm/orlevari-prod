@@ -16,7 +16,7 @@ export function LegalPageChrome({ children }: { children: React.ReactNode }) {
       >
         {t.nav.skipToContent}
       </a>
-      <header className="sticky top-0 z-50 border-b border-blue-900/30 bg-[#070b14]/95 backdrop-blur-md">
+      <header className="sticky top-0 z-50 isolate bg-[#070b14]/95 shadow-[0_1px_0_0_#050a12] backdrop-blur-md supports-[backdrop-filter]:bg-[#070b14]/90">
         <div className="container-wide flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <Link
             href="/"

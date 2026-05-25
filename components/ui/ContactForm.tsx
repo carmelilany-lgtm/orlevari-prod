@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { ServiceTypePicker } from "@/components/ui/ServiceTypePicker";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
 import { buildServiceTypeOptions } from "@/lib/contact/service-types";
 import { useLanguage } from "@/lib/i18n/context";
@@ -178,23 +179,18 @@ export function ContactForm() {
         <label htmlFor="serviceType" className="mb-2 block text-base text-slate-400">
           {t.contact.form.serviceType}
         </label>
-        <select
+        <ServiceTypePicker
           id="serviceType"
-          name="serviceType"
-          required
-          className={cn(inputClass, "appearance-none")}
+          label={t.contact.form.serviceType}
+          placeholder={t.contact.form.selectService}
+          options={serviceTypeOptions}
           value={form.serviceType}
-          onChange={(e) =>
-            setForm((f) => ({ ...f, serviceType: e.target.value }))
+          onChange={(serviceType) =>
+            setForm((f) => ({ ...f, serviceType }))
           }
-        >
-          <option value="">{t.contact.form.selectService}</option>
-          {serviceTypeOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          required
+          inputClass={inputClass}
+        />
       </div>
 
       <div>
