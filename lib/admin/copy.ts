@@ -14,6 +14,7 @@ export const adminCopy = {
     videos: "סרטונים",
     stills: "גלריית תמונות",
     stillsCollage: "קולאז׳ תמונות",
+    stillsCollagePublic: "עריכת קולאז׳ באתר",
     services: "שירותים",
     content: "תוכן האתר",
     leads: "פניות",
@@ -163,12 +164,12 @@ export const adminCopy = {
     uploadFailedHint: "בדקו את סוג הקובץ (JPG, PNG, WebP) וגודל (עד 10MB).",
   },
   collage: {
-    pageTitle: "עריכת קולאז׳ תמונות",
-    intro:
-      "סידור גודל ומיקום תמונות בגלריית הסטילס באתר. במכשירים ניידים האתר משתמש בפריסת בטיחות אוטומטית.",
+    pageTitle: "עריכת קולאז׳ באתר",
+    intro: "עריכת הקולאז׳ מתבצעת ישירות באתר הציבורי.",
+    openPublicEditor: "מעבר לעריכת הקולאז׳ באתר",
     save: "שמירת פריסה",
     reset: "איפוס פריסה",
-    resetTitle: "לאפס את פריסת הקולאז׳?",
+    resetTitle: "האם לאפס את פריסת הקולאז׳?",
     resetMessage:
       "כל הגדרות הגודל והסדר המותאמות יימחקו. האתר יחזור לפריסת Masonry אוטומטית.",
     preview: "תצוגה מקדימה",
@@ -313,6 +314,12 @@ export const adminErrors = {
   saveContentFailed: (key: string, msg: string) =>
     `שמירת "${key}" נכשלה: ${msg}`,
   processUploadFailed: "עיבוד העלאת התמונה נכשל.",
+  dimensionsUnreadable: "לא ניתן לקרוא את ממדי התמונה",
+  storageUploadFailed: "העלאה ל־Storage נכשלה",
+  dbInsertFailed: "שמירת התמונה במסד הנתונים נכשלה",
+  invalidFileName: "שם הקובץ לא תקין",
+  collageSaveFailed: "שמירת הפריסה נכשלה.",
+  collageSaved: "הפריסה נשמרה בהצלחה.",
 } as const;
 
 export const adminPageTitles: Record<string, string> = {

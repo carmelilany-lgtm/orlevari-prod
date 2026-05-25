@@ -1,3 +1,5 @@
+import { normalizeImageMime } from "@/lib/images/sanitize-file-name";
+
 export type ImageDimensions = {
   width: number;
   height: number;
@@ -46,5 +48,5 @@ export const ALLOWED_IMAGE_TYPES = [
 ] as const;
 
 export function isAllowedImageType(type: string): boolean {
-  return (ALLOWED_IMAGE_TYPES as readonly string[]).includes(type);
+  return normalizeImageMime(type) != null;
 }

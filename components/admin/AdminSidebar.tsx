@@ -10,7 +10,10 @@ const NAV: { href: string; label: string; exact?: boolean }[] = [
   { href: "/admin/categories", label: adminCopy.nav.categories },
   { href: "/admin/videos", label: adminCopy.nav.videos },
   { href: "/admin/stills", label: adminCopy.nav.stills },
-  { href: "/admin/stills/collage", label: adminCopy.nav.stillsCollage },
+  {
+    href: "/admin/stills/collage",
+    label: adminCopy.nav.stillsCollagePublic,
+  },
   { href: "/admin/services", label: adminCopy.nav.services },
   { href: "/admin/content", label: adminCopy.nav.content },
   { href: "/admin/leads", label: adminCopy.nav.leads },

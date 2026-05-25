@@ -7,7 +7,7 @@ import { WorkFilters } from "@/components/works/WorkFilters";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
 import { useLanguage } from "@/lib/i18n/context";
 import type { WorkFilter } from "@/types/works";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 export function Works() {
   const { t, cms } = useLanguage();
@@ -60,7 +60,9 @@ export function Works() {
                 }
               >
                 <div className="-mx-4 sm:-mx-6 lg:-mx-8">
-                  <StillsMasonryGallery />
+                  <Suspense fallback={null}>
+                    <StillsMasonryGallery />
+                  </Suspense>
                 </div>
               </div>
             ) : null}

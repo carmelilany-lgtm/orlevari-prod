@@ -243,6 +243,46 @@ html[lang="he"] body {
   object-fit: cover;
 }
 
+/* Positional collage (x/y/w/h from live editor) */
+.stills-collage-grid-positional {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: minmax(4.5rem, auto);
+  gap: 4px;
+}
+
+.stills-collage-positional-tile {
+  min-height: 0;
+}
+
+.stills-collage-positional-tile .still-mosaic-image,
+.stills-collage-positional-tile img {
+  width: 100%;
+  height: 100%;
+  min-height: 5rem;
+  object-fit: cover;
+}
+
+/* Live edit mode — react-grid-layout */
+.stills-collage-edit-surface .react-grid-layout {
+  min-height: 12rem;
+}
+
+.stills-rgl-item {
+  background: rgba(15, 23, 42, 0.9);
+  cursor: grab;
+}
+
+.stills-rgl-item:active {
+  cursor: grabbing;
+}
+
+.stills-collage-edit-surface .react-resizable-handle-se {
+  width: 14px;
+  height: 14px;
+  border-end-end-radius: 2px;
+}
+
 /* Custom pickers — thin scrollbar, no OS menu chrome */
 .select-list-scroll {
   scrollbar-width: thin;

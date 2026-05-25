@@ -221,10 +221,13 @@ export function StillsManager({ initialStills }: Props) {
       if (succeeded > 0) {
         router.refresh();
       }
-    } catch {
-      setError(
-        `${adminErrors.processUploadFailed} ${adminCopy.stills.uploadFailedHint}`,
-      );
+    } catch (err) {
+      console.error("[lev-ari] still upload batch:", err);
+      const detail =
+        err instanceof Error && err.message.includes("Body exceeded")
+          ? adminErrors.imageTooLarge
+          : adminErrors.processUploadFailed;
+      setError(`${detail} ${adminCopy.stills.uploadFailedHint}`);
     } finally {
       setUploading(false);
       setUploadProgress(null);
@@ -286,7 +289,7 @@ export function StillsManager({ initialStills }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-end gap-3">
-        <Link href="/admin/stills/collage" className={adminBtnSecondary}>
+        <Link href="/?editCollage=1#works" className={adminBtnSecondary}>
           {adminCopy.stills.collageLink}
         </Link>
       </div>

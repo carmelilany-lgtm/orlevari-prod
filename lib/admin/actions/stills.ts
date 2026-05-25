@@ -5,7 +5,12 @@ import { actionError, actionOk } from "@/lib/admin/action-result";
 import { adminErrors } from "@/lib/admin/copy";
 import { revalidatePublicSite } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
-import { sanitizeFileName } from "@/lib/images/sanitize-file-name";
+import {
+  normalizeImageMime,
+  sanitizeFileName,
+  storageExtensionForUpload,
+} from "@/lib/images/sanitize-file-name";
+import { ensureAdminUserInDatabase } from "@/lib/auth/ensure-admin-user";
 import type { Database } from "@/lib/supabase/types";
 
 export type StillImageRow = Database["public"]["Tables"]["still_images"]["Row"];
@@ -80,13 +85,15 @@ export async function uploadStillImage(formData: FormData): Promise<
   const ctx = await requireAdmin();
   if (!("supabase" in ctx)) return ctx;
 
+  await ensureAdminUserInDatabase(ctx.email);
+
   const file = formData.get("file");
   if (!(file instanceof File)) {
     return actionError(adminErrors.noImageFile);
   }
 
-  const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-  if (!allowed.includes(file.type)) {
+  const contentType = normalizeImageMime(file.type);
+  if (!contentType) {
     return actionError(adminErrors.invalidImageType);
   }
 
@@ -107,23 +114,29 @@ export async function uploadStillImage(formData: FormData): Promise<
   const fileIndex = Number(formData.get("file_index") ?? 0);
   const timestamp = Number.isFinite(batchTimestamp) ? batchTimestamp : Date.now();
   const index = Number.isFinite(fileIndex) ? fileIndex : 0;
-  const safeName = sanitizeFileName(file.name);
-  const storagePath = `${timestamp}-${index}-${safeName}`;
+  const safeName = sanitizeFileName(file.name) || "image";
+  const ext = storageExtensionForUpload(file.type, file.name);
+  const random = Math.random().toString(36).slice(2, 10);
+  const storagePath = `stills/${timestamp}-${index}-${random}-${safeName}${ext}`;
 
   const arrayBuffer = await file.arrayBuffer();
   const { error: uploadError } = await ctx.supabase.storage
     .from(STILLS_BUCKET)
     .upload(storagePath, arrayBuffer, {
-      contentType: file.type,
+      contentType,
       upsert: false,
     });
 
   if (uploadError) {
-    return actionError(
-      uploadError.message
-        ? adminErrors.uploadFailed(uploadError.message)
-        : adminErrors.stillUploadFailed,
-    );
+    console.error("[lev-ari] still upload storage:", uploadError.message);
+    const msg = uploadError.message?.toLowerCase() ?? "";
+    if (msg.includes("mime") || msg.includes("content")) {
+      return actionError(adminErrors.invalidImageType);
+    }
+    if (msg.includes("policy") || msg.includes("authorized")) {
+      return actionError(adminErrors.accessDenied);
+    }
+    return actionError(adminErrors.storageUploadFailed);
   }
 
   const {
@@ -147,8 +160,9 @@ export async function uploadStillImage(formData: FormData): Promise<
     .single();
 
   if (error) {
+    console.error("[lev-ari] still upload db:", error.message);
     await ctx.supabase.storage.from(STILLS_BUCKET).remove([storagePath]);
-    return actionError(error.message);
+    return actionError(adminErrors.dbInsertFailed);
   }
 
   revalidatePublicSite();

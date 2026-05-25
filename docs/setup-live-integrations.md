@@ -227,12 +227,42 @@ Summary:
 
 ---
 
+## H. Stills gallery (upload + live collage)
+
+### Upload multiple images
+
+1. Admin → **גלריית תמונות** → choose one or more JPG/PNG/WebP files (≤ 10MB each).
+2. Optional alt text and sort order apply to the whole batch.
+3. Per-file errors appear in the list; a partial batch shows e.g. `הועלו 7 מתוך 8 תמונות`.
+
+### Edit collage on the public site
+
+1. Sign in as admin (same browser session as the public site).
+2. Open the homepage **#works** section, or use **עריכת קולאז׳** (admin-only button).
+3. Or open `/?editCollage=1#works` from admin → **עריכת קולאז׳ באתר**.
+4. Drag and resize tiles on desktop, then **שמירה**. Mobile visitors keep masonry layout.
+5. **איפוס פריסה** clears saved layout and returns to automatic masonry.
+
+Recommended: edit from a desktop/laptop (wide grid).
+
+### Upload error messages (admin)
+
+| Message | Likely cause |
+|---------|----------------|
+| סוג הקובץ לא נתמך | Not JPG/PNG/WebP |
+| הקובץ גדול מדי | Over 10MB (or server action body limit misconfigured) |
+| העלאה ל־Storage נכשלה | Bucket/policy/MIME; check `/admin/integrations` |
+| שמירת התמונה במסד הנתונים נכשלה | DB insert after upload |
+| אין הרשאה להעלות תמונות | Not in `admin_users` (storage uses `is_admin()`) |
+
+---
+
 ## Troubleshooting
 
 | Symptom | Check |
 |---------|--------|
 | Admin login → access denied | Email in `admin_users` or `ADMIN_ALLOWED_EMAILS`; service role for bootstrap |
-| Upload fails | Buckets exist; user is admin; file type JPG/PNG/WebP ≤ 10MB |
+| Upload fails | Buckets exist; user is admin; file type JPG/PNG/WebP ≤ 10MB; `next.config` `serverActions.bodySizeLimit` ≥ 11mb |
 | Lead not saved | `NEXT_PUBLIC_SUPABASE_*` set; RLS `leads_insert_public`; privacy checkbox; contact API must not `.select()` after insert (anon has INSERT only on `leads`) |
 | No emails | `RESEND_API_KEY`, `EMAIL_FROM` (verified), `CONTACT_NOTIFICATION_EMAIL` |
 | Public site empty | Seed ran; categories `is_published = true` |

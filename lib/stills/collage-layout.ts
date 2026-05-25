@@ -3,10 +3,14 @@
 export type CollageSize = "small" | "medium" | "wide" | "tall" | "large";
 
 export type CollageLayout = {
+  x?: number;
+  y?: number;
   w: number;
   h: number;
   size?: CollageSize;
 };
+
+export const COLLAGE_GRID_COLS = 12;
 
 export const COLLAGE_SIZE_SPANS: Record<CollageSize, CollageLayout> = {
   small: { w: 1, h: 1, size: "small" },
@@ -36,11 +40,19 @@ export function parseCollageLayout(raw: unknown): CollageLayout | null {
   if (!Number.isFinite(w) || !Number.isFinite(h) || w < 1 || h < 1) {
     return null;
   }
-  const size = o.size;
   const layout: CollageLayout = {
-    w: Math.min(3, Math.max(1, Math.round(w))),
-    h: Math.min(2, Math.max(1, Math.round(h))),
+    w: Math.min(COLLAGE_GRID_COLS, Math.max(1, Math.round(w))),
+    h: Math.min(8, Math.max(1, Math.round(h))),
   };
+  const x = Number(o.x);
+  const y = Number(o.y);
+  if (Number.isFinite(x) && x >= 0) {
+    layout.x = Math.min(COLLAGE_GRID_COLS - 1, Math.round(x));
+  }
+  if (Number.isFinite(y) && y >= 0) {
+    layout.y = Math.max(0, Math.round(y));
+  }
+  const size = o.size;
   if (
     typeof size === "string" &&
     (COLLAGE_SIZE_ORDER as string[]).includes(size)
@@ -48,6 +60,19 @@ export function parseCollageLayout(raw: unknown): CollageLayout | null {
     layout.size = size as CollageSize;
   }
   return layout;
+}
+
+export function hasPositionalCollageLayout(
+  items: { collage_layout?: CollageLayout | null }[],
+): boolean {
+  return items.some((item) => {
+    const layout = item.collage_layout;
+    return (
+      layout != null &&
+      Number.isFinite(layout.x) &&
+      Number.isFinite(layout.y)
+    );
+  });
 }
 
 export function sizeFromLayout(layout: CollageLayout | null | undefined): CollageSize {
@@ -87,4 +112,59 @@ export function collageSpansForViewport(
     row = Math.min(row, 2);
   }
   return { col: Math.max(1, col), row: Math.max(1, row) };
+}
+
+export function clampCollageLayoutItem(input: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}): CollageLayout {
+  const w = Math.min(COLLAGE_GRID_COLS, Math.max(1, Math.round(input.w)));
+  const x = Math.min(COLLAGE_GRID_COLS - w, Math.max(0, Math.round(input.x)));
+  const y = Math.max(0, Math.round(input.y));
+  const h = Math.min(8, Math.max(1, Math.round(input.h)));
+  return { x, y, w, h };
+}
+
+/** Build default x/y positions for react-grid-layout from span-only layouts. */
+export function buildDefaultGridPositions(
+  items: { id: string; collage_layout?: CollageLayout | null }[],
+): Map<string, CollageLayout> {
+  const result = new Map<string, CollageLayout>();
+  let cursorX = 0;
+  let cursorY = 0;
+  let rowMaxH = 1;
+
+  for (const item of items) {
+    const parsed = parseCollageLayout(item.collage_layout);
+    const w = parsed?.w ?? 2;
+    const h = parsed?.h ?? 2;
+    if (
+      parsed &&
+      Number.isFinite(parsed.x) &&
+      Number.isFinite(parsed.y)
+    ) {
+      result.set(item.id, clampCollageLayoutItem({
+        x: parsed.x!,
+        y: parsed.y!,
+        w,
+        h,
+      }));
+      continue;
+    }
+    if (cursorX + w > COLLAGE_GRID_COLS) {
+      cursorX = 0;
+      cursorY += rowMaxH;
+      rowMaxH = 1;
+    }
+    result.set(
+      item.id,
+      clampCollageLayoutItem({ x: cursorX, y: cursorY, w, h }),
+    );
+    cursorX += w;
+    rowMaxH = Math.max(rowMaxH, h);
+  }
+
+  return result;
 }

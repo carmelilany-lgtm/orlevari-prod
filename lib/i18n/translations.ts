@@ -39,6 +39,20 @@ export type TranslationKeys = {
     openVideo: string;
     openStill: string;
     emptyPortfolio: string;
+    collage: {
+      editCollage: string;
+      modeLabel: string;
+      save: string;
+      saving: string;
+      cancel: string;
+      reset: string;
+      hint: string;
+      mobileWarning: string;
+      resetConfirm: string;
+      collageSaved: string;
+      collageSaveFailed: string;
+      collageResetDone: string;
+    };
   };
   services: {
     title: string;
@@ -128,6 +142,20 @@ const en: TranslationKeys = {
     openVideo: "Play video",
     openStill: "View still image",
     emptyPortfolio: "Portfolio content will appear here once published.",
+    collage: {
+      editCollage: "Edit Collage",
+      modeLabel: "Collage edit mode",
+      save: "Save",
+      saving: "Saving…",
+      cancel: "Cancel",
+      reset: "Reset layout",
+      hint: "Drag images, resize them, then save",
+      mobileWarning: "Collage editing works best on a desktop computer.",
+      resetConfirm: "Reset the collage layout?",
+      collageSaved: "Layout saved successfully.",
+      collageSaveFailed: "Failed to save layout.",
+      collageResetDone: "Collage layout was reset.",
+    },
   },
   services: {
     title: "Services",
@@ -218,6 +246,20 @@ const he: TranslationKeys = {
     openVideo: "נגן וידאו",
     openStill: "צפייה בתמונה",
     emptyPortfolio: "תוכן הפורטפוליו יופיע כאן לאחר פרסום בעבודות.",
+    collage: {
+      editCollage: "עריכת קולאז׳",
+      modeLabel: "מצב עריכת קולאז׳",
+      save: "שמירה",
+      saving: "שומר…",
+      cancel: "ביטול",
+      reset: "איפוס פריסה",
+      hint: "גרור תמונות, שנה גודל ולחץ שמירה",
+      mobileWarning: "עריכת קולאז׳ מומלצת ממחשב.",
+      resetConfirm: "האם לאפס את פריסת הקולאז׳?",
+      collageSaved: "הפריסה נשמרה בהצלחה.",
+      collageSaveFailed: "שמירת הפריסה נכשלה.",
+      collageResetDone: "פריסת הקולאז׳ אופסה.",
+    },
   },
   services: {
     title: "שירותים",
