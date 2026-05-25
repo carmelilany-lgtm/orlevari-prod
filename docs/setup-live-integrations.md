@@ -239,7 +239,7 @@ Summary:
 
 1. Sign in as admin (same browser session as the public site).
 2. Open the homepage **#works** section, or use **עריכת קולאז׳** (admin-only button).
-3. Or open `/?editCollage=1#works` from admin → **עריכת קולאז׳ באתר**.
+3. Or open `/?editCollage=1#works` from admin → **גלריית תמונות** → **עריכת קולאז׳**.
 4. Drag and resize tiles on desktop, then **שמירה**. Mobile visitors keep masonry layout.
 5. **איפוס פריסה** clears saved layout and returns to automatic masonry.
 
