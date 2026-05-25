@@ -273,15 +273,18 @@ Public visitors cannot upload or see edit overlays.
 ### Hero / header images
 
 1. Admin → **גלריית תמונות**.
-2. For each still, enable **מופיע בהדר** (stored as `still_images.show_in_hero`).
-3. The public hero collage prefers published stills with `show_in_hero = true`; if none are marked, it uses all published stills; if there are no stills, gradient placeholders remain.
+2. By default, all **published** stills can appear in the public hero collage (random order on each visit).
+3. To hide a still from the hero only (it stays in the gallery), check **אל תציג בהדר** (`still_images.exclude_from_hero`).
+4. If every published still is excluded (or there are no stills), the hero shows gradient placeholders.
 
-Apply migration `004_add_stills_hero_flag.sql` on existing databases:
+Apply migration `005_add_exclude_from_hero_to_stills.sql` on existing databases:
 
 ```sql
 ALTER TABLE public.still_images
-ADD COLUMN IF NOT EXISTS show_in_hero boolean NOT NULL DEFAULT false;
+ADD COLUMN IF NOT EXISTS exclude_from_hero boolean NOT NULL DEFAULT false;
 ```
+
+(Legacy column `show_in_hero` from `004_add_stills_hero_flag.sql` is ignored by the public hero; do not use it in admin UI.)
 
 ### About image (admin content)
 
@@ -301,17 +304,19 @@ ON CONFLICT (key) DO NOTHING;
 
 ### Upload multiple images
 
-1. Admin → **גלריית תמונות** → choose one or more JPG/PNG/WebP files (≤ 10MB each).
-2. Optional alt text and sort order apply to the whole batch.
-3. Per-file errors appear in the list; a partial batch shows e.g. `הועלו 7 מתוך 8 תמונות`.
+1. Admin → **גלריית תמונות** → choose up to **40** JPG/PNG/WebP files at once (≤ 10MB each).
+2. Selecting more than 40 is rejected with `ניתן להעלות עד 40 תמונות בכל פעם.`
+3. Optional alt text and sort order apply to the whole batch; uploads run with limited concurrency (4 at a time).
+4. Per-file errors appear in the list; valid files still upload. Summary e.g. `הועלו 37 מתוך 40 תמונות`.
 
 ### Edit collage on the public site
 
 1. Sign in as admin (same browser session as the public site).
 2. Open the homepage **#works** section, or use **עריכת קולאז׳** (admin-only button).
 3. Or open `/?editCollage=1#works` from admin → **גלריית תמונות** → **עריכת קולאז׳**.
-4. Drag and resize tiles on desktop, then **שמירה**. Mobile visitors keep masonry layout.
-5. **איפוס פריסה** clears saved layout and returns to automatic masonry.
+4. Drag and resize tiles on desktop (corner handles), or select a tile and use size buttons (**קטן** / **רגיל** / **רחב** / **גבוה** / **גדול**), then **שמירה**.
+5. Lightbox is disabled while edit mode is active.
+6. **איפוס פריסה** clears saved layout and returns to automatic masonry.
 
 Recommended: edit from a desktop/laptop (wide grid).
 

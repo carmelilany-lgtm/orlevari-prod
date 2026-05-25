@@ -142,7 +142,8 @@ export const adminCopy = {
       "גוררים, מעלים, מסדרים — בלי לפתוח קבוצת תמיכה עם כרמל.",
     uploadTitle: "העלאת תמונות",
     uploadChoose: "בחר תמונות",
-    uploadMultiHint: "ניתן לבחור כמה תמונות יחד",
+    uploadMultiHint: "ניתן לבחור עד 40 תמונות יחד",
+    uploadTooMany: "ניתן להעלות עד 40 תמונות בכל פעם.",
     uploadProgress: (current: number, total: number) =>
       `מעלה ${current} מתוך ${total}`,
     uploadingMany: "מעלה תמונות…",
@@ -165,11 +166,11 @@ export const adminCopy = {
     deleteMessage: "הרשומה יימחקו מהמסד, וקובץ האחסון יוסר אם אפשר.",
     uploading: "מעלה תמונה…",
     uploadFailedHint: "בדקו את סוג הקובץ (JPG, PNG, WebP) וגודל (עד 10MB).",
-    heroFlag: "מופיע בהדר",
-    heroFlagHint:
-      "תמונות שמסומנות כאן יופיעו ברקע אזור הפתיחה באתר.",
+    excludeFromHero: "אל תציג בהדר",
+    excludeFromHeroHint:
+      "ברירת המחדל: תמונות פעילות יכולות להופיע בהדר. סמנו כאן רק תמונות שלא תרצו שיופיעו שם.",
     heroPageNote:
-      "ניהול תמונות ההדר מתבצע דרך גלריית התמונות — סמנו תמונות כ׳מופיע בהדר׳.",
+      "תמונות ההדר נבחרות באופן אקראי מגלריית הסטילס. סמנו «אל תציג בהדר» כדי להוציא תמונה מההדר בלבד.",
   },
   services: {
     intro: "ניהול שירותים דו-לשוניים המוצגים באתר.",

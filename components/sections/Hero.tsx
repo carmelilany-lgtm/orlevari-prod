@@ -5,10 +5,25 @@ import { useVisualEditorActive } from "@/components/visual-editor/VisualEditorPr
 import { useSiteData } from "@/components/providers/SiteDataProvider";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/lib/i18n/context";
-import { pickHeroStillImages } from "@/lib/stills/hero-stills";
+import {
+  pickHeroStillImagesForRender,
+  pickHeroStillImagesRandom,
+} from "@/lib/stills/hero-stills";
 import { stillAlt } from "@/types/works";
 import { cn } from "@/lib/utils";
-import { useMemo } from "react";
+import { useMemo, useSyncExternalStore } from "react";
+
+function subscribeNoop() {
+  return () => {};
+}
+
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
 
 const COLLAGE_CELLS = 6;
 
@@ -29,9 +44,18 @@ export function Hero() {
   const visualEdit = useVisualEditorActive();
   const { stills } = useSiteData();
 
+  const isClient = useSyncExternalStore(
+    subscribeNoop,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
+
   const heroCells = useMemo(
-    () => pickHeroStillImages(stills, COLLAGE_CELLS),
-    [stills],
+    () =>
+      isClient
+        ? pickHeroStillImagesRandom(stills, COLLAGE_CELLS)
+        : pickHeroStillImagesForRender(stills, COLLAGE_CELLS),
+    [stills, isClient],
   );
 
   return (

@@ -90,6 +90,7 @@ export function toStillWorkItem(row: StillImage): StillWorkItem {
     sort_order: row.sort_order,
     published: row.is_published,
     show_in_hero: row.show_in_hero ?? false,
+    exclude_from_hero: row.exclude_from_hero ?? false,
     collage_layout: parseCollageLayout(row.collage_layout),
   };
 }

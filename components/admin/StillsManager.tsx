@@ -17,7 +17,7 @@ import {
   getNextStillSortOrder,
   saveStillImageMeta,
   toggleStillPublished,
-  updateStillHeroFlag,
+  updateStillExcludeFromHero,
   uploadStillImage,
   type StillImageRow,
 } from "@/lib/admin/actions/stills";
@@ -26,6 +26,11 @@ import {
   isAllowedImageType,
   MAX_STILL_UPLOAD_BYTES,
 } from "@/lib/images/get-image-dimensions";
+import {
+  MAX_BULK_STILL_UPLOAD_FILES,
+  STILL_UPLOAD_CONCURRENCY,
+} from "@/lib/images/still-upload-constants";
+import { mapWithConcurrency } from "@/lib/images/upload-batch";
 import { adminCopy, adminErrors } from "@/lib/admin/copy";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -56,7 +61,7 @@ export function StillsManager({ initialStills }: Props) {
   const [altHe, setAltHe] = useState("");
   const [sortOrder, setSortOrder] = useState(0);
   const [published, setPublished] = useState(true);
-  const [showInHero, setShowInHero] = useState(false);
+  const [excludeFromHero, setExcludeFromHero] = useState(false);
   const [query, setQuery] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -88,6 +93,12 @@ export function StillsManager({ initialStills }: Props) {
   async function handleUpload(fileList: FileList) {
     const files = Array.from(fileList);
     if (files.length === 0) return;
+
+    if (files.length > MAX_BULK_STILL_UPLOAD_FILES) {
+      setError(adminCopy.stills.uploadTooMany);
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
 
     setError("");
     setSuccess("");
@@ -124,7 +135,7 @@ export function StillsManager({ initialStills }: Props) {
       );
       return;
     }
-    let nextSortOrder = sortBaseResult.data;
+    const nextSortOrder = sortBaseResult.data;
     const batchTimestamp = Date.now();
 
     setUploading(true);
@@ -140,43 +151,45 @@ export function StillsManager({ initialStills }: Props) {
     const uploadErrors: string[] = [...skipped];
 
     try {
-      for (let i = 0; i < validFiles.length; i++) {
-        const file = validFiles[i];
-        setUploadProgress({
-          current: i + 1,
-          total: validFiles.length,
-          succeeded,
-          failed,
-        });
+      const outcomes = await mapWithConcurrency(
+        validFiles,
+        STILL_UPLOAD_CONCURRENCY,
+        async (file, i) => {
+          let width: number | null = null;
+          let height: number | null = null;
+          let aspectRatio: number | null = null;
 
-        let width: number | null = null;
-        let height: number | null = null;
-        let aspectRatio: number | null = null;
+          try {
+            const dims = await getImageDimensionsFromFile(file);
+            width = dims.width;
+            height = dims.height;
+            aspectRatio = dims.aspectRatio;
+          } catch {
+            // Upload without dimensions when detection fails
+          }
 
-        try {
-          const dims = await getImageDimensionsFromFile(file);
-          width = dims.width;
-          height = dims.height;
-          aspectRatio = dims.aspectRatio;
-        } catch {
-          // Upload without dimensions when detection fails
-        }
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("batch_timestamp", String(batchTimestamp));
+          formData.append("file_index", String(i));
+          if (width != null) formData.append("width", String(width));
+          if (height != null) formData.append("height", String(height));
+          if (aspectRatio != null) {
+            formData.append("aspect_ratio", String(aspectRatio));
+          }
+          formData.append("alt_en", altEn);
+          formData.append("alt_he", altHe);
+          formData.append("sort_order", String(nextSortOrder + i));
+          formData.append("is_published", published ? "true" : "false");
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("batch_timestamp", String(batchTimestamp));
-        formData.append("file_index", String(i));
-        if (width != null) formData.append("width", String(width));
-        if (height != null) formData.append("height", String(height));
-        if (aspectRatio != null) {
-          formData.append("aspect_ratio", String(aspectRatio));
-        }
-        formData.append("alt_en", altEn);
-        formData.append("alt_he", altHe);
-        formData.append("sort_order", String(nextSortOrder));
-        formData.append("is_published", published ? "true" : "false");
+          const result = await uploadStillImage(formData);
+          return { file, result };
+        },
+      );
 
-        const result = await uploadStillImage(formData);
+      let completed = 0;
+      for (const { file, result } of outcomes) {
+        completed += 1;
         if (!result.success) {
           failed += 1;
           uploadErrors.push(
@@ -184,8 +197,13 @@ export function StillsManager({ initialStills }: Props) {
           );
         } else {
           succeeded += 1;
-          nextSortOrder += 1;
         }
+        setUploadProgress({
+          current: completed,
+          total: validFiles.length,
+          succeeded,
+          failed,
+        });
       }
 
       setFileErrors(uploadErrors);
@@ -242,7 +260,7 @@ export function StillsManager({ initialStills }: Props) {
     setAltHe(row.alt_he ?? "");
     setSortOrder(row.sort_order);
     setPublished(row.is_published);
-    setShowInHero(row.show_in_hero ?? false);
+    setExcludeFromHero(row.exclude_from_hero ?? false);
   }
 
   async function handleSaveMeta(e: React.FormEvent) {
@@ -256,7 +274,7 @@ export function StillsManager({ initialStills }: Props) {
       alt_he: altHe,
       sort_order: sortOrder,
       is_published: published,
-      show_in_hero: showInHero,
+      exclude_from_hero: excludeFromHero,
     });
     setLoading(false);
     if (!result.success) {
@@ -268,8 +286,11 @@ export function StillsManager({ initialStills }: Props) {
     router.refresh();
   }
 
-  async function handleHeroToggle(id: string, show_in_hero: boolean) {
-    const result = await updateStillHeroFlag(id, show_in_hero);
+  async function handleExcludeFromHeroToggle(
+    id: string,
+    exclude_from_hero: boolean,
+  ) {
+    const result = await updateStillExcludeFromHero(id, exclude_from_hero);
     if (!result.success) {
       setError(result.error);
       return;
@@ -362,7 +383,7 @@ export function StillsManager({ initialStills }: Props) {
           <input
             ref={fileRef}
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp,image/*"
             multiple
             onChange={handleFileSelect}
             disabled={uploading}
@@ -447,13 +468,15 @@ export function StillsManager({ initialStills }: Props) {
             <label className="flex items-end gap-2 text-sm text-slate-300 sm:col-span-2">
               <input
                 type="checkbox"
-                checked={showInHero}
-                onChange={(e) => setShowInHero(e.target.checked)}
+                checked={excludeFromHero}
+                onChange={(e) => setExcludeFromHero(e.target.checked)}
               />
-              {adminCopy.stills.heroFlag}
+              {adminCopy.stills.excludeFromHero}
             </label>
           </div>
-          <p className="text-xs text-slate-500">{adminCopy.stills.heroFlagHint}</p>
+          <p className="text-xs text-slate-500">
+            {adminCopy.stills.excludeFromHeroHint}
+          </p>
           <div className="flex gap-3">
             <button type="submit" className={adminBtnPrimary} disabled={loading}>
               {adminCopy.actions.save}
@@ -503,14 +526,16 @@ export function StillsManager({ initialStills }: Props) {
               <label className="flex items-center gap-2 text-sm text-slate-300">
                 <input
                   type="checkbox"
-                  checked={row.show_in_hero ?? false}
+                  checked={row.exclude_from_hero ?? false}
                   onChange={(e) =>
-                    void handleHeroToggle(row.id, e.target.checked)
+                    void handleExcludeFromHeroToggle(row.id, e.target.checked)
                   }
                 />
-                {adminCopy.stills.heroFlag}
+                {adminCopy.stills.excludeFromHero}
               </label>
-              <p className="text-xs text-slate-500">{adminCopy.stills.heroFlagHint}</p>
+              <p className="text-xs text-slate-500">
+                {adminCopy.stills.excludeFromHeroHint}
+              </p>
               <div className="flex gap-2">
                 <button
                   type="button"

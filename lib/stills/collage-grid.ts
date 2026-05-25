@@ -2,7 +2,9 @@ import type { Layout } from "react-grid-layout/legacy";
 import {
   buildDefaultGridPositions,
   clampCollageLayoutItem,
+  COLLAGE_SIZE_SPANS,
   type CollageLayout,
+  type CollageSize,
 } from "@/lib/stills/collage-layout";
 import type { StillWorkItem } from "@/types/works";
 
@@ -49,4 +51,31 @@ export function gridLayoutToCollageLayouts(
       h: item.h,
     }),
   }));
+}
+
+/** Apply a size preset to one grid item (live collage editor). */
+export function applySizeToLayoutItem(
+  layout: Layout,
+  itemId: string,
+  size: CollageSize,
+): Layout {
+  const spans = COLLAGE_SIZE_SPANS[size];
+  return layout.map((item) => {
+    if (item.i !== itemId) return item;
+    const clamped = clampCollageLayoutItem({
+      x: item.x,
+      y: item.y,
+      w: spans.w,
+      h: spans.h,
+    });
+    return {
+      ...item,
+      w: clamped.w,
+      h: clamped.h,
+      minW: item.minW,
+      minH: item.minH,
+      maxW: item.maxW,
+      maxH: item.maxH,
+    };
+  });
 }

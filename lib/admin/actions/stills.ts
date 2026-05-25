@@ -56,7 +56,7 @@ export type StillImageInput = {
   alt_he: string | null;
   sort_order: number;
   is_published: boolean;
-  show_in_hero?: boolean;
+  exclude_from_hero?: boolean;
 };
 
 export async function saveStillImageMeta(
@@ -72,8 +72,8 @@ export async function saveStillImageMeta(
       alt_he: input.alt_he?.trim() || null,
       sort_order: input.sort_order,
       is_published: input.is_published,
-      ...(input.show_in_hero !== undefined
-        ? { show_in_hero: input.show_in_hero }
+      ...(input.exclude_from_hero !== undefined
+        ? { exclude_from_hero: input.exclude_from_hero }
         : {}),
     })
     .eq("id", input.id);
@@ -83,16 +83,16 @@ export async function saveStillImageMeta(
   return actionOk();
 }
 
-export async function updateStillHeroFlag(
+export async function updateStillExcludeFromHero(
   id: string,
-  showInHero: boolean,
+  excludeFromHero: boolean,
 ): Promise<ActionResult> {
   const ctx = await requireAdmin();
   if (!("supabase" in ctx)) return ctx;
 
   const { error } = await ctx.supabase
     .from("still_images")
-    .update({ show_in_hero: showInHero })
+    .update({ exclude_from_hero: excludeFromHero })
     .eq("id", id);
 
   if (error) return actionError(error.message);

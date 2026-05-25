@@ -64,6 +64,7 @@ export interface StillImage {
   sort_order: number;
   is_published: boolean;
   show_in_hero?: boolean;
+  exclude_from_hero?: boolean;
   collage_layout?: CollageLayout | null;
   created_at?: string;
   updated_at?: string;

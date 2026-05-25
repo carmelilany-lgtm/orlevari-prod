@@ -15,9 +15,9 @@ export const COLLAGE_GRID_COLS = 12;
 export const COLLAGE_SIZE_SPANS: Record<CollageSize, CollageLayout> = {
   small: { w: 1, h: 1, size: "small" },
   medium: { w: 2, h: 2, size: "medium" },
-  wide: { w: 2, h: 1, size: "wide" },
-  tall: { w: 1, h: 2, size: "tall" },
-  large: { w: 3, h: 2, size: "large" },
+  wide: { w: 3, h: 2, size: "wide" },
+  tall: { w: 2, h: 3, size: "tall" },
+  large: { w: 4, h: 3, size: "large" },
 };
 
 export const COLLAGE_SIZE_ORDER: CollageSize[] = [

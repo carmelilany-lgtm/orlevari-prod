@@ -1,13 +1,10 @@
 "use client";
 
-import {
-  gridLayoutToCollageLayouts,
-  stillsToGridLayout,
-} from "@/lib/stills/collage-grid";
+import { stillsToGridLayout } from "@/lib/stills/collage-grid";
 import { cn } from "@/lib/utils";
 import { stillAlt, type StillWorkItem } from "@/types/works";
 import dynamic from "next/dynamic";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback } from "react";
 import type { Layout } from "react-grid-layout/legacy";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -24,27 +21,25 @@ const GridLayoutWithWidth = dynamic(
 type Props = {
   items: StillWorkItem[];
   locale: "en" | "he";
+  layout: Layout;
   selectedId: string | null;
   onSelect: (id: string) => void;
-  onLayoutDraftChange: (layout: Layout) => void;
+  onLayoutChange: (layout: Layout) => void;
 };
 
 export function StillsCollageLiveEditor({
   items,
   locale,
+  layout,
   selectedId,
   onSelect,
-  onLayoutDraftChange,
+  onLayoutChange,
 }: Props) {
-  const initialLayout = useMemo(() => stillsToGridLayout(items), [items]);
-  const [layout, setLayout] = useState<Layout>(initialLayout);
-
   const handleLayoutChange = useCallback(
     (next: Layout) => {
-      setLayout(next);
-      onLayoutDraftChange(next);
+      onLayoutChange(next);
     },
-    [onLayoutDraftChange],
+    [onLayoutChange],
   );
 
   return (
@@ -58,7 +53,7 @@ export function StillsCollageLiveEditor({
         containerPadding={[0, 0] as [number, number]}
         isDraggable
         isResizable
-        resizeHandles={["se", "e", "s"]}
+        resizeHandles={["se", "sw", "ne", "nw", "e", "w", "n", "s"]}
         compactType="vertical"
         onLayoutChange={handleLayoutChange}
       >
@@ -70,7 +65,10 @@ export function StillsCollageLiveEditor({
               key={item.id}
               role="button"
               tabIndex={0}
-              onClick={() => onSelect(item.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(item.id);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
@@ -78,8 +76,10 @@ export function StillsCollageLiveEditor({
                 }
               }}
               className={cn(
-                "stills-rgl-item overflow-hidden rounded-sm",
-                selected && "ring-2 ring-cyan-400 ring-offset-2 ring-offset-[#070b14]",
+                "stills-rgl-item overflow-hidden rounded-sm transition-shadow",
+                selected
+                  ? "stills-rgl-item-selected ring-2 ring-blue-400 ring-offset-2 ring-offset-[#070b14] shadow-[0_0_0_1px_rgba(56,189,248,0.5)]"
+                  : "hover:ring-2 hover:ring-blue-400/50 hover:ring-offset-1 hover:ring-offset-[#070b14]",
               )}
               aria-label={label}
               aria-pressed={selected}
@@ -89,7 +89,7 @@ export function StillsCollageLiveEditor({
                 <img
                   src={item.image_url}
                   alt={label}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover pointer-events-none"
                   draggable={false}
                 />
               ) : (
@@ -105,6 +105,4 @@ export function StillsCollageLiveEditor({
   );
 }
 
-export function layoutItemsFromDraft(layout: Layout) {
-  return gridLayoutToCollageLayouts(layout);
-}
+export { stillsToGridLayout };

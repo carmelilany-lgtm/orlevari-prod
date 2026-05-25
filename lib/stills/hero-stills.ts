@@ -8,23 +8,62 @@ function publishedWithUrl(stills: StillWorkItem[]): StillWorkItem[] {
   );
 }
 
+/** Published stills eligible for the hero random pool. */
+export function getEligibleHeroStills(stills: StillWorkItem[]): StillWorkItem[] {
+  return publishedWithUrl(stills).filter((s) => s.exclude_from_hero !== true);
+}
+
 /**
- * Hero collage sources: marked hero stills first, else all published stills.
- * Returns up to `count` items, cycling when fewer than needed.
+ * Deterministic hero order (sort_order) — used for SSR and first client paint
+ * so server and client markup match before shuffle.
  */
+export function pickHeroStillImagesForRender(
+  stills: StillWorkItem[],
+  count = HERO_CELL_COUNT,
+): StillWorkItem[] {
+  const eligible = getEligibleHeroStills(stills);
+  if (eligible.length === 0) return [];
+
+  const sorted = [...eligible].sort(
+    (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0),
+  );
+  const result: StillWorkItem[] = [];
+  for (let i = 0; i < count; i++) {
+    result.push(sorted[i % sorted.length]);
+  }
+  return result;
+}
+
+function shuffleInPlace<T>(arr: T[]): void {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+/**
+ * Random hero order — call only after mount (client) to avoid hydration mismatch.
+ */
+export function pickHeroStillImagesRandom(
+  stills: StillWorkItem[],
+  count = HERO_CELL_COUNT,
+): StillWorkItem[] {
+  const eligible = getEligibleHeroStills(stills);
+  if (eligible.length === 0) return [];
+
+  const pool = [...eligible];
+  shuffleInPlace(pool);
+  const result: StillWorkItem[] = [];
+  for (let i = 0; i < count; i++) {
+    result.push(pool[i % pool.length]);
+  }
+  return result;
+}
+
+/** @deprecated Use pickHeroStillImagesForRender — kept for tests importing old name */
 export function pickHeroStillImages(
   stills: StillWorkItem[],
   count = HERO_CELL_COUNT,
 ): StillWorkItem[] {
-  const published = publishedWithUrl(stills);
-  if (published.length === 0) return [];
-
-  const heroMarked = published.filter((s) => s.show_in_hero);
-  const source = heroMarked.length > 0 ? heroMarked : published;
-
-  const result: StillWorkItem[] = [];
-  for (let i = 0; i < count; i++) {
-    result.push(source[i % source.length]);
-  }
-  return result;
+  return pickHeroStillImagesForRender(stills, count);
 }

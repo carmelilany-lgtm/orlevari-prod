@@ -38,6 +38,8 @@ export interface StillWorkItem {
   sort_order?: number;
   published?: boolean;
   show_in_hero?: boolean;
+  /** When true, excluded from random public hero pool */
+  exclude_from_hero?: boolean;
   collage_layout?: CollageLayout | null;
   /** Mock-only: gradient variant for placeholders without image_url */
   variant?: number;

@@ -49,6 +49,12 @@ npm run verify:setup   # Supabase table counts + masked admin status
 
 After admin login, open **/admin/integrations** for in-app readiness checks.
 
+### Admin stills (summary)
+
+- Bulk upload: up to **40** images per batch (JPG/PNG/WebP, 10MB each).
+- Hero/header: random published gallery images; **אל תציג בהדר** excludes a still from the hero only.
+- Collage editor (`/?editCollage=1#works`): drag/resize plus preset size buttons on desktop.
+
 ## Contact form & Resend (Step 4)
 
 When a visitor submits the public contact form:
