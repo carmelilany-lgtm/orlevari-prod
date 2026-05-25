@@ -10,11 +10,12 @@ import {
   adminTdClass,
   adminThClass,
 } from "@/components/admin/admin-styles";
+import { AdminSearchField } from "@/components/admin/AdminSearchField";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import { deleteLead, type LeadRow } from "@/lib/admin/actions/leads";
 import { adminCopy } from "@/lib/admin/copy";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = {
   initialLeads: LeadRow[];
@@ -37,13 +38,44 @@ function formatLanguage(lang: string) {
   return lang;
 }
 
+function matchesLeadQuery(row: LeadRow, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const haystack = [
+    row.full_name,
+    row.email,
+    row.phone,
+    row.service_type ?? "",
+    row.message ?? "",
+    row.language,
+  ]
+    .join(" ")
+    .toLowerCase();
+  return haystack.includes(q);
+}
+
 export function LeadsManager({ initialLeads }: Props) {
   const router = useRouter();
   const leads = initialLeads;
+  const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<LeadRow | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const filteredLeads = useMemo(
+    () => leads.filter((row) => matchesLeadQuery(row, query)),
+    [leads, query],
+  );
+
+  useEffect(() => {
+    if (!selected) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelected(null);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [selected]);
 
   async function handleDelete() {
     if (!deleteId) return;
@@ -69,6 +101,11 @@ export function LeadsManager({ initialLeads }: Props) {
           description={adminCopy.leads.emptyDesc}
         />
       ) : (
+        <>
+          <AdminSearchField value={query} onChange={setQuery} />
+          {filteredLeads.length === 0 ? (
+            <AdminEmptyState title={adminCopy.search.noResults} />
+          ) : (
         <div className={`${adminCardClass} overflow-x-auto`}>
           <table className={adminTableClass}>
             <thead>
@@ -82,7 +119,7 @@ export function LeadsManager({ initialLeads }: Props) {
               </tr>
             </thead>
             <tbody>
-              {leads.map((row) => (
+              {filteredLeads.map((row) => (
                 <tr key={row.id}>
                   <td className={adminTdClass}>{row.full_name}</td>
                   <td className={adminTdClass} dir="ltr">
@@ -116,6 +153,8 @@ export function LeadsManager({ initialLeads }: Props) {
             </tbody>
           </table>
         </div>
+          )}
+        </>
       )}
 
       {selected && (

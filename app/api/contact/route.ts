@@ -1,3 +1,4 @@
+import { getClientIp, isContactRateLimited } from "@/lib/contact/rate-limit";
 import { createLead, validateLeadInput } from "@/lib/api/leads";
 import {
   sendCustomerConfirmationEmail,
@@ -62,7 +63,6 @@ export async function POST(request: Request) {
   try {
     body = (await request.json()) as ContactBody;
   } catch {
-    console.warn("[lev-ari] contact: invalid JSON body");
     return NextResponse.json(
       { ok: false, error: "Invalid request" },
       { status: 400 },
@@ -74,9 +74,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  const clientIp = getClientIp(request);
+  if (isContactRateLimited(clientIp)) {
+    return NextResponse.json(
+      { ok: false, error: "Unable to submit right now. Please try again later." },
+      { status: 429 },
+    );
+  }
+
   const input = toLeadInput(body);
   if (!input) {
-    console.warn("[lev-ari] contact: invalid language or payload");
     return NextResponse.json(
       { ok: false, error: "Invalid request" },
       { status: 400 },
@@ -85,7 +92,6 @@ export async function POST(request: Request) {
 
   const validation = validateLeadInput(input);
   if (!validation.ok) {
-    console.warn("[lev-ari] contact: validation failed");
     return NextResponse.json(
       { ok: false, error: "Please check the form and try again" },
       { status: 400 },
@@ -129,9 +135,6 @@ export async function POST(request: Request) {
       confirmationResult.reason,
     );
   }
-
-  // TODO: rate limiting on /api/contact
-  // TODO: Turnstile or reCAPTCHA if spam becomes a problem
 
   return NextResponse.json({
     ok: true,

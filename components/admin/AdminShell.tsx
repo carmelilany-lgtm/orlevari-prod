@@ -7,10 +7,11 @@ import { useState } from "react";
 
 type Props = {
   email?: string;
+  publicSiteUrl?: string;
   children: React.ReactNode;
 };
 
-export function AdminShell({ email, children }: Props) {
+export function AdminShell({ email, publicSiteUrl, children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -41,6 +42,7 @@ export function AdminShell({ email, children }: Props) {
       <div className="flex min-w-0 flex-1 flex-col">
         <AdminHeader
           email={email}
+          publicSiteUrl={publicSiteUrl}
           onMenuToggle={() => setSidebarOpen(true)}
         />
         <main className="flex-1 p-4 sm:p-6">{children}</main>

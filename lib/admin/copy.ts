@@ -18,6 +18,11 @@ export const adminCopy = {
     leads: "פניות",
     integrations: "אינטגרציות",
   },
+  search: {
+    label: "חיפוש",
+    placeholder: "חיפוש…",
+    noResults: "לא נמצאו תוצאות לחיפוש.",
+  },
   actions: {
     save: "שמירה",
     saving: "שומר…",
@@ -30,6 +35,9 @@ export const adminCopy = {
     view: "צפייה",
     viewAll: "הצג הכל",
     viewSite: "חזרה לאתר",
+    copySiteLink: "העתקת קישור לאתר",
+    linkCopied: "הקישור הועתק",
+    copyLinkFailed: "לא ניתן להעתיק את הקישור",
     logout: "התנתקות",
     signingOut: "מתנתק…",
     menu: "תפריט",
@@ -110,6 +118,8 @@ export const adminCopy = {
     youtubeUrl: "קישור YouTube",
     youtubeDetected: (id: string) => `מזהה שזוהה: ${id}`,
     youtubeHint: "הדביקו קישור YouTube תקין",
+    youtubeInvalidInline:
+      "קישור לא תקין — השתמשו ב-watch, youtu.be, embed או shorts.",
     customCover: "קאבר מותאם (אופציונלי)",
     emptyTitle: "אין סרטונים עדיין.",
     emptyDesc: "הוסיפו סרטון YouTube ראשון לתיק העבודות.",
@@ -138,6 +148,7 @@ export const adminCopy = {
     deleteTitle: "למחוק את התמונה?",
     deleteMessage: "הרשומה יימחקו מהמסד, וקובץ האחסון יוסר אם אפשר.",
     uploading: "מעלה תמונה…",
+    uploadFailedHint: "בדקו את סוג הקובץ (JPG, PNG, WebP) וגודל (עד 10MB).",
   },
   services: {
     intro: "ניהול שירותים דו-לשוניים המוצגים באתר.",

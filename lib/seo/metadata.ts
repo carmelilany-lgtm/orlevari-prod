@@ -1,25 +1,53 @@
 import type { Metadata } from "next";
 import { getSiteContentMap } from "@/lib/api/content";
 import { resolveCmsText } from "@/lib/i18n/cms";
+import { absolutePublicUrl, getMetadataBase } from "@/lib/seo/site-url";
 
 const DEFAULT_TITLE = "Lev Ari Productions | לב ארי הפקות";
 const DEFAULT_DESCRIPTION =
   "Cinematic video production for businesses, events & artists. הפקות וידאו קולנועיות לעסקים, אירועים ואמנים.";
 
-function siteMetadataBase(): URL | undefined {
-  const url = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!url) return undefined;
-  try {
-    return new URL(url);
-  } catch {
-    return undefined;
-  }
+export { DEFAULT_TITLE, DEFAULT_DESCRIPTION };
+
+type PublicPageMetaInput = {
+  title: string;
+  description: string;
+  path: string;
+};
+
+/** Shared Open Graph, Twitter, and canonical for public static pages */
+export function buildPublicPageMetadata({
+  title,
+  description,
+  path,
+}: PublicPageMetaInput): Metadata {
+  const metadataBase = getMetadataBase();
+  const canonical = absolutePublicUrl(path);
+
+  return {
+    title,
+    description,
+    ...(metadataBase ? { metadataBase } : {}),
+    ...(canonical ? { alternates: { canonical } } : {}),
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      siteName: "Lev Ari Productions",
+      ...(canonical ? { url: canonical } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
 }
 
 /** English-default homepage metadata with CMS overrides */
 export async function buildHomeMetadata(): Promise<Metadata> {
   const cmsMap = await getSiteContentMap();
-  const metadataBase = siteMetadataBase();
+  const metadataBase = getMetadataBase();
 
   const title = resolveCmsText(
     cmsMap,
@@ -34,6 +62,8 @@ export async function buildHomeMetadata(): Promise<Metadata> {
     DEFAULT_DESCRIPTION,
   );
 
+  const canonical = absolutePublicUrl("/");
+
   return {
     title: {
       default: title,
@@ -41,6 +71,7 @@ export async function buildHomeMetadata(): Promise<Metadata> {
     },
     description,
     ...(metadataBase ? { metadataBase } : {}),
+    ...(canonical ? { alternates: { canonical } } : {}),
     openGraph: {
       title,
       description,
@@ -48,7 +79,7 @@ export async function buildHomeMetadata(): Promise<Metadata> {
       type: "website",
       locale: "en_US",
       alternateLocale: ["he_IL"],
-      ...(metadataBase ? { url: metadataBase } : {}),
+      ...(canonical ? { url: canonical } : {}),
     },
     twitter: {
       card: "summary_large_image",

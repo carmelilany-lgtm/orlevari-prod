@@ -2,6 +2,7 @@
 
 import { AdminAlert } from "@/components/admin/AdminAlert";
 import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { AdminSearchField } from "@/components/admin/AdminSearchField";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import {
   adminBtnDanger,
@@ -58,6 +59,7 @@ export function VideosManager({ initialVideos, categories }: Props) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   const categoryMap = useMemo(
     () => new Map(categories.map((c) => [c.id, c.title_en])),
@@ -65,6 +67,28 @@ export function VideosManager({ initialVideos, categories }: Props) {
   );
 
   const parsedId = parseYoutubeId(form.youtube_url);
+  const youtubeUrlInvalid =
+    form.youtube_url.trim().length > 0 && parsedId === null;
+
+  const filteredVideos = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return videos;
+    return videos.filter((row) => {
+      const category = row.category_id
+        ? categoryMap.get(row.category_id) ?? ""
+        : "";
+      const haystack = [
+        row.title_en,
+        row.title_he,
+        category,
+        row.youtube_url,
+        row.youtube_id ?? "",
+      ]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [videos, query, categoryMap]);
 
   function openCreate() {
     setEditingId(null);
@@ -97,9 +121,15 @@ export function VideosManager({ initialVideos, categories }: Props) {
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setError("");
     setSuccess("");
+
+    if (!parsedId) {
+      setError(adminCopy.videos.youtubeInvalidInline);
+      return;
+    }
+
+    setLoading(true);
 
     const youtubeId = parsedId ?? form.youtube_id;
     const result = await saveVideoWork({
@@ -220,7 +250,9 @@ export function VideosManager({ initialVideos, categories }: Props) {
                 hint={
                   parsedId
                     ? adminCopy.videos.youtubeDetected(parsedId)
-                    : adminCopy.videos.youtubeHint
+                    : youtubeUrlInvalid
+                      ? adminCopy.videos.youtubeInvalidInline
+                      : adminCopy.videos.youtubeHint
                 }
               />
               <AdminFormField
@@ -247,7 +279,11 @@ export function VideosManager({ initialVideos, categories }: Props) {
             </div>
           </div>
           <div className="flex gap-3">
-            <button type="submit" className={adminBtnPrimary} disabled={loading}>
+            <button
+              type="submit"
+              className={adminBtnPrimary}
+              disabled={loading || youtubeUrlInvalid}
+            >
               {loading ? adminCopy.actions.saving : adminCopy.actions.save}
             </button>
             <button
@@ -272,6 +308,11 @@ export function VideosManager({ initialVideos, categories }: Props) {
           }
         />
       ) : (
+        <>
+          <AdminSearchField value={query} onChange={setQuery} />
+          {filteredVideos.length === 0 ? (
+            <AdminEmptyState title={adminCopy.search.noResults} />
+          ) : (
         <div className={`${adminCardClass} overflow-x-auto`}>
           <table className={adminTableClass}>
             <thead>
@@ -285,7 +326,7 @@ export function VideosManager({ initialVideos, categories }: Props) {
               </tr>
             </thead>
             <tbody>
-              {videos.map((row) => (
+              {filteredVideos.map((row) => (
                 <tr key={row.id}>
                   <td className={adminTdClass}>
                     <YouTubePreview
@@ -331,6 +372,8 @@ export function VideosManager({ initialVideos, categories }: Props) {
             </tbody>
           </table>
         </div>
+          )}
+        </>
       )}
 
       <DeleteConfirmDialog

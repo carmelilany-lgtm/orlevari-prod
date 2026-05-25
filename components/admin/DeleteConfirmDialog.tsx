@@ -2,6 +2,7 @@
 
 import { adminBtnDanger, adminBtnSecondary } from "@/components/admin/admin-styles";
 import { adminCopy } from "@/lib/admin/copy";
+import { useEffect } from "react";
 
 type Props = {
   open: boolean;
@@ -20,6 +21,15 @@ export function DeleteConfirmDialog({
   onConfirm,
   onCancel,
 }: Props) {
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !loading) onCancel();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, loading, onCancel]);
+
   if (!open) return null;
 
   return (

@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { Cormorant_Garamond, Heebo, Inter } from "next/font/google";
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_TITLE,
+} from "@/lib/seo/metadata";
+import { getMetadataBase } from "@/lib/seo/site-url";
 import "./globals.css";
 
 const inter = Inter({
@@ -22,14 +27,25 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
+const metadataBase = getMetadataBase();
+
 /** Fallback for non-home routes; homepage overrides via generateMetadata */
 export const metadata: Metadata = {
   title: {
-    default: "Lev Ari Productions | לב ארי הפקות",
+    default: DEFAULT_TITLE,
     template: "%s | Lev Ari Productions",
   },
-  description:
-    "Cinematic video production for businesses, events & artists. הפקות וידאו קולנועיות לעסקים, אירועים ואמנים.",
+  description: DEFAULT_DESCRIPTION,
+  ...(metadataBase ? { metadataBase } : {}),
+  openGraph: {
+    siteName: "Lev Ari Productions",
+    type: "website",
+    locale: "en_US",
+    alternateLocale: ["he_IL"],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({

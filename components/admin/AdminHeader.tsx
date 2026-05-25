@@ -9,14 +9,34 @@ import { useState } from "react";
 
 type Props = {
   email?: string;
+  publicSiteUrl?: string;
   onMenuToggle?: () => void;
 };
 
-export function AdminHeader({ email, onMenuToggle }: Props) {
+export function AdminHeader({ email, publicSiteUrl, onMenuToggle }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const title = adminPageTitles[pathname] ?? adminCopy.brand.defaultPageTitle;
   const [loggingOut, setLoggingOut] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "ok" | "fail">("idle");
+
+  async function handleCopySiteLink() {
+    const url =
+      publicSiteUrl?.trim() ||
+      (typeof window !== "undefined" ? window.location.origin : "");
+    if (!url) {
+      setCopyState("fail");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopyState("ok");
+      window.setTimeout(() => setCopyState("idle"), 2000);
+    } catch {
+      setCopyState("fail");
+      window.setTimeout(() => setCopyState("idle"), 2500);
+    }
+  }
 
   async function handleLogout() {
     setLoggingOut(true);
@@ -62,7 +82,21 @@ export function AdminHeader({ email, onMenuToggle }: Props) {
             {email}
           </span>
         )}
-        <Link href="/" className={adminBtnSecondary}>
+        {publicSiteUrl && (
+          <button
+            type="button"
+            className={adminBtnSecondary}
+            onClick={handleCopySiteLink}
+            aria-live="polite"
+          >
+            {copyState === "ok"
+              ? adminCopy.actions.linkCopied
+              : copyState === "fail"
+                ? adminCopy.actions.copyLinkFailed
+                : adminCopy.actions.copySiteLink}
+          </button>
+        )}
+        <Link href="/" className={adminBtnSecondary} target="_blank" rel="noopener noreferrer">
           {adminCopy.actions.viewSite}
         </Link>
         <button
