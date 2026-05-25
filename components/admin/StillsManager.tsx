@@ -23,6 +23,7 @@ import {
   isAllowedImageType,
   MAX_STILL_UPLOAD_BYTES,
 } from "@/lib/images/get-image-dimensions";
+import { adminCopy, adminErrors } from "@/lib/admin/copy";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
@@ -53,11 +54,11 @@ export function StillsManager({ initialStills }: Props) {
     setSuccess("");
 
     if (!isAllowedImageType(file.type)) {
-      setError("Invalid file type. Use JPG, PNG, or WebP.");
+      setError(adminErrors.invalidImageType);
       return;
     }
     if (file.size > MAX_STILL_UPLOAD_BYTES) {
-      setError("File is too large. Maximum size is 10MB.");
+      setError(adminErrors.imageTooLarge);
       return;
     }
 
@@ -79,12 +80,12 @@ export function StillsManager({ initialStills }: Props) {
         setError(result.error);
         return;
       }
-      setSuccess("Image uploaded successfully.");
+      setSuccess(adminCopy.stills.uploaded);
       if (fileRef.current) fileRef.current.value = "";
       router.refresh();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to process image upload.",
+        err instanceof Error ? err.message : adminErrors.processUploadFailed,
       );
     } finally {
       setUploading(false);
@@ -116,7 +117,7 @@ export function StillsManager({ initialStills }: Props) {
       setError(result.error);
       return;
     }
-    setSuccess("Still image updated.");
+    setSuccess(adminCopy.stills.updated);
     setEditing(null);
     router.refresh();
   }
@@ -149,22 +150,26 @@ export function StillsManager({ initialStills }: Props) {
       <AdminAlert variant="success" message={success} />
 
       <div className={`${adminCardClass} space-y-4`}>
-        <h2 className="text-lg font-semibold text-white">Upload still image</h2>
+        <h2 className="text-lg font-semibold text-white">
+          {adminCopy.stills.uploadTitle}
+        </h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <AdminFormField
-            label="Alt text (English)"
+            label={adminCopy.stills.altEn}
             name="upload_alt_en"
+            dir="ltr"
             value={altEn}
             onChange={setAltEn}
           />
           <AdminFormField
-            label="Alt text (Hebrew)"
+            label={adminCopy.stills.altHe}
             name="upload_alt_he"
+            dir="rtl"
             value={altHe}
             onChange={setAltHe}
           />
           <AdminFormField
-            label="Sort order"
+            label={adminCopy.stills.sortOrder}
             name="upload_sort"
             type="number"
             value={sortOrder}
@@ -176,7 +181,7 @@ export function StillsManager({ initialStills }: Props) {
               checked={published}
               onChange={(e) => setPublished(e.target.checked)}
             />
-            Publish on upload
+            {adminCopy.actions.publishOnUpload}
           </label>
         </div>
         <input
@@ -188,22 +193,30 @@ export function StillsManager({ initialStills }: Props) {
           className="text-sm text-slate-400 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:text-white"
         />
         {uploading && (
-          <p className="text-sm text-blue-300">Uploading image…</p>
+          <p className="text-sm text-blue-300">{adminCopy.stills.uploading}</p>
         )}
       </div>
 
       {editing && (
         <form onSubmit={handleSaveMeta} className={`${adminCardClass} space-y-4`}>
-          <h2 className="text-lg font-semibold text-white">Edit still</h2>
+          <h2 className="text-lg font-semibold text-white">
+            {adminCopy.stills.editTitle}
+          </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <AdminFormField
-              label="Alt (English)"
+              label={adminCopy.stills.altEn}
+              dir="ltr"
               value={altEn}
               onChange={setAltEn}
             />
-            <AdminFormField label="Alt (Hebrew)" value={altHe} onChange={setAltHe} />
             <AdminFormField
-              label="Sort order"
+              label={adminCopy.stills.altHe}
+              dir="rtl"
+              value={altHe}
+              onChange={setAltHe}
+            />
+            <AdminFormField
+              label={adminCopy.stills.sortOrder}
               type="number"
               value={sortOrder}
               onChange={(v) => setSortOrder(Number(v) || 0)}
@@ -211,14 +224,14 @@ export function StillsManager({ initialStills }: Props) {
           </div>
           <div className="flex gap-3">
             <button type="submit" className={adminBtnPrimary} disabled={loading}>
-              Save
+              {adminCopy.actions.save}
             </button>
             <button
               type="button"
               className={adminBtnSecondary}
               onClick={() => setEditing(null)}
             >
-              Cancel
+              {adminCopy.actions.cancel}
             </button>
           </div>
         </form>
@@ -226,8 +239,8 @@ export function StillsManager({ initialStills }: Props) {
 
       {stills.length === 0 ? (
         <AdminEmptyState
-          title="No still images uploaded yet."
-          description="Upload JPG, PNG, or WebP files. Original aspect ratios are preserved for the masonry gallery."
+          title={adminCopy.stills.emptyTitle}
+          description={adminCopy.stills.emptyDesc}
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -236,15 +249,15 @@ export function StillsManager({ initialStills }: Props) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={row.image_url}
-                alt={row.alt_en ?? "Still"}
+                alt={row.alt_en ?? "תמונה"}
                 className="max-h-48 w-full rounded-lg object-contain bg-black/20"
               />
               <p className="text-xs text-slate-500">
                 {row.width && row.height
                   ? `${row.width} × ${row.height}`
-                  : "Dimensions unknown"}
+                  : adminCopy.stills.dimensionsUnknown}
                 {row.aspect_ratio != null &&
-                  ` · ratio ${Number(row.aspect_ratio).toFixed(2)}`}
+                  ` · ${adminCopy.stills.ratio(Number(row.aspect_ratio))}`}
               </p>
               <PublishToggle
                 published={row.is_published}
@@ -256,14 +269,14 @@ export function StillsManager({ initialStills }: Props) {
                   className={adminBtnSecondary}
                   onClick={() => startEdit(row)}
                 >
-                  Edit
+                  {adminCopy.actions.edit}
                 </button>
                 <button
                   type="button"
                   className={adminBtnDanger}
                   onClick={() => setDeleteId(row.id)}
                 >
-                  Delete
+                  {adminCopy.actions.delete}
                 </button>
               </div>
             </div>
@@ -273,8 +286,8 @@ export function StillsManager({ initialStills }: Props) {
 
       <DeleteConfirmDialog
         open={Boolean(deleteId)}
-        title="Delete still image?"
-        message="Removes the database record and storage file when possible."
+        title={adminCopy.stills.deleteTitle}
+        message={adminCopy.stills.deleteMessage}
         loading={loading}
         onConfirm={handleDelete}
         onCancel={() => setDeleteId(null)}

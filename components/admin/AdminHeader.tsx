@@ -2,19 +2,10 @@
 
 import { adminBtnSecondary } from "@/components/admin/admin-styles";
 import { signOutAdmin } from "@/lib/admin/actions/auth";
+import { adminCopy, adminPageTitles } from "@/lib/admin/copy";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-
-const PAGE_TITLES: Record<string, string> = {
-  "/admin": "Dashboard",
-  "/admin/categories": "Video Categories",
-  "/admin/videos": "Videos",
-  "/admin/stills": "Stills Gallery",
-  "/admin/services": "Services",
-  "/admin/content": "Site Content",
-  "/admin/leads": "Leads",
-};
 
 type Props = {
   email?: string;
@@ -23,12 +14,23 @@ type Props = {
 
 export function AdminHeader({ email, onMenuToggle }: Props) {
   const pathname = usePathname();
-  const title = PAGE_TITLES[pathname] ?? "Admin";
+  const router = useRouter();
+  const title = adminPageTitles[pathname] ?? adminCopy.brand.defaultPageTitle;
   const [loggingOut, setLoggingOut] = useState(false);
 
   async function handleLogout() {
     setLoggingOut(true);
-    await signOutAdmin();
+    try {
+      const result = await signOutAdmin();
+      if (!result.ok) {
+        setLoggingOut(false);
+        return;
+      }
+      router.push("/admin/login");
+      router.refresh();
+    } catch {
+      setLoggingOut(false);
+    }
   }
 
   return (
@@ -39,24 +41,29 @@ export function AdminHeader({ email, onMenuToggle }: Props) {
             type="button"
             className="rounded-lg border border-blue-900/50 px-3 py-2 text-sm text-slate-300 lg:hidden"
             onClick={onMenuToggle}
-            aria-label="Open menu"
+            aria-label={adminCopy.actions.openMenu}
           >
-            Menu
+            {adminCopy.actions.menu}
           </button>
         )}
-        <div>
+        <div className="text-right">
           <p className="text-xs uppercase tracking-wider text-blue-400/80">
-            Lev Ari Admin
+            {adminCopy.brand.headerBadge}
           </p>
           <h1 className="text-xl font-semibold text-white">{title}</h1>
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-3">
         {email && (
-          <span className="hidden text-sm text-slate-500 sm:inline">{email}</span>
+          <span
+            className="hidden text-sm text-slate-500 sm:inline"
+            dir="ltr"
+          >
+            {email}
+          </span>
         )}
         <Link href="/" className={adminBtnSecondary}>
-          View site
+          {adminCopy.actions.viewSite}
         </Link>
         <button
           type="button"
@@ -64,7 +71,7 @@ export function AdminHeader({ email, onMenuToggle }: Props) {
           onClick={handleLogout}
           disabled={loggingOut}
         >
-          {loggingOut ? "Signing out…" : "Logout"}
+          {loggingOut ? adminCopy.actions.signingOut : adminCopy.actions.logout}
         </button>
       </div>
     </header>

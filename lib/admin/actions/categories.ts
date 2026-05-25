@@ -2,6 +2,7 @@
 
 import type { ActionResult } from "@/lib/admin/action-result";
 import { actionError, actionOk } from "@/lib/admin/action-result";
+import { adminErrors } from "@/lib/admin/copy";
 import { revalidatePublicSite } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import type { Database } from "@/lib/supabase/types";
@@ -35,11 +36,11 @@ export type CategoryInput = {
 };
 
 function validateCategory(input: CategoryInput): string | null {
-  if (!input.title_en.trim()) return "English title is required.";
-  if (!input.title_he.trim()) return "Hebrew title is required.";
-  if (!input.slug.trim()) return "Slug is required.";
+  if (!input.title_en.trim()) return adminErrors.titleEnRequired;
+  if (!input.title_he.trim()) return adminErrors.titleHeRequired;
+  if (!input.slug.trim()) return adminErrors.slugRequired;
   if (input.initial_visible_count < 1) {
-    return "Initial visible count must be at least 1.";
+    return adminErrors.initialVisibleMin;
   }
   return null;
 }
@@ -99,9 +100,7 @@ export async function deleteVideoCategory(
 
   if (countError) return actionError(countError.message);
   if (count && count > 0) {
-    return actionError(
-      `Cannot delete: ${count} video(s) are assigned to this category. Reassign or delete them first.`,
-    );
+    return actionError(adminErrors.categoryDeleteBlocked(count));
   }
 
   const { error } = await ctx.supabase

@@ -1,6 +1,7 @@
 "use client";
 
 import { adminBtnDanger, adminBtnSecondary } from "@/components/admin/admin-styles";
+import { adminCopy } from "@/lib/admin/copy";
 
 type Props = {
   open: boolean;
@@ -28,19 +29,19 @@ export function DeleteConfirmDialog({
       aria-modal="true"
       aria-labelledby="delete-dialog-title"
     >
-      <div className="w-full max-w-md rounded-xl border border-blue-900/50 bg-[#0f1729] p-6 shadow-xl">
+      <div className="w-full max-w-md rounded-xl border border-blue-900/50 bg-[#0f1729] p-6 text-right shadow-xl">
         <h2 id="delete-dialog-title" className="text-lg font-semibold text-white">
           {title}
         </h2>
         <p className="mt-2 text-sm text-slate-400">{message}</p>
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-6 flex justify-start gap-3">
           <button
             type="button"
             className={adminBtnSecondary}
             onClick={onCancel}
             disabled={loading}
           >
-            Cancel
+            {adminCopy.actions.cancel}
           </button>
           <button
             type="button"
@@ -48,7 +49,7 @@ export function DeleteConfirmDialog({
             onClick={onConfirm}
             disabled={loading}
           >
-            {loading ? "Deleting…" : "Delete"}
+            {loading ? adminCopy.actions.deleting : adminCopy.actions.delete}
           </button>
         </div>
       </div>

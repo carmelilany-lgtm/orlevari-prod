@@ -6,8 +6,8 @@ export function Footer() {
   const { t } = useLanguage();
 
   const links = [
-    { href: "#", label: t.footer.privacy },
-    { href: "#", label: t.footer.accessibility },
+    { href: "/privacy-policy", label: t.footer.privacy },
+    { href: "/accessibility-statement", label: t.footer.accessibility },
   ];
 
   return (
@@ -19,7 +19,7 @@ export function Footer() {
         <nav aria-label="Footer" className="flex flex-wrap justify-center gap-6">
           {links.map((link) => (
             <a
-              key={link.label}
+              key={link.href}
               href={link.href}
               className="text-base text-slate-400 transition-colors hover:text-cyan-300"
             >

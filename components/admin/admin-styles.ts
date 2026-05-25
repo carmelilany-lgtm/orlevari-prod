@@ -10,7 +10,7 @@ export const adminLabelClass = "mb-1 block text-sm font-medium text-slate-300";
 export const adminCardClass =
   "rounded-xl border border-blue-900/40 bg-[#0f1729] p-5 shadow-lg shadow-black/20";
 
-export const adminTableClass = "w-full text-left text-sm";
+export const adminTableClass = "w-full text-right text-sm";
 
 export const adminThClass =
   "border-b border-blue-900/40 px-3 py-2 font-medium text-slate-400";

@@ -1,11 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { useSiteData } from "@/components/providers/SiteDataProvider";
+import { buildServiceTypeOptions } from "@/lib/contact/service-types";
 import { useLanguage } from "@/lib/i18n/context";
-import { SERVICES } from "@/data/services";
 import { cn } from "@/lib/utils";
 import { LEAD_MESSAGE_MAX_LENGTH } from "@/types/leads";
-import { type FormEvent, useState } from "react";
+import Link from "next/link";
+import { type FormEvent, useMemo, useState } from "react";
 
 export interface ContactFormData {
   fullName: string;
@@ -55,6 +57,11 @@ async function submitContactForm(
 
 export function ContactForm() {
   const { locale, t } = useLanguage();
+  const { services, categories } = useSiteData();
+  const serviceTypeOptions = useMemo(
+    () => buildServiceTypeOptions(services, categories, locale),
+    [services, categories, locale],
+  );
   const [form, setForm] = useState<ContactFormData>(initialState);
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
@@ -182,9 +189,9 @@ export function ContactForm() {
           }
         >
           <option value="">{t.contact.form.selectService}</option>
-          {SERVICES.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.title[locale]}
+          {serviceTypeOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
             </option>
           ))}
         </select>
@@ -219,7 +226,15 @@ export function ContactForm() {
           }
           className="mt-1 h-4 w-4 rounded border-zinc-600 bg-zinc-900 text-blue-600 focus:ring-blue-500"
         />
-        <span>{t.contact.form.privacy}</span>
+        <span>
+          {t.contact.form.privacyAgree}{" "}
+          <Link
+            href="/privacy-policy"
+            className="text-cyan-300/90 underline underline-offset-2 transition-colors hover:text-cyan-200"
+          >
+            {t.contact.form.privacyLink}
+          </Link>
+        </span>
       </label>
 
       <Button

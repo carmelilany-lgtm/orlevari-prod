@@ -1,6 +1,7 @@
 "use client";
 
 import { AdminFormField } from "@/components/admin/AdminFormField";
+import { adminCopy } from "@/lib/admin/copy";
 
 type Props = {
   value: number;
@@ -10,13 +11,13 @@ type Props = {
 export function SortOrderField({ value, onChange }: Props) {
   return (
     <AdminFormField
-      label="Sort order"
+      label={adminCopy.categories.sortOrder}
       name="sort_order"
       type="number"
       value={value}
       min={0}
       onChange={(v) => onChange(Number(v) || 0)}
-      hint="Lower numbers appear first"
+      hint={adminCopy.categories.sortHint}
     />
   );
 }

@@ -15,8 +15,10 @@ export interface VideoWorkItem {
   id: string;
   categoryId: VideoCategoryId;
   title: { en: string; he: string };
-  /** Placeholder for future YouTube video ID */
+  youtubeUrl?: string;
   youtubeId?: string;
+  thumbnailUrl?: string;
+  customCoverUrl?: string;
   thumbnailLabel: string;
 }
 

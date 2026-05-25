@@ -7,7 +7,11 @@ import { useLanguage } from "@/lib/i18n/context";
 
 export function Services() {
   const { locale, t, cms } = useLanguage();
-  const { services } = useSiteData();
+  const { services, isLiveData } = useSiteData();
+
+  if (isLiveData && services.length === 0) {
+    return null;
+  }
 
   return (
     <section

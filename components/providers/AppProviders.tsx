@@ -10,13 +10,20 @@ export function AppProviders({
   children,
   siteData,
   cmsMap,
+  whatsappEnvFallback,
 }: {
   children: ReactNode;
   siteData?: SitePortfolioData;
   cmsMap?: SiteContentMap;
+  /** Server-only WHATSAPP_PHONE passed for client floating button / contact */
+  whatsappEnvFallback?: string;
 }) {
   return (
-    <LanguageProvider cmsMap={cmsMap}>
+    <LanguageProvider
+      cmsMap={cmsMap}
+      isLiveData={siteData?.isLiveData ?? false}
+      whatsappEnvFallback={whatsappEnvFallback}
+    >
       <SiteDataProvider data={siteData}>{children}</SiteDataProvider>
     </LanguageProvider>
   );

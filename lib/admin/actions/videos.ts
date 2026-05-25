@@ -2,6 +2,7 @@
 
 import type { ActionResult } from "@/lib/admin/action-result";
 import { actionError, actionOk } from "@/lib/admin/action-result";
+import { adminErrors } from "@/lib/admin/copy";
 import { revalidatePublicSite } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { parseYoutubeId } from "@/lib/youtube/client";
@@ -36,11 +37,11 @@ export type VideoWorkInput = {
 };
 
 function validateVideo(input: VideoWorkInput): string | null {
-  if (!input.title_en.trim()) return "English title is required.";
-  if (!input.title_he.trim()) return "Hebrew title is required.";
-  if (!input.youtube_url.trim()) return "YouTube URL is required.";
+  if (!input.title_en.trim()) return adminErrors.titleEnRequired;
+  if (!input.title_he.trim()) return adminErrors.titleHeRequired;
+  if (!input.youtube_url.trim()) return adminErrors.youtubeRequired;
   const id = parseYoutubeId(input.youtube_url.trim());
-  if (!id) return "Invalid YouTube URL. Use a standard watch, youtu.be, embed, or shorts link.";
+  if (!id) return adminErrors.youtubeInvalid;
   return null;
 }
 
@@ -59,7 +60,7 @@ export async function saveVideoWork(
 
   const youtubeId =
     input.youtube_id?.trim() || parseYoutubeId(input.youtube_url.trim());
-  if (!youtubeId) return actionError("Could not parse YouTube video ID.");
+  if (!youtubeId) return actionError(adminErrors.youtubeParseFailed);
 
   const payload = {
     title_en: input.title_en.trim(),

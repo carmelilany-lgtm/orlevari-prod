@@ -22,6 +22,7 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
+/** Fallback for non-home routes; homepage overrides via generateMetadata */
 export const metadata: Metadata = {
   title: {
     default: "Lev Ari Productions | לב ארי הפקות",
@@ -29,7 +30,6 @@ export const metadata: Metadata = {
   },
   description:
     "Cinematic video production for businesses, events & artists. הפקות וידאו קולנועיות לעסקים, אירועים ואמנים.",
-  metadataBase: new URL("https://levari.productions"),
 };
 
 export default function RootLayout({
@@ -41,6 +41,7 @@ export default function RootLayout({
     <html
       lang="en"
       dir="ltr"
+      data-scroll-behavior="smooth"
       className={`${inter.variable} ${heebo.variable} ${cormorant.variable} h-full scroll-smooth`}
       suppressHydrationWarning
     >

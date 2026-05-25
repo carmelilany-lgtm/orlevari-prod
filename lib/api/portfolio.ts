@@ -19,8 +19,8 @@ import type {
   VideoCategory,
   VideoWork,
 } from "@/types/portfolio";
+import type { SiteVideoCategory } from "@/lib/data/site-data";
 import type { StillWorkItem, VideoWorkItem } from "@/types/works";
-import type { VideoCategoryId } from "@/types/works";
 
 export async function getPublishedVideoCategories(): Promise<
   PortfolioVideoCategory[]
@@ -32,8 +32,8 @@ export async function getPublishedVideoCategories(): Promise<
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
-    warnSupabaseMissing("getPublishedVideoCategories");
-    return MOCK_PORTFOLIO_CATEGORIES;
+    console.error("[lev-ari] getPublishedVideoCategories: no Supabase client");
+    return [];
   }
 
   const { data, error } = await supabase
@@ -42,9 +42,13 @@ export async function getPublishedVideoCategories(): Promise<
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
 
-  if (error || !data?.length) {
-    if (error) console.error("[lev-ari] video_categories:", error.message);
-    return MOCK_PORTFOLIO_CATEGORIES;
+  if (error) {
+    console.error("[lev-ari] video_categories:", error.message);
+    return [];
+  }
+
+  if (!data?.length) {
+    return [];
   }
 
   return (data as VideoCategory[]).map(toPortfolioCategory);
@@ -58,7 +62,8 @@ export async function getPublishedVideoWorks(): Promise<PortfolioVideoWork[]> {
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
-    return MOCK_PORTFOLIO_VIDEO_WORKS;
+    console.error("[lev-ari] getPublishedVideoWorks: no Supabase client");
+    return [];
   }
 
   const [categories, worksResult] = await Promise.all([
@@ -74,11 +79,13 @@ export async function getPublishedVideoWorks(): Promise<PortfolioVideoWork[]> {
     categories.map((c) => [c.id, c.slug]),
   );
 
-  if (worksResult.error || !worksResult.data?.length) {
-    if (worksResult.error) {
-      console.error("[lev-ari] video_works:", worksResult.error.message);
-    }
-    return MOCK_PORTFOLIO_VIDEO_WORKS;
+  if (worksResult.error) {
+    console.error("[lev-ari] video_works:", worksResult.error.message);
+    return [];
+  }
+
+  if (!worksResult.data?.length) {
+    return [];
   }
 
   return (worksResult.data as VideoWork[])
@@ -104,7 +111,8 @@ export async function getPublishedStillImages(): Promise<StillWorkItem[]> {
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
-    return MOCK_STILLS;
+    console.error("[lev-ari] getPublishedStillImages: no Supabase client");
+    return [];
   }
 
   const { data, error } = await supabase
@@ -113,18 +121,20 @@ export async function getPublishedStillImages(): Promise<StillWorkItem[]> {
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
 
-  if (error || !data?.length) {
-    if (error) console.error("[lev-ari] still_images:", error.message);
-    return MOCK_STILLS;
+  if (error) {
+    console.error("[lev-ari] still_images:", error.message);
+    return [];
+  }
+
+  if (!data?.length) {
+    return [];
   }
 
   return (data as StillImage[]).map(toStillWorkItem);
 }
 
-/** Categories in legacy `{ id: slug, label }` shape for existing components */
-export async function getLegacyVideoCategories(): Promise<
-  { id: VideoCategoryId; label: { en: string; he: string } }[]
-> {
+/** Categories for public Works grid (slug id + per-category initial visible count) */
+export async function getLegacyVideoCategories(): Promise<SiteVideoCategory[]> {
   const categories = await getPublishedVideoCategories();
   return categories.map(toLegacyVideoCategory);
 }

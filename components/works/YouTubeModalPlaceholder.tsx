@@ -1,46 +1,89 @@
 "use client";
 
-/**
- * Placeholder for future YouTube lightbox / modal player.
- * Will receive youtubeId and open/close state from parent.
- */
+import { resolveVideoYoutubeId } from "@/lib/youtube/client";
+import { useEffect, useId, useRef } from "react";
+
 export interface YouTubeModalPlaceholderProps {
   youtubeId?: string;
+  youtubeUrl?: string;
   title: string;
   open: boolean;
   onClose: () => void;
+  closeLabel?: string;
 }
 
 export function YouTubeModalPlaceholder({
   youtubeId,
+  youtubeUrl,
   title,
   open,
   onClose,
+  closeLabel = "Close",
 }: YouTubeModalPlaceholderProps) {
-  if (!open) return null;
+  const titleId = useId();
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const resolvedId = resolveVideoYoutubeId({ youtubeId, youtubeUrl });
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open, onClose]);
+
+  if (!open || !resolvedId) return null;
+
+  const embedSrc = `https://www.youtube.com/embed/${resolvedId}?autoplay=1&rel=0`;
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={title}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      aria-labelledby={titleId}
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="card-surface max-w-2xl rounded-2xl p-8 text-center"
+        className="relative w-full max-w-5xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <p className="text-zinc-300">
-          YouTube player — {youtubeId ?? "no ID yet"}
-        </p>
         <button
+          ref={closeRef}
           type="button"
           onClick={onClose}
-          className="mt-6 rounded-full bg-zinc-800 px-6 py-2 text-sm text-zinc-200 hover:bg-zinc-700"
+          aria-label={closeLabel}
+          className="absolute -top-2 end-0 z-10 flex h-10 w-10 translate-y-[-100%] items-center justify-center rounded-full border border-white/20 bg-black/60 text-white transition-colors hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 sm:top-0 sm:end-[-3rem] sm:translate-y-0"
         >
-          Close
+          <svg aria-hidden className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
+
+        <p id={titleId} className="sr-only">
+          {title}
+        </p>
+
+        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black shadow-2xl">
+          <iframe
+            title={title}
+            src={embedSrc}
+            className="absolute inset-0 h-full w-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        </div>
       </div>
     </div>
   );

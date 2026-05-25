@@ -52,11 +52,15 @@ supabase db push
 
 After migration succeeds:
 
+Paste `supabase/seed.sql` into the **SQL Editor** and run.
+
+Some Supabase CLI versions also support:
+
 ```bash
 supabase db execute --file supabase/seed.sql
 ```
 
-Or paste `supabase/seed.sql` into the SQL Editor and run.
+If that command is unknown, use the SQL Editor or `npm run verify:setup` to confirm row counts.
 
 **Confirm in Table Editor:**
 
@@ -150,7 +154,27 @@ On first successful login, the app calls `ensureAdminUserInDatabase()` and upser
 
 ---
 
-## G. Local test flow
+## G. Public site & CMS (Step 5)
+
+After Supabase is connected, the homepage loads **published** rows only (no mock portfolio when env is set but tables are empty).
+
+| Content | Admin | Public behavior |
+|---------|-------|-----------------|
+| Hero, About, Works/Services/Contact titles, SEO | `/admin/content` | CMS value → translation fallback; empty/whitespace CMS = missing |
+| Phone, email, WhatsApp | `/admin/content` keys `phone`, `email`, `whatsapp_number`, `whatsapp_message_*` | Shown only when set; no fake placeholders on live site |
+| Services cards | `/admin/services` | Published, `sort_order`; section hidden if none published |
+| Videos / categories / stills | `/admin/videos`, `/admin/categories`, `/admin/stills` | Published only; empty categories hidden; `initial_visible_count` per category |
+| Contact service dropdown | — | Built from published service titles + category titles + Other/אחר |
+
+**WhatsApp:** CMS `whatsapp_number` first, then optional `WHATSAPP_PHONE` in `.env.local` (passed server-side). Floating mobile button hidden when no number on live site.
+
+**SEO:** Edit `seo_title_en`, `seo_description_en`, etc. in content admin; set `NEXT_PUBLIC_SITE_URL` for canonical/Open Graph base.
+
+Admin mutations revalidate `/` automatically.
+
+---
+
+## H. Local test flow
 
 ```bash
 npm run dev
@@ -175,13 +199,17 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## H. Production notes (Vercel)
+## I. Production notes (Vercel)
 
-1. **Environment variables** (Vercel project → Settings → Environment Variables): copy all vars from `.env.local` for Production (and Preview if needed).
+See **[deploy-vercel.md](./deploy-vercel.md)** for the full Vercel import, env var list, Supabase Auth redirect URLs, Resend domain verification, and post-deploy checklist.
+
+Summary:
+
+1. **Environment variables** (Vercel → Settings → Environment Variables): copy from `.env.local` for Production (Preview optional).
 2. **Resend:** Verify production domain; use production `EMAIL_FROM`.
-3. **`NEXT_PUBLIC_SITE_URL`:** Set to `https://your-production-domain.com`.
-4. **Supabase:** Run the same migration + seed on the **production** Supabase project (or use CLI linked to prod).
-5. **Auth:** Add production URL to Supabase redirect allow-list.
+3. **`NEXT_PUBLIC_SITE_URL`:** Set to `https://your-production-domain.com` (not localhost).
+4. **Supabase:** `supabase db push` + seed on the linked project.
+5. **Auth:** Add production + `*.vercel.app` redirect URLs.
 6. Deploy; smoke-test `/admin/login`, one upload, one contact submission.
 
 ---
@@ -191,6 +219,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Command / page | Purpose |
 |----------------|---------|
 | `npm run check:env` | Terminal: present/missing for each var (no values) |
+| `npm run verify:setup` | Table row counts; masked admin/auth status (no secrets) |
 | `/admin/integrations` | In-app readiness after admin login |
 | `npm run build` | Production build sanity |
 | `npm run lint` | ESLint |
@@ -203,7 +232,7 @@ Open [http://localhost:3000](http://localhost:3000).
 |---------|--------|
 | Admin login → access denied | Email in `admin_users` or `ADMIN_ALLOWED_EMAILS`; service role for bootstrap |
 | Upload fails | Buckets exist; user is admin; file type JPG/PNG/WebP ≤ 10MB |
-| Lead not saved | `NEXT_PUBLIC_SUPABASE_*` set; RLS `leads_insert_public`; privacy checkbox |
+| Lead not saved | `NEXT_PUBLIC_SUPABASE_*` set; RLS `leads_insert_public`; privacy checkbox; contact API must not `.select()` after insert (anon has INSERT only on `leads`) |
 | No emails | `RESEND_API_KEY`, `EMAIL_FROM` (verified), `CONTACT_NOTIFICATION_EMAIL` |
 | Public site empty | Seed ran; categories `is_published = true` |
 | `is_admin()` false | JWT email must match `admin_users.email` exactly (lowercase in DB) |

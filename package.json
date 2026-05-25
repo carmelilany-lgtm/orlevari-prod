@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "check:env": "node scripts/check-env.mjs",
+    "verify:setup": "node scripts/verify-setup.mjs",
     "check:build": "npm run build"
   },
   "dependencies": {

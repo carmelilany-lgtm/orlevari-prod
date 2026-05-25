@@ -21,6 +21,7 @@ import {
   toggleCategoryPublished,
   type VideoCategoryRow,
 } from "@/lib/admin/actions/categories";
+import { adminCopy } from "@/lib/admin/copy";
 import { slugifyTitle } from "@/lib/admin/slug";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -92,7 +93,7 @@ export function CategoriesManager({ initialCategories }: Props) {
       return;
     }
 
-    setSuccess(editingId ? "Category updated." : "Category created.");
+    setSuccess(editingId ? adminCopy.categories.updated : adminCopy.categories.created);
     setFormOpen(false);
     router.refresh();
   }
@@ -122,11 +123,9 @@ export function CategoriesManager({ initialCategories }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="text-sm text-slate-400">
-          Manage portfolio video categories and visibility.
-        </p>
+        <p className="text-sm text-slate-400">{adminCopy.categories.intro}</p>
         <button type="button" className={adminBtnPrimary} onClick={openCreate}>
-          Add category
+          {adminCopy.categories.add}
         </button>
       </div>
 
@@ -136,12 +135,13 @@ export function CategoriesManager({ initialCategories }: Props) {
       {formOpen && (
         <form onSubmit={handleSave} className={`${adminCardClass} space-y-4`}>
           <h2 className="text-lg font-semibold text-white">
-            {editingId ? "Edit category" : "New category"}
+            {editingId ? adminCopy.categories.edit : adminCopy.categories.new}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <AdminFormField
-              label="Title (English)"
+              label={adminCopy.categories.titleEn}
               name="title_en"
+              dir="ltr"
               value={form.title_en}
               required
               onChange={(v) => {
@@ -153,25 +153,27 @@ export function CategoriesManager({ initialCategories }: Props) {
               }}
             />
             <AdminFormField
-              label="Title (Hebrew)"
+              label={adminCopy.categories.titleHe}
               name="title_he"
+              dir="rtl"
               value={form.title_he}
               required
               onChange={(v) => setForm((f) => ({ ...f, title_he: v }))}
             />
             <AdminFormField
-              label="Slug"
+              label={adminCopy.categories.slug}
               name="slug"
+              dir="ltr"
               value={form.slug}
               required
-              hint="URL-safe identifier"
+              hint={adminCopy.categories.slugHint}
               onChange={(v) => {
                 setSlugManual(true);
                 setForm((f) => ({ ...f, slug: v }));
               }}
             />
             <AdminFormField
-              label="Initial visible count"
+              label={adminCopy.categories.initialVisible}
               name="initial_visible_count"
               type="number"
               min={1}
@@ -197,20 +199,20 @@ export function CategoriesManager({ initialCategories }: Props) {
                   }
                   className="rounded border-blue-800"
                 />
-                Published
+                {adminCopy.publish.published}
               </label>
             </div>
           </div>
           <div className="flex gap-3">
             <button type="submit" className={adminBtnPrimary} disabled={loading}>
-              {loading ? "Saving…" : "Save"}
+              {loading ? adminCopy.actions.saving : adminCopy.actions.save}
             </button>
             <button
               type="button"
               className={adminBtnSecondary}
               onClick={() => setFormOpen(false)}
             >
-              Cancel
+              {adminCopy.actions.cancel}
             </button>
           </div>
         </form>
@@ -218,11 +220,11 @@ export function CategoriesManager({ initialCategories }: Props) {
 
       {categories.length === 0 ? (
         <AdminEmptyState
-          title="No categories found."
-          description="Add your first video category to organize works."
+          title={adminCopy.categories.emptyTitle}
+          description={adminCopy.categories.emptyDesc}
           action={
             <button type="button" className={adminBtnPrimary} onClick={openCreate}>
-              Add category
+              {adminCopy.categories.add}
             </button>
           }
         />
@@ -231,12 +233,12 @@ export function CategoriesManager({ initialCategories }: Props) {
           <table className={adminTableClass}>
             <thead>
               <tr>
-                <th className={adminThClass}>Title (EN)</th>
-                <th className={adminThClass}>Slug</th>
-                <th className={adminThClass}>Order</th>
-                <th className={adminThClass}>Visible</th>
-                <th className={adminThClass}>Status</th>
-                <th className={adminThClass}>Actions</th>
+                <th className={adminThClass}>{adminCopy.categories.tableTitleEn}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableSlug}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableOrder}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableVisible}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableStatus}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableActions}</th>
               </tr>
             </thead>
             <tbody>
@@ -259,14 +261,14 @@ export function CategoriesManager({ initialCategories }: Props) {
                         className={adminBtnSecondary}
                         onClick={() => openEdit(row)}
                       >
-                        Edit
+                        {adminCopy.actions.edit}
                       </button>
                       <button
                         type="button"
                         className={adminBtnDanger}
                         onClick={() => setDeleteId(row.id)}
                       >
-                        Delete
+                        {adminCopy.actions.delete}
                       </button>
                     </div>
                   </td>
@@ -279,8 +281,8 @@ export function CategoriesManager({ initialCategories }: Props) {
 
       <DeleteConfirmDialog
         open={Boolean(deleteId)}
-        title="Delete category?"
-        message="This cannot be undone. Categories with assigned videos cannot be deleted."
+        title={adminCopy.categories.deleteTitle}
+        message={adminCopy.categories.deleteMessage}
         loading={loading}
         onConfirm={handleDelete}
         onCancel={() => setDeleteId(null)}

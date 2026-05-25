@@ -9,6 +9,14 @@ import { AppProviders } from "@/components/providers/AppProviders";
 import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
 import { getSiteContentMap } from "@/lib/api/content";
 import { loadSitePortfolioData } from "@/lib/data/site-data";
+import { buildHomeMetadata } from "@/lib/seo/metadata";
+
+export async function generateMetadata() {
+  return buildHomeMetadata();
+}
+
+/** Fresh homepage data after admin revalidatePath('/') */
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const [siteData, cmsMap] = await Promise.all([
@@ -16,8 +24,14 @@ export default async function HomePage() {
     getSiteContentMap(),
   ]);
 
+  const whatsappEnvFallback = process.env.WHATSAPP_PHONE?.trim() || undefined;
+
   return (
-    <AppProviders siteData={siteData} cmsMap={cmsMap}>
+    <AppProviders
+      siteData={siteData}
+      cmsMap={cmsMap}
+      whatsappEnvFallback={whatsappEnvFallback}
+    >
       <Header />
       <main id="main-content">
         <Hero />

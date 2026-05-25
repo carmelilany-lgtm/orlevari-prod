@@ -20,6 +20,7 @@ const defaultData: SitePortfolioData = {
     title: s.title,
     description: s.description,
   })),
+  isLiveData: false,
 };
 
 const SiteDataContext = createContext<SitePortfolioData>(defaultData);

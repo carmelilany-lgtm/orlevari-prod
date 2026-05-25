@@ -1,5 +1,6 @@
 "use client";
 
+import { adminCopy } from "@/lib/admin/copy";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -29,7 +30,7 @@ export function YouTubePreview({
           className,
         )}
       >
-        No preview
+        {adminCopy.videos.noPreview}
       </div>
     );
   }
@@ -38,7 +39,7 @@ export function YouTubePreview({
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
-      alt={title ? `Preview: ${title}` : "Video thumbnail"}
+      alt={title ? `תצוגה: ${title}` : "תמונת סרטון"}
       className={cn("h-24 w-40 rounded-lg object-cover", className)}
     />
   );

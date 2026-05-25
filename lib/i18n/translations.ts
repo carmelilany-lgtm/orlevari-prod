@@ -38,6 +38,7 @@ export type TranslationKeys = {
     cardPlaceholder: string;
     openVideo: string;
     openStill: string;
+    emptyPortfolio: string;
   };
   services: {
     title: string;
@@ -52,7 +53,8 @@ export type TranslationKeys = {
       email: string;
       serviceType: string;
       message: string;
-      privacy: string;
+      privacyAgree: string;
+      privacyLink: string;
       submit: string;
       submitting: string;
       success: string;
@@ -73,6 +75,9 @@ export type TranslationKeys = {
     rights: string;
     privacy: string;
     accessibility: string;
+  };
+  legal: {
+    backToHome: string;
   };
   floatingWhatsapp: string;
   langToggle: {
@@ -120,6 +125,7 @@ const en: TranslationKeys = {
     cardPlaceholder: "Thumbnail placeholder",
     openVideo: "Play video",
     openStill: "View still image",
+    emptyPortfolio: "Portfolio content will appear here once published.",
   },
   services: {
     title: "Services",
@@ -134,7 +140,8 @@ const en: TranslationKeys = {
       email: "Email",
       serviceType: "Service Type",
       message: "Message",
-      privacy: "I agree to the Privacy Policy",
+      privacyAgree: "I agree to the",
+      privacyLink: "Privacy Policy",
       submit: "Send Message",
       submitting: "Sending…",
       success: "Thank you. Your message was sent successfully.",
@@ -155,6 +162,9 @@ const en: TranslationKeys = {
     rights: "All rights reserved Lev Ari Productions 2026",
     privacy: "Privacy Policy",
     accessibility: "Accessibility Statement",
+  },
+  legal: {
+    backToHome: "Back to home",
   },
   floatingWhatsapp: "Chat on WhatsApp",
   langToggle: {
@@ -202,6 +212,7 @@ const he: TranslationKeys = {
     cardPlaceholder: "ממוזג תמונה",
     openVideo: "נגן וידאו",
     openStill: "צפייה בתמונה",
+    emptyPortfolio: "תוכן הפורטפוליו יופיע כאן לאחר פרסום בעבודות.",
   },
   services: {
     title: "שירותים",
@@ -216,7 +227,8 @@ const he: TranslationKeys = {
       email: "אימייל",
       serviceType: "סוג שירות",
       message: "הודעה",
-      privacy: "אני מאשר/ת את מדיניות הפרטיות",
+      privacyAgree: "אני מאשר/ת את",
+      privacyLink: "מדיניות הפרטיות",
       submit: "שליחת הודעה",
       submitting: "שולח…",
       success: "תודה, הפנייה נשלחה בהצלחה.",
@@ -237,6 +249,9 @@ const he: TranslationKeys = {
     rights: "כל הזכויות שמורות לב ארי הפקות 2026",
     privacy: "מדיניות פרטיות",
     accessibility: "הצהרת נגישות",
+  },
+  legal: {
+    backToHome: "חזרה לדף הבית",
   },
   floatingWhatsapp: "צ'אט בוואטסאפ",
   langToggle: {

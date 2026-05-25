@@ -128,7 +128,7 @@ function StillTile({
 export function StillsMasonryGallery() {
   const { locale, t } = useLanguage();
   const { stills } = useSiteData();
-  const [active, setActive] = useState<StillWorkItem | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const visibleStills = useMemo(() => {
     const sorted = stills.filter((item) => item.published !== false).sort(
@@ -146,16 +146,22 @@ export function StillsMasonryGallery() {
             item={item}
             locale={locale}
             openLabel={t.works.openStill}
-            onSelect={setActive}
+            onSelect={(item) => {
+              const idx = visibleStills.findIndex((s) => s.id === item.id);
+              if (idx >= 0 && item.image_url) setActiveIndex(idx);
+            }}
           />
         ))}
       </div>
 
       <StillsLightboxPlaceholder
-        open={!!active}
-        stillId={active?.id ?? ""}
-        title={active ? stillAlt(active, locale) : ""}
-        onClose={() => setActive(null)}
+        open={activeIndex !== null}
+        images={visibleStills}
+        index={activeIndex ?? 0}
+        locale={locale}
+        closeLabel={t.works.close}
+        onClose={() => setActiveIndex(null)}
+        onIndexChange={setActiveIndex}
       />
     </div>
   );

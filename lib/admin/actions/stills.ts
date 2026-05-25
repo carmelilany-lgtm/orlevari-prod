@@ -2,6 +2,7 @@
 
 import type { ActionResult } from "@/lib/admin/action-result";
 import { actionError, actionOk } from "@/lib/admin/action-result";
+import { adminErrors } from "@/lib/admin/copy";
 import { revalidatePublicSite } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { sanitizeFileName } from "@/lib/images/sanitize-file-name";
@@ -61,17 +62,17 @@ export async function uploadStillImage(formData: FormData): Promise<
 
   const file = formData.get("file");
   if (!(file instanceof File)) {
-    return actionError("No image file provided.");
+    return actionError(adminErrors.noImageFile);
   }
 
   const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
   if (!allowed.includes(file.type)) {
-    return actionError("Invalid file type. Use JPG, PNG, or WebP.");
+    return actionError(adminErrors.invalidImageType);
   }
 
   const maxBytes = 10 * 1024 * 1024;
   if (file.size > maxBytes) {
-    return actionError("File is too large. Maximum size is 10MB.");
+    return actionError(adminErrors.imageTooLarge);
   }
 
   const width = Number(formData.get("width"));
@@ -95,7 +96,7 @@ export async function uploadStillImage(formData: FormData): Promise<
     });
 
   if (uploadError) {
-    return actionError(`Upload failed: ${uploadError.message}`);
+    return actionError(adminErrors.uploadFailed(uploadError.message));
   }
 
   const {
@@ -145,9 +146,7 @@ export async function deleteStillImage(id: string): Promise<ActionResult> {
       .remove([row.storage_path]);
 
     if (storageError) {
-      return actionError(
-        `Could not delete file from storage: ${storageError.message}`,
-      );
+      return actionError(adminErrors.storageDeleteFailed(storageError.message));
     }
   }
 

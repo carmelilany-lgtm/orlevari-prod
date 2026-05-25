@@ -1,13 +1,13 @@
 "use client";
 
+import { useFloatingWhatsAppHref } from "@/lib/contact/use-public-contact";
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
-const WHATSAPP_URL = "https://wa.me/972500000000";
-
 export function FloatingWhatsApp() {
   const { t } = useLanguage();
+  const href = useFloatingWhatsAppHref();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -17,9 +17,11 @@ export function FloatingWhatsApp() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  if (!href) return null;
+
   return (
     <a
-      href={WHATSAPP_URL}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={t.floatingWhatsapp}

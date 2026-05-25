@@ -6,6 +6,10 @@ import type {
   VideoWork,
 } from "@/types/portfolio";
 import type { Service, ServiceDisplay } from "@/types/services";
+import {
+  parseYoutubeId,
+  resolveVideoYoutubeId,
+} from "@/lib/youtube/client";
 import type { StillWorkItem, VideoWorkItem } from "@/types/works";
 import type { VideoCategoryId } from "@/types/works";
 
@@ -20,10 +24,15 @@ export function toPortfolioCategory(row: VideoCategory): PortfolioVideoCategory 
 
 export function toLegacyVideoCategory(
   row: PortfolioVideoCategory,
-): { id: VideoCategoryId; label: { en: string; he: string } } {
+): {
+  id: VideoCategoryId;
+  label: { en: string; he: string };
+  initialVisibleCount: number;
+} {
   return {
     id: row.slug as VideoCategoryId,
     label: row.label,
+    initialVisibleCount: row.initialVisibleCount,
   };
 }
 
@@ -31,12 +40,17 @@ export function toPortfolioVideoWork(
   row: VideoWork,
   categorySlug: string,
 ): PortfolioVideoWork {
+  const youtubeId =
+    row.youtube_id?.trim() ||
+    parseYoutubeId(row.youtube_url) ||
+    undefined;
+
   return {
     id: row.id,
     categorySlug,
     title: { en: row.title_en, he: row.title_he },
     youtubeUrl: row.youtube_url,
-    youtubeId: row.youtube_id ?? undefined,
+    youtubeId,
     thumbnailUrl: row.thumbnail_url ?? undefined,
     customCoverUrl: row.custom_cover_url ?? undefined,
     thumbnailLabel: row.title_en,
@@ -45,11 +59,20 @@ export function toPortfolioVideoWork(
 }
 
 export function toVideoWorkItem(work: PortfolioVideoWork): VideoWorkItem {
+  const youtubeId =
+    resolveVideoYoutubeId({
+      youtubeId: work.youtubeId,
+      youtubeUrl: work.youtubeUrl,
+    }) ?? undefined;
+
   return {
     id: work.id,
     categoryId: work.categorySlug as VideoCategoryId,
     title: work.title,
-    youtubeId: work.youtubeId,
+    youtubeUrl: work.youtubeUrl,
+    youtubeId,
+    thumbnailUrl: work.thumbnailUrl,
+    customCoverUrl: work.customCoverUrl,
     thumbnailLabel: work.thumbnailLabel,
   };
 }

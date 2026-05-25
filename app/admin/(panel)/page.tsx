@@ -5,6 +5,7 @@ import {
   getDashboardStats,
   getRecentLeads,
 } from "@/lib/admin/actions/dashboard";
+import { adminCopy } from "@/lib/admin/copy";
 import { requireAdminPage } from "@/lib/admin/guard";
 
 export default async function AdminDashboardPage() {
@@ -24,16 +25,16 @@ export default async function AdminDashboardPage() {
 
   const cards = stats
     ? [
-        { label: "Published videos", value: stats.publishedVideos },
-        { label: "Video categories", value: stats.categories },
-        { label: "Still images", value: stats.stillImages },
-        { label: "Services", value: stats.services },
-        { label: "Leads", value: stats.leads },
+        { label: adminCopy.dashboard.publishedVideos, value: stats.publishedVideos },
+        { label: adminCopy.dashboard.videoCategories, value: stats.categories },
+        { label: adminCopy.dashboard.stillImages, value: stats.stillImages },
+        { label: adminCopy.dashboard.services, value: stats.services },
+        { label: adminCopy.dashboard.leads, value: stats.leads },
       ]
     : [];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 text-right">
       {!statsResult.success && (
         <p className="text-sm text-red-300" role="alert">
           {statsResult.error}
@@ -50,29 +51,33 @@ export default async function AdminDashboardPage() {
       </div>
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-white">Quick links</h2>
+        <h2 className="text-lg font-semibold text-white">
+          {adminCopy.dashboard.quickLinks}
+        </h2>
         <div className="flex flex-wrap gap-3">
           <Link href="/admin/videos" className={adminBtnSecondary}>
-            Add video
+            {adminCopy.dashboard.addVideo}
           </Link>
           <Link href="/admin/stills" className={adminBtnSecondary}>
-            Upload still image
+            {adminCopy.dashboard.uploadStill}
           </Link>
           <Link href="/admin/content" className={adminBtnSecondary}>
-            Edit homepage content
+            {adminCopy.dashboard.editHomepage}
           </Link>
         </div>
       </section>
 
       <section className={`${adminCardClass} space-y-4`}>
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Recent leads</h2>
+          <h2 className="text-lg font-semibold text-white">
+            {adminCopy.dashboard.recentLeads}
+          </h2>
           <Link href="/admin/leads" className="text-sm text-blue-400 hover:text-blue-300">
-            View all
+            {adminCopy.actions.viewAll}
           </Link>
         </div>
         {recentLeads.length === 0 ? (
-          <p className="text-sm text-slate-500">No leads yet.</p>
+          <p className="text-sm text-slate-500">{adminCopy.dashboard.noLeadsYet}</p>
         ) : (
           <ul className="divide-y divide-blue-950/60">
             {recentLeads.map((lead) => (
@@ -80,9 +85,15 @@ export default async function AdminDashboardPage() {
                 <span className="font-medium text-slate-200">
                   {lead.full_name}
                 </span>
-                <span className="text-slate-500"> · {lead.email}</span>
+                <span className="text-slate-500" dir="ltr">
+                  {" "}
+                  · {lead.email}
+                </span>
                 <p className="text-xs text-slate-500">
-                  {new Date(lead.created_at).toLocaleString()}
+                  {new Date(lead.created_at).toLocaleString("he-IL", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
                 </p>
               </li>
             ))}

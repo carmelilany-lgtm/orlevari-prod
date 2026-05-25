@@ -27,6 +27,7 @@ import {
   youtubeThumbnailUrl,
 } from "@/lib/youtube/client";
 import type { VideoCategoryRow } from "@/lib/admin/actions/categories";
+import { adminCopy } from "@/lib/admin/copy";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -122,7 +123,7 @@ export function VideosManager({ initialVideos, categories }: Props) {
       return;
     }
 
-    setSuccess(editingId ? "Video updated." : "Video created.");
+    setSuccess(editingId ? adminCopy.videos.updated : adminCopy.videos.created);
     setFormOpen(false);
     router.refresh();
   }
@@ -152,9 +153,9 @@ export function VideosManager({ initialVideos, categories }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="text-sm text-slate-400">Manage YouTube portfolio videos.</p>
+        <p className="text-sm text-slate-400">{adminCopy.videos.intro}</p>
         <button type="button" className={adminBtnPrimary} onClick={openCreate}>
-          Add video
+          {adminCopy.videos.add}
         </button>
       </div>
 
@@ -164,7 +165,7 @@ export function VideosManager({ initialVideos, categories }: Props) {
       {formOpen && (
         <form onSubmit={handleSave} className={`${adminCardClass} space-y-4`}>
           <h2 className="text-lg font-semibold text-white">
-            {editingId ? "Edit video" : "New video"}
+            {editingId ? adminCopy.videos.edit : adminCopy.videos.new}
           </h2>
           <div className="flex flex-wrap gap-6">
             <YouTubePreview
@@ -174,27 +175,29 @@ export function VideosManager({ initialVideos, categories }: Props) {
             />
             <div className="grid min-w-0 flex-1 gap-4 sm:grid-cols-2">
               <AdminFormField
-                label="Title (English)"
+                label={adminCopy.videos.titleEn}
                 name="title_en"
+                dir="ltr"
                 value={form.title_en}
                 required
                 onChange={(v) => setForm((f) => ({ ...f, title_en: v }))}
               />
               <AdminFormField
-                label="Title (Hebrew)"
+                label={adminCopy.videos.titleHe}
                 name="title_he"
+                dir="rtl"
                 value={form.title_he}
                 required
                 onChange={(v) => setForm((f) => ({ ...f, title_he: v }))}
               />
               <AdminFormField
                 as="select"
-                label="Category"
+                label={adminCopy.videos.category}
                 name="category_id"
                 value={form.category_id}
                 onChange={(v) => setForm((f) => ({ ...f, category_id: v }))}
                 options={[
-                  { value: "", label: "— None —" },
+                  { value: "", label: adminCopy.actions.none },
                   ...categories.map((c) => ({
                     value: c.id,
                     label: c.title_en,
@@ -202,8 +205,9 @@ export function VideosManager({ initialVideos, categories }: Props) {
                 ]}
               />
               <AdminFormField
-                label="YouTube URL"
+                label={adminCopy.videos.youtubeUrl}
                 name="youtube_url"
+                dir="ltr"
                 value={form.youtube_url}
                 required
                 onChange={(v) =>
@@ -215,13 +219,14 @@ export function VideosManager({ initialVideos, categories }: Props) {
                 }
                 hint={
                   parsedId
-                    ? `Detected ID: ${parsedId}`
-                    : "Paste a valid YouTube link"
+                    ? adminCopy.videos.youtubeDetected(parsedId)
+                    : adminCopy.videos.youtubeHint
                 }
               />
               <AdminFormField
-                label="Custom cover URL (optional)"
+                label={adminCopy.videos.customCover}
                 name="custom_cover_url"
+                dir="ltr"
                 value={form.custom_cover_url}
                 onChange={(v) => setForm((f) => ({ ...f, custom_cover_url: v }))}
               />
@@ -237,20 +242,20 @@ export function VideosManager({ initialVideos, categories }: Props) {
                     setForm((f) => ({ ...f, is_published: e.target.checked }))
                   }
                 />
-                Published
+                {adminCopy.publish.published}
               </label>
             </div>
           </div>
           <div className="flex gap-3">
             <button type="submit" className={adminBtnPrimary} disabled={loading}>
-              {loading ? "Saving…" : "Save"}
+              {loading ? adminCopy.actions.saving : adminCopy.actions.save}
             </button>
             <button
               type="button"
               className={adminBtnSecondary}
               onClick={() => setFormOpen(false)}
             >
-              Cancel
+              {adminCopy.actions.cancel}
             </button>
           </div>
         </form>
@@ -258,11 +263,11 @@ export function VideosManager({ initialVideos, categories }: Props) {
 
       {videos.length === 0 ? (
         <AdminEmptyState
-          title="No videos yet."
-          description="Add your first YouTube video to the portfolio."
+          title={adminCopy.videos.emptyTitle}
+          description={adminCopy.videos.emptyDesc}
           action={
             <button type="button" className={adminBtnPrimary} onClick={openCreate}>
-              Add video
+              {adminCopy.videos.add}
             </button>
           }
         />
@@ -271,12 +276,12 @@ export function VideosManager({ initialVideos, categories }: Props) {
           <table className={adminTableClass}>
             <thead>
               <tr>
-                <th className={adminThClass}>Preview</th>
-                <th className={adminThClass}>Title</th>
-                <th className={adminThClass}>Category</th>
-                <th className={adminThClass}>Order</th>
-                <th className={adminThClass}>Status</th>
-                <th className={adminThClass}>Actions</th>
+                <th className={adminThClass}>{adminCopy.videos.tablePreview}</th>
+                <th className={adminThClass}>{adminCopy.videos.tableTitle}</th>
+                <th className={adminThClass}>{adminCopy.videos.tableCategory}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableOrder}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableStatus}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableActions}</th>
               </tr>
             </thead>
             <tbody>
@@ -310,14 +315,14 @@ export function VideosManager({ initialVideos, categories }: Props) {
                         className={adminBtnSecondary}
                         onClick={() => openEdit(row)}
                       >
-                        Edit
+                        {adminCopy.actions.edit}
                       </button>
                       <button
                         type="button"
                         className={adminBtnDanger}
                         onClick={() => setDeleteId(row.id)}
                       >
-                        Delete
+                        {adminCopy.actions.delete}
                       </button>
                     </div>
                   </td>
@@ -330,8 +335,8 @@ export function VideosManager({ initialVideos, categories }: Props) {
 
       <DeleteConfirmDialog
         open={Boolean(deleteId)}
-        title="Delete video?"
-        message="This will permanently remove the video from the portfolio."
+        title={adminCopy.videos.deleteTitle}
+        message={adminCopy.videos.deleteMessage}
         loading={loading}
         onConfirm={handleDelete}
         onCancel={() => setDeleteId(null)}

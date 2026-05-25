@@ -21,6 +21,7 @@ import {
   toggleServicePublished,
   type ServiceRow,
 } from "@/lib/admin/actions/services";
+import { adminCopy } from "@/lib/admin/copy";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -90,7 +91,7 @@ export function ServicesManager({ initialServices }: Props) {
       setError(result.error);
       return;
     }
-    setSuccess(editingId ? "Service updated." : "Service created.");
+    setSuccess(editingId ? adminCopy.services.updated : adminCopy.services.created);
     setFormOpen(false);
     router.refresh();
   }
@@ -120,9 +121,9 @@ export function ServicesManager({ initialServices }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap justify-between gap-4">
-        <p className="text-sm text-slate-400">Manage bilingual service offerings.</p>
+        <p className="text-sm text-slate-400">{adminCopy.services.intro}</p>
         <button type="button" className={adminBtnPrimary} onClick={openCreate}>
-          Add service
+          {adminCopy.services.add}
         </button>
       </div>
 
@@ -132,37 +133,42 @@ export function ServicesManager({ initialServices }: Props) {
       {formOpen && (
         <form onSubmit={handleSave} className={`${adminCardClass} space-y-4`}>
           <h2 className="text-lg font-semibold text-white">
-            {editingId ? "Edit service" : "New service"}
+            {editingId ? adminCopy.services.edit : adminCopy.services.new}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <AdminFormField
-              label="Title (English)"
+              label={adminCopy.services.titleEn}
+              dir="ltr"
               value={form.title_en}
               required
               onChange={(v) => setForm((f) => ({ ...f, title_en: v }))}
             />
             <AdminFormField
-              label="Title (Hebrew)"
+              label={adminCopy.services.titleHe}
+              dir="rtl"
               value={form.title_he}
               required
               onChange={(v) => setForm((f) => ({ ...f, title_he: v }))}
             />
             <AdminFormField
               as="textarea"
-              label="Description (English)"
+              label={adminCopy.services.descEn}
+              dir="ltr"
               value={form.description_en}
               onChange={(v) => setForm((f) => ({ ...f, description_en: v }))}
             />
             <AdminFormField
               as="textarea"
-              label="Description (Hebrew)"
+              label={adminCopy.services.descHe}
+              dir="rtl"
               value={form.description_he}
               onChange={(v) => setForm((f) => ({ ...f, description_he: v }))}
             />
             <AdminFormField
-              label="Icon key"
+              label={adminCopy.services.iconKey}
+              dir="ltr"
               value={form.icon_key}
-              hint="Optional icon identifier for the public UI"
+              hint={adminCopy.services.iconHint}
               onChange={(v) => setForm((f) => ({ ...f, icon_key: v }))}
             />
             <SortOrderField
@@ -177,19 +183,19 @@ export function ServicesManager({ initialServices }: Props) {
                   setForm((f) => ({ ...f, is_published: e.target.checked }))
                 }
               />
-              Published
+              {adminCopy.publish.published}
             </label>
           </div>
           <div className="flex gap-3">
             <button type="submit" className={adminBtnPrimary} disabled={loading}>
-              {loading ? "Saving…" : "Save"}
+              {loading ? adminCopy.actions.saving : adminCopy.actions.save}
             </button>
             <button
               type="button"
               className={adminBtnSecondary}
               onClick={() => setFormOpen(false)}
             >
-              Cancel
+              {adminCopy.actions.cancel}
             </button>
           </div>
         </form>
@@ -197,11 +203,11 @@ export function ServicesManager({ initialServices }: Props) {
 
       {services.length === 0 ? (
         <AdminEmptyState
-          title="No services found."
-          description="Add services shown on the public homepage."
+          title={adminCopy.services.emptyTitle}
+          description={adminCopy.services.emptyDesc}
           action={
             <button type="button" className={adminBtnPrimary} onClick={openCreate}>
-              Add service
+              {adminCopy.services.add}
             </button>
           }
         />
@@ -210,11 +216,11 @@ export function ServicesManager({ initialServices }: Props) {
           <table className={adminTableClass}>
             <thead>
               <tr>
-                <th className={adminThClass}>Title</th>
-                <th className={adminThClass}>Icon</th>
-                <th className={adminThClass}>Order</th>
-                <th className={adminThClass}>Status</th>
-                <th className={adminThClass}>Actions</th>
+                <th className={adminThClass}>{adminCopy.services.tableTitle}</th>
+                <th className={adminThClass}>{adminCopy.services.tableIcon}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableOrder}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableStatus}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableActions}</th>
               </tr>
             </thead>
             <tbody>
@@ -236,14 +242,14 @@ export function ServicesManager({ initialServices }: Props) {
                         className={adminBtnSecondary}
                         onClick={() => openEdit(row)}
                       >
-                        Edit
+                        {adminCopy.actions.edit}
                       </button>
                       <button
                         type="button"
                         className={adminBtnDanger}
                         onClick={() => setDeleteId(row.id)}
                       >
-                        Delete
+                        {adminCopy.actions.delete}
                       </button>
                     </div>
                   </td>
@@ -256,8 +262,8 @@ export function ServicesManager({ initialServices }: Props) {
 
       <DeleteConfirmDialog
         open={Boolean(deleteId)}
-        title="Delete service?"
-        message="This cannot be undone."
+        title={adminCopy.services.deleteTitle}
+        message={adminCopy.services.deleteMessage}
         loading={loading}
         onConfirm={handleDelete}
         onCancel={() => setDeleteId(null)}

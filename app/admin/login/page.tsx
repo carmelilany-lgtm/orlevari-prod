@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import { AdminLoginForm } from "@/components/admin/AdminLoginForm";
+import { SupabaseConfigBanner } from "@/components/admin/SupabaseConfigBanner";
+import { adminCopy } from "@/lib/admin/copy";
 
 export const dynamic = "force-dynamic";
-import { SupabaseConfigBanner } from "@/components/admin/SupabaseConfigBanner";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 type Props = {
@@ -24,10 +26,12 @@ export default async function AdminLoginPage({ searchParams }: Props) {
           className="mx-auto max-w-md px-4 pt-4 text-center text-sm text-red-300"
           role="alert"
         >
-          Access denied. Your account is not authorized as an admin.
+          {adminCopy.auth.accessDeniedShort}
         </p>
       )}
-      <AdminLoginForm />
+      <Suspense fallback={null}>
+        <AdminLoginForm />
+      </Suspense>
     </>
   );
 }

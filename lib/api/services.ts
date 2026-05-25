@@ -13,7 +13,8 @@ export async function getPublishedServices(): Promise<ServiceDisplay[]> {
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
-    return MOCK_SERVICES;
+    console.error("[lev-ari] getPublishedServices: no Supabase client");
+    return [];
   }
 
   const { data, error } = await supabase
@@ -22,9 +23,13 @@ export async function getPublishedServices(): Promise<ServiceDisplay[]> {
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
 
-  if (error || !data?.length) {
-    if (error) console.error("[lev-ari] services:", error.message);
-    return MOCK_SERVICES;
+  if (error) {
+    console.error("[lev-ari] services:", error.message);
+    return [];
+  }
+
+  if (!data?.length) {
+    return [];
   }
 
   return (data as Service[]).map(toServiceDisplay);

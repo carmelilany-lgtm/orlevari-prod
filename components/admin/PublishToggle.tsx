@@ -1,5 +1,6 @@
 "use client";
 
+import { adminCopy } from "@/lib/admin/copy";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -23,7 +24,7 @@ export function PublishToggle({ published, disabled, onToggle }: Props) {
       )}
       aria-pressed={published}
     >
-      {published ? "Published" : "Hidden"}
+      {published ? adminCopy.publish.published : adminCopy.publish.hidden}
     </button>
   );
 }

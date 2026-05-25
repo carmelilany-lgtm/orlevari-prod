@@ -2,6 +2,7 @@
 
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { adminCopy } from "@/lib/admin/copy";
 import { useState } from "react";
 
 type Props = {
@@ -15,15 +16,15 @@ export function AdminShell({ email, children }: Props) {
   return (
     <div className="flex min-h-screen bg-[#070b14] text-slate-100">
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform border-r border-blue-900/40 bg-[#0c1222] transition-transform lg:static lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-0 right-0 z-40 w-64 transform border-l border-blue-900/40 bg-[#0c1222] transition-transform lg:static lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="border-b border-blue-900/40 px-4 py-5">
+        <div className="border-b border-blue-900/40 px-4 py-5 text-right">
           <p className="font-display text-lg font-semibold text-white">
-            Lev Ari
+            {adminCopy.brand.title}
           </p>
-          <p className="text-xs text-slate-500">Content management</p>
+          <p className="text-xs text-slate-500">{adminCopy.brand.subtitle}</p>
         </div>
         <AdminSidebar onNavigate={() => setSidebarOpen(false)} />
       </aside>
@@ -32,7 +33,7 @@ export function AdminShell({ email, children }: Props) {
         <button
           type="button"
           className="fixed inset-0 z-30 bg-black/50 lg:hidden"
-          aria-label="Close menu"
+          aria-label={adminCopy.actions.closeMenu}
           onClick={() => setSidebarOpen(false)}
         />
       )}

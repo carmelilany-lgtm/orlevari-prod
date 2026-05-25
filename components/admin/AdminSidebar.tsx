@@ -2,17 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { adminCopy } from "@/lib/admin/copy";
 import { cn } from "@/lib/utils";
 
 const NAV: { href: string; label: string; exact?: boolean }[] = [
-  { href: "/admin", label: "Dashboard", exact: true },
-  { href: "/admin/categories", label: "Video Categories" },
-  { href: "/admin/videos", label: "Videos" },
-  { href: "/admin/stills", label: "Stills Gallery" },
-  { href: "/admin/services", label: "Services" },
-  { href: "/admin/content", label: "Site Content" },
-  { href: "/admin/leads", label: "Leads" },
-  { href: "/admin/integrations", label: "Integrations" },
+  { href: "/admin", label: adminCopy.nav.dashboard, exact: true },
+  { href: "/admin/categories", label: adminCopy.nav.categories },
+  { href: "/admin/videos", label: adminCopy.nav.videos },
+  { href: "/admin/stills", label: adminCopy.nav.stills },
+  { href: "/admin/services", label: adminCopy.nav.services },
+  { href: "/admin/content", label: adminCopy.nav.content },
+  { href: "/admin/leads", label: adminCopy.nav.leads },
+  { href: "/admin/integrations", label: adminCopy.nav.integrations },
 ];
 
 type Props = {
@@ -23,7 +24,10 @@ export function AdminSidebar({ onNavigate }: Props) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-col gap-1 p-4" aria-label="Admin navigation">
+    <nav
+      className="flex flex-col gap-1 p-4 text-right"
+      aria-label="ניווט ניהול"
+    >
       {NAV.map((item) => {
         const active = item.exact
           ? pathname === item.href

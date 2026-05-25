@@ -9,7 +9,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import { resolveCmsText } from "@/lib/i18n/cms";
+import { getCmsRawValue, resolveCmsText } from "@/lib/i18n/cms";
 import { translations, type TranslationKeys } from "@/lib/i18n/translations";
 import type { SiteContentKey, SiteContentMap } from "@/types/content";
 import {
@@ -24,7 +24,11 @@ interface LanguageContextValue {
   dir: "ltr" | "rtl";
   t: TranslationKeys;
   cmsMap?: SiteContentMap;
+  /** True when homepage loaded from Supabase (not mock fallback) */
+  isLiveData: boolean;
+  whatsappEnvFallback?: string;
   cms: (key: SiteContentKey, fallback: string) => string;
+  cmsRaw: (key: SiteContentKey) => string | null;
   setLocale: (locale: Locale) => void;
 }
 
@@ -75,9 +79,13 @@ function persistLocale(locale: Locale) {
 export function LanguageProvider({
   children,
   cmsMap,
+  isLiveData = false,
+  whatsappEnvFallback,
 }: {
   children: ReactNode;
   cmsMap?: SiteContentMap;
+  isLiveData?: boolean;
+  whatsappEnvFallback?: string;
 }) {
   const locale = useSyncExternalStore(
     subscribeLocale,
@@ -99,16 +107,24 @@ export function LanguageProvider({
     [cmsMap, locale],
   );
 
+  const cmsRaw = useCallback(
+    (key: SiteContentKey) => getCmsRawValue(cmsMap, key, locale),
+    [cmsMap, locale],
+  );
+
   const value = useMemo<LanguageContextValue>(
     () => ({
       locale,
       dir: locale === "he" ? "rtl" : "ltr",
       t: translations[locale],
       cmsMap,
+      isLiveData,
+      whatsappEnvFallback,
       cms,
+      cmsRaw,
       setLocale,
     }),
-    [locale, setLocale, cmsMap, cms],
+    [locale, setLocale, cmsMap, isLiveData, whatsappEnvFallback, cms, cmsRaw],
   );
 
   return (

@@ -30,7 +30,8 @@ Copy `.env.example` to `.env.local` when connecting Supabase, Resend, and admin 
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | No | Public reads + lead insert (RLS) |
 | `SUPABASE_SERVICE_ROLE_KEY` | No | Server-only admin/bootstrap |
 | `ADMIN_ALLOWED_EMAILS` | No | Step 3 admin login fallback |
-| `NEXT_PUBLIC_SITE_URL` | No | Auth redirects, canonical URL |
+| `NEXT_PUBLIC_SITE_URL` | No | Auth redirects, SEO `metadataBase`, Open Graph |
+| `WHATSAPP_PHONE` | No | Fallback WhatsApp number if CMS `whatsapp_number` is empty (server → public) |
 | `RESEND_API_KEY` | No | Server-only — contact form emails |
 | `EMAIL_FROM` | No | Verified Resend sender (e.g. `Lev Ari Productions <noreply@yourdomain.com>`) |
 | `CONTACT_NOTIFICATION_EMAIL` | No | Or’s inbox for new lead notifications |
@@ -39,10 +40,11 @@ Copy `.env.example` to `.env.local` when connecting Supabase, Resend, and admin 
 
 See **[supabase/README.md](./supabase/README.md)** for migrations, seed, RLS, storage buckets, and first admin setup.
 
-For connecting real Supabase + Resend before deploy, see **[docs/setup-live-integrations.md](./docs/setup-live-integrations.md)**.
+For connecting real Supabase + Resend before deploy, see **[docs/setup-live-integrations.md](./docs/setup-live-integrations.md)** and **[docs/deploy-vercel.md](./docs/deploy-vercel.md)**.
 
 ```bash
-npm run check:env   # present/missing env vars (no secret values)
+npm run check:env      # present/missing env vars (no secret values)
+npm run verify:setup   # Supabase table counts + masked admin status
 ```
 
 After admin login, open **/admin/integrations** for in-app readiness checks.
@@ -97,6 +99,19 @@ supabase/
   seed.sql
 types/                  # language, portfolio, content, services, leads, works
 ```
+
+## Public site data (Step 5)
+
+| Condition | Portfolio (videos, stills, services) | CMS text (hero, about, contact copy, SEO) | Contact phone / email / WhatsApp |
+|-----------|--------------------------------------|-------------------------------------------|----------------------------------|
+| No Supabase env | `data/mock.ts` | Translations fallback | Translation placeholders + dev WhatsApp |
+| Supabase configured, rows published | Live admin data | CMS → translations fallback | CMS → hide if missing |
+| Supabase configured, nothing published | Empty sections (no mock portfolio) | CMS → translations fallback | CMS only; hide missing links |
+
+- Contact **Service Type** dropdown: published services + video category labels (active language), deduped, plus “Other” / “אחר”.
+- WhatsApp priority: CMS `whatsapp_number` → `WHATSAPP_PHONE` env → hidden on live site if both missing.
+- Homepage SEO: `generateMetadata` uses CMS `seo_*` keys (English default); `NEXT_PUBLIC_SITE_URL` sets `metadataBase` when set.
+- Admin saves call `revalidatePath('/')`; homepage is `force-dynamic` for fresh public data.
 
 ## Languages
 

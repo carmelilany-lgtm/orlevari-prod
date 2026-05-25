@@ -5,6 +5,7 @@
 import { MOCK_STILLS, MOCK_VIDEO_WORKS } from "@/data/mock-works";
 import { SERVICES } from "@/data/services";
 import { VIDEO_CATEGORIES } from "@/data/video-categories";
+import { toVideoWorkItem } from "@/lib/supabase/mappers";
 import type { PortfolioVideoCategory, PortfolioVideoWork } from "@/types/portfolio";
 import type { ServiceDisplay } from "@/types/services";
 import type { VideoWorkItem } from "@/types/works";
@@ -42,13 +43,11 @@ export const MOCK_SERVICES: ServiceDisplay[] = SERVICES.map((s) => ({
 export const MOCK_VIDEO_WORKS_PORTFOLIO = MOCK_PORTFOLIO_VIDEO_WORKS;
 
 export function toVideoWorkItems(works: PortfolioVideoWork[]): VideoWorkItem[] {
-  return works.map((work) => ({
-    id: work.id,
-    categoryId: work.categorySlug as VideoWorkItem["categoryId"],
-    title: work.title,
-    youtubeId: work.youtubeId,
-    thumbnailLabel: work.thumbnailLabel,
-  }));
+  return works.map(toVideoWorkItem);
 }
 
-export const MOCK_LEGACY_CATEGORIES = VIDEO_CATEGORIES;
+export const MOCK_LEGACY_CATEGORIES = VIDEO_CATEGORIES.map((c) => ({
+  id: c.id,
+  label: c.label,
+  initialVisibleCount: 3,
+}));

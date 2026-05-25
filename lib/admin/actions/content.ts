@@ -2,6 +2,7 @@
 
 import type { ActionResult } from "@/lib/admin/action-result";
 import { actionError, actionOk } from "@/lib/admin/action-result";
+import { adminErrors } from "@/lib/admin/copy";
 import { revalidatePublicSite } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import type { SiteContentItem } from "@/types/content";
@@ -41,7 +42,7 @@ export async function saveSiteContent(
       .eq("key", row.key);
 
     if (error) {
-      return actionError(`Failed to save "${row.key}": ${error.message}`);
+      return actionError(adminErrors.saveContentFailed(row.key, error.message));
     }
   }
 

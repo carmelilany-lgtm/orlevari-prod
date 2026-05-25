@@ -12,6 +12,7 @@ import {
   isLongContentKey,
   SITE_CONTENT_SECTIONS,
 } from "@/lib/admin/content-keys";
+import { adminCopy, contentSectionTitle } from "@/lib/admin/copy";
 import type { SiteContentItem, SiteContentKey } from "@/types/content";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -65,23 +66,22 @@ export function ContentEditor({ initialContent }: Props) {
       setError(result.error);
       return;
     }
-    setSuccess("Site content saved. Public site will use CMS values when available.");
+    setSuccess(adminCopy.content.saved);
     router.refresh();
   }
 
   return (
-    <form onSubmit={handleSave} className="space-y-8">
-      <p className="text-sm text-slate-400">
-        Edit bilingual copy stored in Supabase. The public site falls back to
-        built-in translations when a value is empty.
-      </p>
+    <form onSubmit={handleSave} className="space-y-8 text-right">
+      <p className="text-sm text-slate-400">{adminCopy.content.intro}</p>
 
       <AdminAlert variant="error" message={error} />
       <AdminAlert variant="success" message={success} />
 
       {SITE_CONTENT_SECTIONS.map((section) => (
         <section key={section.title} className={`${adminCardClass} space-y-4`}>
-          <h2 className="text-lg font-semibold text-white">{section.title}</h2>
+          <h2 className="text-lg font-semibold text-white">
+            {contentSectionTitle(section.title)}
+          </h2>
           <div className="space-y-6">
             {section.keys.map((key) => {
               const long = isLongContentKey(key as SiteContentKey);
@@ -91,7 +91,7 @@ export function ContentEditor({ initialContent }: Props) {
                   key={key}
                   className="grid gap-4 border-t border-blue-950/60 pt-4 first:border-0 first:pt-0"
                 >
-                  <p className="text-sm font-medium capitalize text-blue-300/90">
+                  <p className="text-sm font-medium text-blue-300/90" dir="ltr">
                     {formatContentKeyLabel(key)}
                   </p>
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -99,7 +99,8 @@ export function ContentEditor({ initialContent }: Props) {
                       <>
                         <AdminFormField
                           as="textarea"
-                          label="English"
+                          label={adminCopy.content.valueEn}
+                          dir="ltr"
                           value={v.value_en}
                           onChange={(val) =>
                             setValues((prev) => ({
@@ -110,7 +111,8 @@ export function ContentEditor({ initialContent }: Props) {
                         />
                         <AdminFormField
                           as="textarea"
-                          label="Hebrew"
+                          label={adminCopy.content.valueHe}
+                          dir="rtl"
                           value={v.value_he}
                           onChange={(val) =>
                             setValues((prev) => ({
@@ -123,7 +125,8 @@ export function ContentEditor({ initialContent }: Props) {
                     ) : (
                       <>
                         <AdminFormField
-                          label="English"
+                          label={adminCopy.content.valueEn}
+                          dir="ltr"
                           value={v.value_en}
                           onChange={(val) =>
                             setValues((prev) => ({
@@ -133,7 +136,8 @@ export function ContentEditor({ initialContent }: Props) {
                           }
                         />
                         <AdminFormField
-                          label="Hebrew"
+                          label={adminCopy.content.valueHe}
+                          dir="rtl"
                           value={v.value_he}
                           onChange={(val) =>
                             setValues((prev) => ({
@@ -153,7 +157,7 @@ export function ContentEditor({ initialContent }: Props) {
       ))}
 
       <button type="submit" className={adminBtnPrimary} disabled={loading}>
-        {loading ? "Saving…" : "Save all content"}
+        {loading ? adminCopy.actions.saving : adminCopy.actions.saveAllContent}
       </button>
     </form>
   );

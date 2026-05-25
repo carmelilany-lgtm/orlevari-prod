@@ -12,6 +12,7 @@ import {
 } from "@/components/admin/admin-styles";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import { deleteLead, type LeadRow } from "@/lib/admin/actions/leads";
+import { adminCopy } from "@/lib/admin/copy";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,13 +22,19 @@ type Props = {
 
 function formatDate(iso: string) {
   try {
-    return new Date(iso).toLocaleString("en-IL", {
+    return new Date(iso).toLocaleString("he-IL", {
       dateStyle: "medium",
       timeStyle: "short",
     });
   } catch {
     return iso;
   }
+}
+
+function formatLanguage(lang: string) {
+  if (lang === "he") return adminCopy.leads.langHe;
+  if (lang === "en") return adminCopy.leads.langEn;
+  return lang;
 }
 
 export function LeadsManager({ initialLeads }: Props) {
@@ -53,33 +60,37 @@ export function LeadsManager({ initialLeads }: Props) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-right">
       <AdminAlert variant="error" message={error} />
 
       {leads.length === 0 ? (
         <AdminEmptyState
-          title="No leads yet."
-          description="Contact form submissions will appear here."
+          title={adminCopy.leads.emptyTitle}
+          description={adminCopy.leads.emptyDesc}
         />
       ) : (
         <div className={`${adminCardClass} overflow-x-auto`}>
           <table className={adminTableClass}>
             <thead>
               <tr>
-                <th className={adminThClass}>Name</th>
-                <th className={adminThClass}>Email</th>
-                <th className={adminThClass}>Phone</th>
-                <th className={adminThClass}>Service</th>
-                <th className={adminThClass}>Date</th>
-                <th className={adminThClass}>Actions</th>
+                <th className={adminThClass}>{adminCopy.leads.tableName}</th>
+                <th className={adminThClass}>{adminCopy.leads.tableEmail}</th>
+                <th className={adminThClass}>{adminCopy.leads.tablePhone}</th>
+                <th className={adminThClass}>{adminCopy.leads.tableService}</th>
+                <th className={adminThClass}>{adminCopy.leads.tableDate}</th>
+                <th className={adminThClass}>{adminCopy.categories.tableActions}</th>
               </tr>
             </thead>
             <tbody>
               {leads.map((row) => (
                 <tr key={row.id}>
                   <td className={adminTdClass}>{row.full_name}</td>
-                  <td className={adminTdClass}>{row.email}</td>
-                  <td className={adminTdClass}>{row.phone}</td>
+                  <td className={adminTdClass} dir="ltr">
+                    {row.email}
+                  </td>
+                  <td className={adminTdClass} dir="ltr">
+                    {row.phone}
+                  </td>
                   <td className={adminTdClass}>{row.service_type ?? "—"}</td>
                   <td className={adminTdClass}>{formatDate(row.created_at)}</td>
                   <td className={adminTdClass}>
@@ -89,14 +100,14 @@ export function LeadsManager({ initialLeads }: Props) {
                         className={adminBtnSecondary}
                         onClick={() => setSelected(row)}
                       >
-                        View
+                        {adminCopy.actions.view}
                       </button>
                       <button
                         type="button"
                         className={adminBtnDanger}
                         onClick={() => setDeleteId(row.id)}
                       >
-                        Delete
+                        {adminCopy.actions.delete}
                       </button>
                     </div>
                   </td>
@@ -113,43 +124,53 @@ export function LeadsManager({ initialLeads }: Props) {
           role="dialog"
           aria-modal="true"
         >
-          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-blue-900/50 bg-[#0f1729] p-6">
-            <h2 className="text-lg font-semibold text-white">Lead details</h2>
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-blue-900/50 bg-[#0f1729] p-6 text-right">
+            <h2 className="text-lg font-semibold text-white">
+              {adminCopy.leads.detailsTitle}
+            </h2>
             <dl className="mt-4 space-y-3 text-sm">
               <div>
-                <dt className="text-slate-500">Name</dt>
+                <dt className="text-slate-500">{adminCopy.leads.name}</dt>
                 <dd className="text-slate-100">{selected.full_name}</dd>
               </div>
               <div>
-                <dt className="text-slate-500">Email</dt>
-                <dd className="text-slate-100">{selected.email}</dd>
+                <dt className="text-slate-500">{adminCopy.leads.email}</dt>
+                <dd className="text-slate-100" dir="ltr">
+                  {selected.email}
+                </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Phone</dt>
-                <dd className="text-slate-100">{selected.phone}</dd>
+                <dt className="text-slate-500">{adminCopy.leads.phone}</dt>
+                <dd className="text-slate-100" dir="ltr">
+                  {selected.phone}
+                </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Service</dt>
+                <dt className="text-slate-500">{adminCopy.leads.service}</dt>
                 <dd className="text-slate-100">{selected.service_type ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-slate-500">Message</dt>
+                <dt className="text-slate-500">{adminCopy.leads.message}</dt>
                 <dd className="whitespace-pre-wrap text-slate-100">
                   {selected.message ?? "—"}
                 </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Language</dt>
-                <dd className="text-slate-100">{selected.language}</dd>
-              </div>
-              <div>
-                <dt className="text-slate-500">Privacy accepted</dt>
+                <dt className="text-slate-500">{adminCopy.leads.language}</dt>
                 <dd className="text-slate-100">
-                  {selected.privacy_accepted ? "Yes" : "No"}
+                  {formatLanguage(selected.language)}
                 </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Submitted</dt>
+                <dt className="text-slate-500">{adminCopy.leads.privacy}</dt>
+                <dd className="text-slate-100">
+                  {selected.privacy_accepted
+                    ? adminCopy.leads.yes
+                    : adminCopy.leads.no}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">{adminCopy.leads.submitted}</dt>
                 <dd className="text-slate-100">
                   {formatDate(selected.created_at)}
                 </dd>
@@ -160,7 +181,7 @@ export function LeadsManager({ initialLeads }: Props) {
               className={`${adminBtnSecondary} mt-6`}
               onClick={() => setSelected(null)}
             >
-              Close
+              {adminCopy.actions.close}
             </button>
           </div>
         </div>
@@ -168,8 +189,8 @@ export function LeadsManager({ initialLeads }: Props) {
 
       <DeleteConfirmDialog
         open={Boolean(deleteId)}
-        title="Delete lead?"
-        message="This contact submission will be permanently removed."
+        title={adminCopy.leads.deleteTitle}
+        message={adminCopy.leads.deleteMessage}
         loading={loading}
         onConfirm={handleDelete}
         onCancel={() => setDeleteId(null)}

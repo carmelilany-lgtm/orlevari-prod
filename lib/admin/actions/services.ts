@@ -2,6 +2,7 @@
 
 import type { ActionResult } from "@/lib/admin/action-result";
 import { actionError, actionOk } from "@/lib/admin/action-result";
+import { adminErrors } from "@/lib/admin/copy";
 import { revalidatePublicSite } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import type { Database } from "@/lib/supabase/types";
@@ -33,8 +34,8 @@ export type ServiceInput = {
 };
 
 function validateService(input: ServiceInput): string | null {
-  if (!input.title_en.trim()) return "English title is required.";
-  if (!input.title_he.trim()) return "Hebrew title is required.";
+  if (!input.title_en.trim()) return adminErrors.titleEnRequired;
+  if (!input.title_he.trim()) return adminErrors.titleHeRequired;
   return null;
 }
 

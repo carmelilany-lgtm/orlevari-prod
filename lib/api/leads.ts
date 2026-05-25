@@ -59,24 +59,21 @@ export async function createLead(
     return { ok: false, error: "Contact form is not configured" };
   }
 
-  const { data, error } = await supabase
-    .from("leads")
-    .insert({
-      full_name: input.full_name.trim(),
-      phone: input.phone.trim(),
-      email: input.email.trim(),
-      service_type: input.service_type?.trim() || null,
-      message: input.message?.trim() || null,
-      language: input.language,
-      privacy_accepted: true,
-    })
-    .select("id")
-    .single();
+  // Do not .select() after insert — anon has INSERT only on leads (no SELECT).
+  const { error } = await supabase.from("leads").insert({
+    full_name: input.full_name.trim(),
+    phone: input.phone.trim(),
+    email: input.email.trim(),
+    service_type: input.service_type?.trim() || null,
+    message: input.message?.trim() || null,
+    language: input.language,
+    privacy_accepted: true,
+  });
 
   if (error) {
     console.error("[lev-ari] createLead:", error.message);
     return { ok: false, error: "Could not save your message" };
   }
 
-  return { ok: true, id: data?.id };
+  return { ok: true };
 }

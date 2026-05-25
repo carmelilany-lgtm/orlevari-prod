@@ -43,7 +43,8 @@ supabase db push
 After migrations:
 
 ```bash
-supabase db execute --file supabase/seed.sql
+# Paste supabase/seed.sql in SQL Editor, or (newer CLI only):
+# supabase db execute --file supabase/seed.sql
 ```
 
 Or run `supabase/seed.sql` in the SQL Editor.

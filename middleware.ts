@@ -1,3 +1,4 @@
+import { getSafeAdminRedirect } from "@/lib/admin/safe-redirect";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/lib/supabase/types";
@@ -33,6 +34,8 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isAdminArea = pathname.startsWith("/admin");
   const isLoginPage = pathname === "/admin/login";
+  const isServerAction =
+    request.method === "POST" && request.headers.has("next-action");
 
   if (isAdminArea && !isLoginPage && !user) {
     const redirectUrl = request.nextUrl.clone();
@@ -41,9 +44,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (isLoginPage && user) {
+  if (isLoginPage && user && !isServerAction) {
     const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/admin";
+    redirectUrl.pathname = getSafeAdminRedirect(
+      redirectUrl.searchParams.get("next"),
+    );
     redirectUrl.search = "";
     return NextResponse.redirect(redirectUrl);
   }

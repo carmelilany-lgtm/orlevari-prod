@@ -9,6 +9,8 @@ type Props = {
   hint?: string;
   children?: ReactNode;
   className?: string;
+  /** LTR for URLs, emails, slugs, English content; RTL for Hebrew content. */
+  dir?: "ltr" | "rtl";
 } & (
   | {
       as?: "input";
@@ -41,7 +43,8 @@ type Props = {
 );
 
 export function AdminFormField(props: Props) {
-  const { label, error, hint, className } = props;
+  const { label, error, hint, className, dir } = props;
+  const dirClass = dir === "ltr" ? "text-left" : dir === "rtl" ? "text-right" : "";
 
   let control: ReactNode;
 
@@ -53,7 +56,8 @@ export function AdminFormField(props: Props) {
         id={props.name}
         name={props.name}
         rows={props.rows ?? 4}
-        className={cn(adminInputClass, "resize-y")}
+        className={cn(adminInputClass, "resize-y", dirClass)}
+        dir={dir}
         value={props.value}
         onChange={(e) => props.onChange(e.target.value)}
         placeholder={props.placeholder}
@@ -65,7 +69,8 @@ export function AdminFormField(props: Props) {
       <select
         id={props.name}
         name={props.name}
-        className={adminInputClass}
+        className={cn(adminInputClass, dirClass)}
+        dir={dir}
         value={props.value}
         onChange={(e) => props.onChange(e.target.value)}
         required={props.required}
@@ -83,7 +88,8 @@ export function AdminFormField(props: Props) {
         id={props.name}
         name={props.name}
         type={props.type ?? "text"}
-        className={adminInputClass}
+        className={cn(adminInputClass, dirClass)}
+        dir={dir}
         value={props.value}
         onChange={(e) => props.onChange(e.target.value)}
         placeholder={props.placeholder}
