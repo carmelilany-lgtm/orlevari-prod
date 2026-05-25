@@ -3,8 +3,8 @@
 import {
   buildMailtoHref,
   buildTelHref,
-  buildWhatsAppHref,
 } from "@/lib/contact/links";
+import { resolveWhatsAppPublicSettings } from "@/lib/contact/whatsapp-settings";
 import { useLanguage } from "@/lib/i18n/context";
 import { useMemo } from "react";
 
@@ -15,10 +15,24 @@ export interface PublicContactLink {
   value: string;
 }
 
-const MOCK_DEV_WHATSAPP = "972500000000";
+export function useWhatsAppPublicSettings() {
+  const { locale, cmsMap, isLiveData, whatsappEnvFallback } = useLanguage();
+
+  return useMemo(
+    () =>
+      resolveWhatsAppPublicSettings({
+        locale,
+        cmsMap,
+        whatsappEnvFallback,
+        isLiveData,
+      }),
+    [locale, cmsMap, whatsappEnvFallback, isLiveData],
+  );
+}
 
 export function usePublicContactLinks(): PublicContactLink[] {
-  const { locale, t, cmsRaw, isLiveData, whatsappEnvFallback } = useLanguage();
+  const { locale, t, cmsRaw, isLiveData } = useLanguage();
+  const whatsapp = useWhatsAppPublicSettings();
 
   return useMemo(() => {
     const links: PublicContactLink[] = [];
@@ -49,44 +63,25 @@ export function usePublicContactLinks(): PublicContactLink[] {
       });
     }
 
-    const waNumber =
-      cmsRaw("whatsapp_number")?.trim() ||
-      whatsappEnvFallback?.trim() ||
-      (!isLiveData ? MOCK_DEV_WHATSAPP : undefined);
-
-    if (waNumber) {
-      const messageKey =
-        locale === "he" ? "whatsapp_message_he" : "whatsapp_message_en";
-      const message = cmsRaw(messageKey) ?? undefined;
-      const waHref = buildWhatsAppHref(waNumber, message);
-      if (waHref) {
-        links.push({
-          kind: "whatsapp",
-          label: t.contact.links.whatsapp,
-          href: waHref,
-          value: t.contact.links.whatsapp,
-        });
-      }
+    if (whatsapp.contactEnabled && whatsapp.href) {
+      links.push({
+        kind: "whatsapp",
+        label: t.contact.links.whatsapp,
+        href: whatsapp.href,
+        value: t.contact.links.whatsapp,
+      });
     }
 
     return links;
-  }, [locale, t, cmsRaw, isLiveData, whatsappEnvFallback]);
+  }, [t, cmsRaw, isLiveData, whatsapp.contactEnabled, whatsapp.href]);
 }
 
 export function useFloatingWhatsAppHref(): string | null {
-  const { locale, cmsRaw, isLiveData, whatsappEnvFallback } = useLanguage();
+  const whatsapp = useWhatsAppPublicSettings();
 
-  return useMemo(() => {
-    const waNumber =
-      cmsRaw("whatsapp_number")?.trim() ||
-      whatsappEnvFallback?.trim() ||
-      (!isLiveData ? MOCK_DEV_WHATSAPP : undefined);
+  if (!whatsapp.floatingEnabled || !whatsapp.href) {
+    return null;
+  }
 
-    if (!waNumber) return null;
-
-    const messageKey =
-      locale === "he" ? "whatsapp_message_he" : "whatsapp_message_en";
-    const message = cmsRaw(messageKey) ?? undefined;
-    return buildWhatsAppHref(waNumber, message);
-  }, [locale, cmsRaw, isLiveData, whatsappEnvFallback]);
+  return whatsapp.href;
 }

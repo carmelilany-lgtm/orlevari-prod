@@ -8,10 +8,11 @@ import {
 } from "@/components/admin/admin-styles";
 import { saveSiteContent } from "@/lib/admin/actions/content";
 import {
-  formatContentKeyLabel,
   isLongContentKey,
   SITE_CONTENT_SECTIONS,
 } from "@/lib/admin/content-keys";
+import { isWhatsAppContentKey } from "@/lib/admin/whatsapp-content-fields";
+import { WhatsAppContentFields } from "@/components/admin/WhatsAppContentFields";
 import { adminCopy, contentSectionTitle } from "@/lib/admin/copy";
 import type { SiteContentItem, SiteContentKey } from "@/types/content";
 import { useRouter } from "next/navigation";
@@ -72,8 +73,6 @@ export function ContentEditor({ initialContent }: Props) {
 
   return (
     <form onSubmit={handleSave} className="space-y-8 text-right">
-      <p className="text-sm text-slate-400">{adminCopy.content.intro}</p>
-
       <AdminAlert variant="error" message={error} />
       <AdminAlert variant="success" message={success} />
 
@@ -84,6 +83,10 @@ export function ContentEditor({ initialContent }: Props) {
           </h2>
           <div className="space-y-6">
             {section.keys.map((key) => {
+              if (isWhatsAppContentKey(key)) {
+                return null;
+              }
+
               const long = isLongContentKey(key as SiteContentKey);
               const v = values[key] ?? { value_en: "", value_he: "" };
               return (
@@ -91,10 +94,7 @@ export function ContentEditor({ initialContent }: Props) {
                   key={key}
                   className="grid gap-4 border-t border-blue-950/60 pt-4 first:border-0 first:pt-0"
                 >
-                  <p className="text-sm font-medium text-blue-300/90" dir="ltr">
-                    {formatContentKeyLabel(key)}
-                  </p>
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="grid gap-4 sm:grid-cols-2" dir="ltr">
                     {long ? (
                       <>
                         <AdminFormField
@@ -152,6 +152,9 @@ export function ContentEditor({ initialContent }: Props) {
                 </div>
               );
             })}
+            {section.title === "Contact" ? (
+              <WhatsAppContentFields values={values} setValues={setValues} />
+            ) : null}
           </div>
         </section>
       ))}

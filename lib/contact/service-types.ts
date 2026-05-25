@@ -6,41 +6,30 @@ export interface ServiceTypeOption {
   value: string;
 }
 
-export interface ServiceTypeCategoryInput {
-  label: { en: string; he: string };
-}
-
 const OTHER_LABEL: Record<Locale, string> = {
   en: "Other",
   he: "אחר",
 };
 
-/** Published services + video categories for the contact form dropdown */
+/** Published services only (matches /#services section), plus "Other" */
 export function buildServiceTypeOptions(
   services: ServiceItem[],
-  categories: ServiceTypeCategoryInput[],
   locale: Locale,
 ): ServiceTypeOption[] {
-  const labels: string[] = [];
+  const seen = new Set<string>();
+  const options: ServiceTypeOption[] = [];
 
   for (const service of services) {
     const label = service.title[locale]?.trim();
-    if (label) labels.push(label);
+    if (!label || seen.has(label)) continue;
+    seen.add(label);
+    options.push({ label, value: label });
   }
-
-  for (const category of categories) {
-    const label = category.label[locale]?.trim();
-    if (label) labels.push(label);
-  }
-
-  const unique = [...new Set(labels)];
-  const options: ServiceTypeOption[] = unique.map((label) => ({
-    label,
-    value: label,
-  }));
 
   const otherLabel = OTHER_LABEL[locale];
-  options.push({ label: otherLabel, value: otherLabel });
+  if (!seen.has(otherLabel)) {
+    options.push({ label: otherLabel, value: otherLabel });
+  }
 
   return options;
 }

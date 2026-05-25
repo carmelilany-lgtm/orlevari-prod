@@ -38,7 +38,7 @@ function toLeadInput(body: ContactBody): CreateLeadInput | null {
     full_name: body.full_name?.trim() ?? "",
     phone: body.phone?.trim() ?? "",
     email: body.email?.trim() ?? "",
-    service_type: trimOptional(body.service_type),
+    service_type: body.service_type?.trim() ?? "",
     message: trimOptional(body.message),
     language,
     privacy_accepted: body.privacy_accepted === true,
@@ -93,7 +93,7 @@ export async function POST(request: Request) {
   const validation = validateLeadInput(input);
   if (!validation.ok) {
     return NextResponse.json(
-      { ok: false, error: "Please check the form and try again" },
+      { ok: false, errors: validation.errors },
       { status: 400 },
     );
   }

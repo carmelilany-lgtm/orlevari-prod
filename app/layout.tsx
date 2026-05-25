@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { Cormorant_Garamond, Heebo, Inter } from "next/font/google";
+import { LOCALE_BOOTSTRAP_SCRIPT } from "@/lib/i18n/locale-storage";
 import {
   DEFAULT_DESCRIPTION,
   DEFAULT_TITLE,
@@ -62,6 +64,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-[#070b14] text-slate-100 antialiased">
+        <Script
+          id="lev-ari-locale-bootstrap"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: LOCALE_BOOTSTRAP_SCRIPT }}
+        />
         <>
           {children}
           {/* Vercel Analytics — active when deployed on Vercel */}

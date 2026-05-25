@@ -33,13 +33,15 @@ export async function saveSiteContent(
   if (!("supabase" in ctx)) return ctx;
 
   for (const row of updates) {
+    const payload = {
+      key: row.key,
+      value_en: row.value_en?.trim() || null,
+      value_he: row.value_he?.trim() || null,
+    };
+
     const { error } = await ctx.supabase
       .from("site_content")
-      .update({
-        value_en: row.value_en?.trim() || null,
-        value_he: row.value_he?.trim() || null,
-      })
-      .eq("key", row.key);
+      .upsert(payload, { onConflict: "key" });
 
     if (error) {
       return actionError(adminErrors.saveContentFailed(row.key, error.message));

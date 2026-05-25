@@ -108,7 +108,7 @@ types/                  # language, portfolio, content, services, leads, works
 | Supabase configured, rows published | Live admin data | CMS → translations fallback | CMS → hide if missing |
 | Supabase configured, nothing published | Empty sections (no mock portfolio) | CMS → translations fallback | CMS only; hide missing links |
 
-- Contact **Service Type** dropdown: published services + video category labels (active language), deduped, plus “Other” / “אחר”.
+- Contact **Service Type** dropdown: published services only (active language), plus “Other” / “אחר”.
 - WhatsApp priority: CMS `whatsapp_number` → `WHATSAPP_PHONE` env → hidden on live site if both missing.
 - Homepage SEO: `generateMetadata` uses CMS `seo_*` keys (English default); `NEXT_PUBLIC_SITE_URL` sets `metadataBase` when set.
 - Admin saves call `revalidatePath('/')`; homepage is `force-dynamic` for fresh public data.

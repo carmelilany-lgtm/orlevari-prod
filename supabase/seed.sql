@@ -104,16 +104,18 @@ VALUES
   ),
   ('phone', '+972-50-000-0000', '+972-50-000-0000'),
   ('email', 'hello@lev-ari.com', 'hello@lev-ari.com'),
-  ('whatsapp_number', '972500000000', '972500000000'),
+  ('whatsapp_number', '', ''),
+  ('whatsapp_enabled', 'true', 'true'),
+  ('whatsapp_floating_enabled', 'true', 'true'),
   (
     'whatsapp_message_en',
-    'Hi Or, I''d like to discuss a video project.',
-    NULL
+    'Hi, I''d like to ask about a video production project.',
+    'Hi, I''d like to ask about a video production project.'
   ),
   (
     'whatsapp_message_he',
-    NULL,
-    'היי אור, אשמח לדבר על פרויקט וידאו.'
+    'שלום, אשמח לקבל פרטים לגבי הפקת וידאו.',
+    'שלום, אשמח לקבל פרטים לגבי הפקת וידאו.'
   ),
   ('seo_title_en', 'Lev Ari Productions | Cinematic Video', 'Lev Ari Productions | וידאו קולנועי'),
   ('seo_title_he', 'לב ארי הפקות | הפקות וידאו קולנועיות', 'לב ארי הפקות | הפקות וידאו קולנועיות'),

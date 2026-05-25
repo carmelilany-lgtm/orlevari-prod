@@ -35,6 +35,8 @@ export const SITE_CONTENT_SECTIONS: {
       "whatsapp_number",
       "whatsapp_message_en",
       "whatsapp_message_he",
+      "whatsapp_enabled",
+      "whatsapp_floating_enabled",
     ],
   },
   {
@@ -60,8 +62,4 @@ const LONG_TEXT_KEYS = new Set<SiteContentKey>([
 
 export function isLongContentKey(key: SiteContentKey): boolean {
   return LONG_TEXT_KEYS.has(key);
-}
-
-export function formatContentKeyLabel(key: string): string {
-  return key.replace(/_/g, " ");
 }

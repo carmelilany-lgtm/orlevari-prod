@@ -18,6 +18,8 @@ type Props = {
   onChange: (value: string) => void;
   required?: boolean;
   inputClass: string;
+  ariaInvalid?: boolean;
+  ariaDescribedBy?: string;
 };
 
 export function ServiceTypePicker({
@@ -29,6 +31,8 @@ export function ServiceTypePicker({
   onChange,
   required,
   inputClass,
+  ariaInvalid,
+  ariaDescribedBy,
 }: Props) {
   const { dir } = useLanguage();
   const listboxId = useId();
@@ -72,6 +76,9 @@ export function ServiceTypePicker({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listboxId}
+        aria-required={required ? true : undefined}
+        aria-invalid={ariaInvalid ? true : undefined}
+        aria-describedby={ariaDescribedBy}
         data-required={required ? "true" : undefined}
         onClick={() => setOpen((prev) => !prev)}
         className={cn(

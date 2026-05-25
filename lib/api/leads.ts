@@ -1,40 +1,56 @@
+import { getContactValidationMessages } from "@/lib/contact/validation-messages";
+import {
+  isValidEmail,
+  isValidPhone,
+  type ContactFieldErrors,
+} from "@/lib/contact/validation";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   LEAD_MESSAGE_MAX_LENGTH,
   type CreateLeadInput,
 } from "@/types/leads";
-import { isLanguage } from "@/types/language";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export interface LeadValidationResult {
   ok: boolean;
-  errors?: Record<string, string>;
+  errors?: ContactFieldErrors;
 }
 
 export function validateLeadInput(input: CreateLeadInput): LeadValidationResult {
-  const errors: Record<string, string> = {};
+  const messages = getContactValidationMessages(input.language);
+  const errors: ContactFieldErrors = {};
 
-  if (!input.full_name?.trim()) {
-    errors.full_name = "Full name is required";
+  const fullName = input.full_name?.trim() ?? "";
+  if (!fullName) {
+    errors.full_name = messages.fullNameRequired;
+  } else if (fullName.length < 2) {
+    errors.full_name = messages.fullNameTooShort;
   }
-  if (!input.phone?.trim()) {
-    errors.phone = "Phone is required";
+
+  const phone = input.phone?.trim() ?? "";
+  if (!phone) {
+    errors.phone = messages.phoneRequired;
+  } else if (!isValidPhone(phone)) {
+    errors.phone = messages.phoneInvalid;
   }
-  if (!input.email?.trim()) {
-    errors.email = "Email is required";
-  } else if (!EMAIL_RE.test(input.email.trim())) {
-    errors.email = "Invalid email format";
+
+  const email = input.email?.trim() ?? "";
+  if (!email) {
+    errors.email = messages.emailRequired;
+  } else if (!isValidEmail(email)) {
+    errors.email = messages.emailInvalid;
   }
+
+  if (!input.service_type?.trim()) {
+    errors.service_type = messages.serviceTypeRequired;
+  }
+
   if (input.privacy_accepted !== true) {
-    errors.privacy_accepted = "Privacy policy must be accepted";
+    errors.privacy_accepted = messages.privacyRequired;
   }
-  if (!isLanguage(input.language)) {
-    errors.language = "Language must be en or he";
-  }
-  if (input.message && input.message.trim().length > LEAD_MESSAGE_MAX_LENGTH) {
-    errors.message = `Message must be at most ${LEAD_MESSAGE_MAX_LENGTH} characters`;
+
+  const message = input.message?.trim() ?? "";
+  if (message.length > LEAD_MESSAGE_MAX_LENGTH) {
+    errors.message = messages.messageTooLong;
   }
 
   return Object.keys(errors).length === 0

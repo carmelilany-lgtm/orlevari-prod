@@ -24,6 +24,8 @@ export type SiteContentKey =
   | "whatsapp_number"
   | "whatsapp_message_en"
   | "whatsapp_message_he"
+  | "whatsapp_enabled"
+  | "whatsapp_floating_enabled"
   | "seo_title_en"
   | "seo_title_he"
   | "seo_description_en"

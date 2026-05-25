@@ -32,12 +32,16 @@ export function buildMailtoHref(email: string): string | null {
   return `mailto:${trimmed}`;
 }
 
+export function isValidWhatsAppDigits(normalized: string): boolean {
+  return normalized.length >= 7 && normalized.length <= 15;
+}
+
 export function buildWhatsAppHref(
   number: string,
   message?: string,
 ): string | null {
   const normalized = normalizePhoneForWhatsApp(number);
-  if (!normalized) return null;
+  if (!normalized || !isValidWhatsAppDigits(normalized)) return null;
 
   const base = `https://wa.me/${normalized}`;
   const text = message?.trim();

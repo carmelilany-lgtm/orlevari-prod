@@ -55,11 +55,11 @@ const privacyEn: LegalPageContent = {
       ],
     },
     {
-      heading: "Third-party services: Supabase, Resend, Vercel",
+      heading: "Third-party services",
       paragraphs: [
-        "Supabase provides database, authentication (for admin users), and file storage. Contact data and site content may be stored there under configured security rules.",
-        "Resend delivers email notifications related to contact form submissions. Only necessary submission details are included in those emails.",
-        "Vercel hosts the website and may process request logs and deployment analytics. Environment variables with secrets are kept server-side and are not exposed to visitors.",
+        "We use trusted third-party providers to host the website, store data, send operational emails, and support site management. Contact data and site content may be processed and stored by these providers under configured security rules.",
+        "Email notifications related to contact form submissions include only the details needed to respond. Hosting and infrastructure providers may process standard request logs and analytics.",
+        "Sensitive configuration and credentials are kept server-side and are not exposed to visitors.",
       ],
     },
     {
@@ -122,11 +122,11 @@ const privacyHe: LegalPageContent = {
       ],
     },
     {
-      heading: "שירותי צד שלישי: Supabase, Resend, Vercel",
+      heading: "שירותי צד שלישי",
       paragraphs: [
-        "Supabase מספקת מסד נתונים, אימות (למנהלים) ואחסון קבצים. נתוני קשר ותוכן האתר עשויים להישמר שם תחת כללי אבטחה מוגדרים.",
-        "Resend שולחת התראות מייל הקשורות לטופס יצירת קשר. רק פרטים נחוצים נכללים במיילים.",
-        "Vercel מאחסנת את האתר ועשויה לעבד לוגים ואנליטיקת פריסה. משתני סביבה רגישים נשמרים בצד השרת ואינם נחשפים למבקרים.",
+        "אנו משתמשים בספקי שירות מהימנים לאירוח האתר, אחסון מידע, שליחת מיילים תפעוליים ותמיכה בניהול האתר. נתוני קשר ותוכן האתר עשויים להיות מעובדים ונשמרים אצל ספקים אלה תחת כללי אבטחה מוגדרים.",
+        "התראות מייל הקשורות לטופס יצירת קשר כוללות רק את הפרטים הנדרשים למענה. ספקי אירוח ותשתית עשויים לעבד לוגים ואנליטיקה סטנדרטיים.",
+        "הגדרות ופרטי גישה רגישים נשמרים בצד השרת ואינם נחשפים למבקרים.",
       ],
     },
     {

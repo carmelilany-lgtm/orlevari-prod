@@ -21,22 +21,24 @@ export function Contact() {
           title={cms("contact_title", t.contact.title)}
           subtitle={cms("contact_intro", t.contact.subtitle)}
         />
-        <div className="grid gap-12 lg:grid-cols-[1fr_minmax(0,280px)] lg:gap-16">
-          <ContactForm />
+        <div className="grid min-w-0 gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-start lg:gap-12">
+          <div className="min-w-0">
+            <ContactForm />
+          </div>
           {links.length > 0 ? (
-            <aside className="space-y-6">
-              <h3 className="text-base font-medium uppercase tracking-wider text-slate-500">
+            <aside className="min-w-0 space-y-5 lg:pt-1">
+              <h3 className="text-sm font-medium uppercase tracking-wider text-slate-500">
                 {cms("contact_title", t.contact.title)}
               </h3>
               <ul className="space-y-4">
                 {links.map((link) => (
-                  <li key={link.kind}>
+                  <li key={link.kind} className="min-w-0">
                     <span className="block text-sm text-slate-500">
                       {link.label}
                     </span>
                     <a
                       href={link.href}
-                      className="mt-1 block text-lg text-slate-200 transition-colors hover:text-cyan-400"
+                      className="mt-1 block break-words text-base leading-snug text-slate-200 transition-colors [overflow-wrap:anywhere] hover:text-cyan-400 sm:text-lg"
                       {...(link.href.startsWith("http")
                         ? { target: "_blank", rel: "noopener noreferrer" }
                         : {})}

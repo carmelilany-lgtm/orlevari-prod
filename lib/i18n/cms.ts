@@ -7,10 +7,14 @@ function pickCmsValue(
   locale: Locale,
 ): string | null {
   if (!row) return null;
-  const primary = locale === "he" ? row.value_he : row.value_en;
-  const secondary = locale === "he" ? row.value_en : row.value_he;
-  const value = primary?.trim() || secondary?.trim();
-  return value || null;
+  if (locale === "en") {
+    const en = row.value_en?.trim();
+    return en || null;
+  }
+
+  const he = row.value_he?.trim();
+  const en = row.value_en?.trim();
+  return he || en || null;
 }
 
 /** CMS value only — null when missing or whitespace-only */

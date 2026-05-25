@@ -1,11 +1,13 @@
 import "server-only";
 
+import { isValidEmail } from "@/lib/contact/validation";
 import { getResendClient } from "@/lib/resend/client";
 import {
   getResendEnv,
   isNotificationEmailConfigured,
   isResendConfigured,
 } from "@/lib/resend/env";
+import { resolveReplyTo } from "@/lib/resend/reply-to";
 import { buildCustomerConfirmationEmail } from "@/lib/resend/templates/customer-confirmation";
 import { buildLeadNotificationEmail } from "@/lib/resend/templates/lead-notification";
 import type { Language } from "@/types/language";
@@ -41,13 +43,15 @@ async function sendEmail(options: {
     return { ok: false, skipped: true, reason: "Resend not configured" };
   }
 
+  const replyTo = resolveReplyTo(emailFrom, options.replyTo);
+
   const { data, error } = await resend.emails.send({
     from: emailFrom,
     to: options.to,
     subject: options.subject,
     html: options.html,
     text: options.text,
-    replyTo: options.replyTo,
+    ...(replyTo ? { replyTo } : {}),
   });
 
   if (error) {
@@ -83,13 +87,15 @@ export async function sendLeadNotificationEmail(
   const { notificationEmail } = getResendEnv();
   const to = notificationEmail!.trim();
   const { subject, html, text } = buildLeadNotificationEmail(lead);
+  const customerEmail = lead.email.trim();
+  const replyTo = isValidEmail(customerEmail) ? customerEmail : undefined;
 
   return sendEmail({
     to,
     subject,
     html,
     text,
-    replyTo: lead.email.trim(),
+    replyTo,
   });
 }
 
@@ -111,6 +117,5 @@ export async function sendCustomerConfirmationEmail(
     subject,
     html,
     text,
-    replyTo: getResendEnv().emailFrom,
   });
 }

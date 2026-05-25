@@ -60,6 +60,8 @@ export type TranslationKeys = {
       success: string;
       error: string;
       selectService: string;
+      optional: string;
+      requiredMark: string;
     };
     links: {
       phone: string;
@@ -138,15 +140,18 @@ const en: TranslationKeys = {
       fullName: "Full Name",
       phone: "Phone",
       email: "Email",
-      serviceType: "Service Type",
-      message: "Message",
+      serviceType: "Subject / Service Type",
+      message: "Message (optional)",
       privacyAgree: "I agree to the",
       privacyLink: "Privacy Policy",
       submit: "Send Message",
       submitting: "Sending…",
-      success: "Thank you. Your message was sent successfully.",
-      error: "Something went wrong. Please try again.",
-      selectService: "Select a service",
+      success:
+        "Thank you. Your message was sent successfully. We'll get back to you soon.",
+      error: "We couldn't send your message. Please try again in a moment.",
+      selectService: "Choose a subject / service type",
+      optional: "optional",
+      requiredMark: "Required",
     },
     links: {
       phone: "Phone",
@@ -225,15 +230,17 @@ const he: TranslationKeys = {
       fullName: "שם מלא",
       phone: "טלפון",
       email: "אימייל",
-      serviceType: "סוג שירות",
-      message: "הודעה",
+      serviceType: "נושא / סוג שירות",
+      message: "הודעה (אופציונלי)",
       privacyAgree: "אני מאשר/ת את",
       privacyLink: "מדיניות הפרטיות",
       submit: "שליחת הודעה",
       submitting: "שולח…",
-      success: "תודה, הפנייה נשלחה בהצלחה.",
-      error: "משהו השתבש. נסה שוב.",
-      selectService: "בחרו שירות",
+      success: "תודה, הפנייה נשלחה בהצלחה. נחזור אליך בהקדם.",
+      error: "לא הצלחנו לשלוח את הפנייה. נסה שוב בעוד רגע.",
+      selectService: "בחר נושא / סוג שירות",
+      optional: "אופציונלי",
+      requiredMark: "שדה חובה",
     },
     links: {
       phone: "טלפון",

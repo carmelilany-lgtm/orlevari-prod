@@ -80,23 +80,40 @@ export default async function AdminDashboardPage() {
           <p className="text-sm text-slate-500">{adminCopy.dashboard.noLeadsYet}</p>
         ) : (
           <ul className="divide-y divide-blue-950/60">
-            {recentLeads.map((lead) => (
-              <li key={lead.id} className="py-3 text-sm">
-                <span className="font-medium text-slate-200">
-                  {lead.full_name}
-                </span>
-                <span className="text-slate-500" dir="ltr">
-                  {" "}
-                  · {lead.email}
-                </span>
-                <p className="text-xs text-slate-500">
-                  {new Date(lead.created_at).toLocaleString("he-IL", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}
-                </p>
-              </li>
-            ))}
+            {recentLeads.map((lead) => {
+              const createdAt = new Date(lead.created_at).toLocaleString(
+                "he-IL",
+                { dateStyle: "medium", timeStyle: "short" },
+              );
+              return (
+                <li key={lead.id} className="py-3.5">
+                  <div className="flex items-start justify-between gap-6">
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <p className="font-medium text-slate-100">
+                        {lead.full_name}
+                      </p>
+                      <p
+                        dir="ltr"
+                        className="truncate text-left text-sm text-slate-400"
+                      >
+                        {lead.email}
+                      </p>
+                      {lead.service_type ? (
+                        <p className="text-xs text-slate-500">
+                          {lead.service_type}
+                        </p>
+                      ) : null}
+                    </div>
+                    <time
+                      dateTime={lead.created_at}
+                      className="shrink-0 pt-0.5 text-xs leading-snug text-slate-500 tabular-nums"
+                    >
+                      {createdAt}
+                    </time>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

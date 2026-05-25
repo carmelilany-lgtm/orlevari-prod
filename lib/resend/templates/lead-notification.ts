@@ -77,7 +77,7 @@ export function buildLeadNotificationEmail(lead: LeadNotificationData): {
       <tr><td style="padding:8px 0;"><strong style="color:#334155;">Submitted / נשלח:</strong></td></tr>
       <tr><td style="padding:8px 0 16px;border-bottom:1px solid #e2e8f0;">${formatDate(lead.created_at, "en")}</td></tr>
       <tr><td style="padding:8px 0;"><strong style="color:#334155;">Message / הודעה:</strong></td></tr>
-      <tr><td style="padding:8px 0 16px;white-space:pre-wrap;">${formatOptionalValue(lead.message, "—")}</td></tr>
+      <tr><td style="padding:8px 0 16px;white-space:pre-wrap;">${formatOptionalValue(lead.message, lead.language === "he" ? "לא נכתבה הודעה." : "No message provided.")}</td></tr>
     </table>
     <p style="margin:0 0 12px;font-size:14px;color:#475569;">Quick actions:</p>
     <p style="margin:0 0 24px;">${actionButtons}</p>
@@ -100,7 +100,7 @@ export function buildLeadNotificationEmail(lead: LeadNotificationData): {
     `Service: ${lead.service_type?.trim() || "—"}`,
     `Language: ${languageLabel(lead.language)}`,
     `Submitted: ${lead.created_at}`,
-    `Message: ${lead.message?.trim() || "—"}`,
+    `Message: ${lead.message?.trim() || "No message provided."}`,
     "",
     "Source: Lev Ari Productions website",
   ].join("\n");

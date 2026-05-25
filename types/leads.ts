@@ -19,7 +19,7 @@ export interface CreateLeadInput {
   full_name: string;
   phone: string;
   email: string;
-  service_type?: string;
+  service_type: string;
   message?: string;
   language: Language;
   privacy_accepted: boolean;

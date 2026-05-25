@@ -36,11 +36,11 @@ export function buildCustomerConfirmationEmail(
 ): { subject: string; html: string; text: string } {
   const name = escapeHtml(lead.full_name.trim());
   const service = escapeHtml(formatServiceLabel(lead.service_type, lead.language));
+  const emptyMessageLabel =
+    lead.language === "he" ? "לא נכתבה הודעה." : "No message provided.";
   const messageBlock = lead.message?.trim()
     ? formatOptionalValue(lead.message)
-    : lead.language === "he"
-      ? "—"
-      : "—";
+    : escapeHtml(emptyMessageLabel);
 
   if (lead.language === "he") {
     const subject = "הפנייה שלך התקבלה — לב ארי הפקות";
@@ -68,7 +68,7 @@ export function buildCustomerConfirmationEmail(
       "",
       "פרטי הפנייה:",
       `סוג שירות: ${formatServiceLabel(lead.service_type, "he")}`,
-      `הודעה: ${lead.message?.trim() || "—"}`,
+      `הודעה: ${lead.message?.trim() || "לא נכתבה הודעה."}`,
       "",
       "בברכה,",
       "לב ארי הפקות",
@@ -102,7 +102,7 @@ export function buildCustomerConfirmationEmail(
     "",
     "Your request:",
     `Service: ${formatServiceLabel(lead.service_type, "en")}`,
-    `Message: ${lead.message?.trim() || "—"}`,
+    `Message: ${lead.message?.trim() || "No message provided."}`,
     "",
     "Best,",
     "Lev Ari Productions",

@@ -13,11 +13,10 @@ import { getCmsRawValue, resolveCmsText } from "@/lib/i18n/cms";
 import { translations, type TranslationKeys } from "@/lib/i18n/translations";
 import type { SiteContentKey, SiteContentMap } from "@/types/content";
 import {
-  DEFAULT_LOCALE,
-  LOCALE_STORAGE_KEY,
-  type Locale,
-} from "@/types/i18n";
-import { isLocale } from "@/types/i18n";
+  readLocaleFromStorage,
+  writeLocaleToStorage,
+} from "@/lib/i18n/locale-storage";
+import { DEFAULT_LOCALE, LOCALE_STORAGE_KEY, type Locale } from "@/types/i18n";
 
 interface LanguageContextValue {
   locale: Locale;
@@ -40,12 +39,6 @@ function applyDocumentLocale(locale: Locale) {
   document.documentElement.dir = dir;
 }
 
-function readStoredLocale(): Locale {
-  const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
-  if (stored && isLocale(stored)) return stored;
-  return DEFAULT_LOCALE;
-}
-
 const localeListeners = new Set<() => void>();
 
 function subscribeLocale(onStoreChange: () => void) {
@@ -63,7 +56,7 @@ function subscribeLocale(onStoreChange: () => void) {
 }
 
 function getLocaleSnapshot(): Locale {
-  return readStoredLocale();
+  return readLocaleFromStorage();
 }
 
 function getLocaleServerSnapshot(): Locale {
@@ -71,7 +64,7 @@ function getLocaleServerSnapshot(): Locale {
 }
 
 function persistLocale(locale: Locale) {
-  localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+  writeLocaleToStorage(locale);
   applyDocumentLocale(locale);
   localeListeners.forEach((listener) => listener());
 }

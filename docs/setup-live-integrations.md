@@ -164,9 +164,9 @@ After Supabase is connected, the homepage loads **published** rows only (no mock
 | Phone, email, WhatsApp | `/admin/content` keys `phone`, `email`, `whatsapp_number`, `whatsapp_message_*` | Shown only when set; no fake placeholders on live site |
 | Services cards | `/admin/services` | Published, `sort_order`; section hidden if none published |
 | Videos / categories / stills | `/admin/videos`, `/admin/categories`, `/admin/stills` | Published only; empty categories hidden; `initial_visible_count` per category |
-| Contact service dropdown | — | Built from published service titles + category titles + Other/אחר |
+| Contact service dropdown | — | Built from published service titles + Other/אחר |
 
-**WhatsApp:** CMS `whatsapp_number` first, then optional `WHATSAPP_PHONE` in `.env.local` (passed server-side). Floating mobile button hidden when no number on live site.
+**WhatsApp:** Controlled in `/admin/content` (number, EN/HE messages, contact + floating toggles). CMS `whatsapp_number` first, then optional `WHATSAPP_PHONE` in `.env.local`. Buttons stay hidden until a valid number exists. On an existing DB, run **[whatsapp-cms-upsert.sql](./whatsapp-cms-upsert.sql)** once, then set the number in admin and save.
 
 **SEO:** Edit `seo_title_en`, `seo_description_en`, etc. in content admin; set `NEXT_PUBLIC_SITE_URL` for canonical/Open Graph base.
 
