@@ -2,6 +2,7 @@
 
 import { StillsLightboxPlaceholder } from "@/components/works/StillsLightboxPlaceholder";
 import { StillsCollageLiveEditor } from "@/components/works/StillsCollageLiveEditor";
+import { VisualStillsUpload } from "@/components/visual-editor/VisualStillsUpload";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
 import { usePublicAdmin } from "@/hooks/use-public-admin";
 import {
@@ -298,6 +299,7 @@ export function StillsMasonryGallery() {
 
   return (
     <div aria-label={t.works.stillsSectionLabel}>
+      {visualEditFromQuery ? <VisualStillsUpload /> : null}
       {isAdmin &&
         !adminLoading &&
         sortedStills.length > 0 &&

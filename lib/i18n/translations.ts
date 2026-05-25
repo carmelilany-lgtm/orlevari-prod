@@ -91,6 +91,8 @@ export type TranslationKeys = {
     rights: string;
     privacy: string;
     accessibility: string;
+    creditPrefix: string;
+    cimediaAriaLabel: string;
   };
   legal: {
     backToHome: string;
@@ -195,6 +197,8 @@ const en: TranslationKeys = {
     rights: "All rights reserved Lev Ari Productions 2026",
     privacy: "Privacy Policy",
     accessibility: "Accessibility Statement",
+    creditPrefix: "Design & development:",
+    cimediaAriaLabel: "Visit Cimedia website",
   },
   legal: {
     backToHome: "Back to home",
@@ -298,6 +302,8 @@ const he: TranslationKeys = {
     rights: "כל הזכויות שמורות לב ארי הפקות 2026",
     privacy: "מדיניות פרטיות",
     accessibility: "הצהרת נגישות",
+    creditPrefix: "עיצוב ופיתוח:",
+    cimediaAriaLabel: "מעבר לאתר Cimedia",
   },
   legal: {
     backToHome: "חזרה לדף הבית",

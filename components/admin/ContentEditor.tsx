@@ -12,6 +12,7 @@ import {
   SITE_CONTENT_SECTIONS,
 } from "@/lib/admin/content-keys";
 import { isWhatsAppContentKey } from "@/lib/admin/whatsapp-content-fields";
+import { AboutImageUpload } from "@/components/admin/AboutImageUpload";
 import { WhatsAppContentFields } from "@/components/admin/WhatsAppContentFields";
 import { adminCopy, contentSectionTitle } from "@/lib/admin/copy";
 import type { SiteContentItem, SiteContentKey } from "@/types/content";
@@ -74,6 +75,7 @@ export function ContentEditor({ initialContent }: Props) {
   return (
     <form onSubmit={handleSave} className="space-y-8 text-right">
       <p className="text-sm text-slate-500">{adminCopy.content.pageHelper}</p>
+      <p className="text-sm text-slate-500">{adminCopy.content.heroStillsNote}</p>
       <AdminAlert variant="error" message={error} />
       <AdminAlert variant="success" message={success} />
 
@@ -83,7 +85,13 @@ export function ContentEditor({ initialContent }: Props) {
             {contentSectionTitle(section.title)}
           </h2>
           <div className="space-y-6">
+            {section.title === "About" ? (
+              <AboutImageUpload content={initialContent} />
+            ) : null}
             {section.keys.map((key) => {
+              if (key === "about_image_url" || key === "about_image_storage_path") {
+                return null;
+              }
               if (isWhatsAppContentKey(key)) {
                 return null;
               }

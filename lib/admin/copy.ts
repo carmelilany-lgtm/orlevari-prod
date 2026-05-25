@@ -165,6 +165,11 @@ export const adminCopy = {
     deleteMessage: "הרשומה יימחקו מהמסד, וקובץ האחסון יוסר אם אפשר.",
     uploading: "מעלה תמונה…",
     uploadFailedHint: "בדקו את סוג הקובץ (JPG, PNG, WebP) וגודל (עד 10MB).",
+    heroFlag: "מופיע בהדר",
+    heroFlagHint:
+      "תמונות שמסומנות כאן יופיעו ברקע אזור הפתיחה באתר.",
+    heroPageNote:
+      "ניהול תמונות ההדר מתבצע דרך גלריית התמונות — סמנו תמונות כ׳מופיע בהדר׳.",
   },
   services: {
     intro: "ניהול שירותים דו-לשוניים המוצגים באתר.",
@@ -189,6 +194,13 @@ export const adminCopy = {
   content: {
     pageHelper:
       "ערכת טקסט? לחצת שמירה? האתר מתעדכן. כרמל יכול להמשיך לשתות קפה.",
+    aboutImageTitle: "תמונת אודות",
+    aboutImageReplace: "החלפת תמונת אודות",
+    aboutImageUploading: "מעלה תמונה...",
+    aboutImageSaved: "תמונת האודות עודכנה בהצלחה",
+    aboutImageNoPreview: "לא הוגדרה תמונה — מוצגת תמונת ברירת מחדל באתר.",
+    heroStillsNote:
+      "ניהול תמונות ההדר מתבצע דרך גלריית התמונות — סמנו תמונות כ׳מופיע בהדר׳.",
     intro:
       "עריכת תוכן דו-לשוני ב-Supabase. כשערך ריק, האתר הציבורי משתמש בתרגומים המובנים.",
     saved:
@@ -297,6 +309,7 @@ export const adminErrors = {
   dimensionsUnreadable: "לא ניתן לקרוא את ממדי התמונה",
   storageUploadFailed: "העלאה ל־Storage נכשלה",
   dbInsertFailed: "שמירת התמונה במסד הנתונים נכשלה",
+  aboutUploadFailed: "העלאת תמונת האודות נכשלה",
   invalidFileName: "שם הקובץ לא תקין",
   collageSaveFailed: "שמירת הפריסה נכשלה.",
   collageSaved: "הפריסה נשמרה בהצלחה.",

@@ -3,7 +3,7 @@
 import type { ActionResult } from "@/lib/admin/action-result";
 import { actionError, actionOk } from "@/lib/admin/action-result";
 import { adminErrors } from "@/lib/admin/copy";
-import { revalidatePublicSite } from "@/lib/admin/revalidate";
+import { revalidateSiteAndAdminMedia } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import type { SiteContentItem } from "@/types/content";
 
@@ -48,6 +48,6 @@ export async function saveSiteContent(
     }
   }
 
-  revalidatePublicSite();
+  revalidateSiteAndAdminMedia();
   return actionOk();
 }

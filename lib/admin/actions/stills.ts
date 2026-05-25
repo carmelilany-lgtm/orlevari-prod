@@ -3,7 +3,7 @@
 import type { ActionResult } from "@/lib/admin/action-result";
 import { actionError, actionOk } from "@/lib/admin/action-result";
 import { adminErrors } from "@/lib/admin/copy";
-import { revalidatePublicSite } from "@/lib/admin/revalidate";
+import { revalidateSiteAndAdminMedia } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import {
   normalizeImageMime,
@@ -56,6 +56,7 @@ export type StillImageInput = {
   alt_he: string | null;
   sort_order: number;
   is_published: boolean;
+  show_in_hero?: boolean;
 };
 
 export async function saveStillImageMeta(
@@ -71,11 +72,31 @@ export async function saveStillImageMeta(
       alt_he: input.alt_he?.trim() || null,
       sort_order: input.sort_order,
       is_published: input.is_published,
+      ...(input.show_in_hero !== undefined
+        ? { show_in_hero: input.show_in_hero }
+        : {}),
     })
     .eq("id", input.id);
 
   if (error) return actionError(error.message);
-  revalidatePublicSite();
+  revalidateSiteAndAdminMedia();
+  return actionOk();
+}
+
+export async function updateStillHeroFlag(
+  id: string,
+  showInHero: boolean,
+): Promise<ActionResult> {
+  const ctx = await requireAdmin();
+  if (!("supabase" in ctx)) return ctx;
+
+  const { error } = await ctx.supabase
+    .from("still_images")
+    .update({ show_in_hero: showInHero })
+    .eq("id", id);
+
+  if (error) return actionError(error.message);
+  revalidateSiteAndAdminMedia();
   return actionOk();
 }
 
@@ -165,7 +186,7 @@ export async function uploadStillImage(formData: FormData): Promise<
     return actionError(adminErrors.dbInsertFailed);
   }
 
-  revalidatePublicSite();
+  revalidateSiteAndAdminMedia();
   return actionOk({ id: data.id });
 }
 
@@ -194,7 +215,7 @@ export async function deleteStillImage(id: string): Promise<ActionResult> {
   const { error } = await ctx.supabase.from("still_images").delete().eq("id", id);
 
   if (error) return actionError(error.message);
-  revalidatePublicSite();
+  revalidateSiteAndAdminMedia();
   return actionOk();
 }
 
@@ -211,6 +232,6 @@ export async function toggleStillPublished(
     .eq("id", id);
 
   if (error) return actionError(error.message);
-  revalidatePublicSite();
+  revalidateSiteAndAdminMedia();
   return actionOk();
 }

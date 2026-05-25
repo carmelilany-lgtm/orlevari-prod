@@ -17,6 +17,7 @@ import {
   getNextStillSortOrder,
   saveStillImageMeta,
   toggleStillPublished,
+  updateStillHeroFlag,
   uploadStillImage,
   type StillImageRow,
 } from "@/lib/admin/actions/stills";
@@ -55,6 +56,7 @@ export function StillsManager({ initialStills }: Props) {
   const [altHe, setAltHe] = useState("");
   const [sortOrder, setSortOrder] = useState(0);
   const [published, setPublished] = useState(true);
+  const [showInHero, setShowInHero] = useState(false);
   const [query, setQuery] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -240,6 +242,7 @@ export function StillsManager({ initialStills }: Props) {
     setAltHe(row.alt_he ?? "");
     setSortOrder(row.sort_order);
     setPublished(row.is_published);
+    setShowInHero(row.show_in_hero ?? false);
   }
 
   async function handleSaveMeta(e: React.FormEvent) {
@@ -253,6 +256,7 @@ export function StillsManager({ initialStills }: Props) {
       alt_he: altHe,
       sort_order: sortOrder,
       is_published: published,
+      show_in_hero: showInHero,
     });
     setLoading(false);
     if (!result.success) {
@@ -261,6 +265,15 @@ export function StillsManager({ initialStills }: Props) {
     }
     setSuccess(adminCopy.stills.updated);
     setEditing(null);
+    router.refresh();
+  }
+
+  async function handleHeroToggle(id: string, show_in_hero: boolean) {
+    const result = await updateStillHeroFlag(id, show_in_hero);
+    if (!result.success) {
+      setError(result.error);
+      return;
+    }
     router.refresh();
   }
 
@@ -296,6 +309,8 @@ export function StillsManager({ initialStills }: Props) {
 
       <AdminAlert variant="error" message={error} />
       <AdminAlert variant="success" message={success} />
+
+      <p className="text-sm text-slate-500">{adminCopy.stills.heroPageNote}</p>
 
       <div className={`${adminCardClass} space-y-4`}>
         <h2 className="text-lg font-semibold text-white">
@@ -429,7 +444,16 @@ export function StillsManager({ initialStills }: Props) {
               value={sortOrder}
               onChange={(v) => setSortOrder(Number(v) || 0)}
             />
+            <label className="flex items-end gap-2 text-sm text-slate-300 sm:col-span-2">
+              <input
+                type="checkbox"
+                checked={showInHero}
+                onChange={(e) => setShowInHero(e.target.checked)}
+              />
+              {adminCopy.stills.heroFlag}
+            </label>
           </div>
+          <p className="text-xs text-slate-500">{adminCopy.stills.heroFlagHint}</p>
           <div className="flex gap-3">
             <button type="submit" className={adminBtnPrimary} disabled={loading}>
               {adminCopy.actions.save}
@@ -476,6 +500,17 @@ export function StillsManager({ initialStills }: Props) {
                 published={row.is_published}
                 onToggle={(p) => handleToggle(row.id, p)}
               />
+              <label className="flex items-center gap-2 text-sm text-slate-300">
+                <input
+                  type="checkbox"
+                  checked={row.show_in_hero ?? false}
+                  onChange={(e) =>
+                    void handleHeroToggle(row.id, e.target.checked)
+                  }
+                />
+                {adminCopy.stills.heroFlag}
+              </label>
+              <p className="text-xs text-slate-500">{adminCopy.stills.heroFlagHint}</p>
               <div className="flex gap-2">
                 <button
                   type="button"

@@ -2,6 +2,8 @@
 
 import { useLanguage } from "@/lib/i18n/context";
 
+const CIMEDIA_URL = "https://cimedia.co.il";
+
 export function Footer() {
   const { t } = useLanguage();
 
@@ -27,6 +29,21 @@ export function Footer() {
             </a>
           ))}
         </nav>
+      </div>
+      <div className="container-wide border-t border-blue-900/20 px-4 py-4 sm:px-6 lg:px-8">
+        <p className="text-center text-xs text-slate-600 sm:text-start">
+          <span>{t.footer.creditPrefix} </span>
+          <a
+            href={CIMEDIA_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            dir="ltr"
+            aria-label={t.footer.cimediaAriaLabel}
+            className="text-slate-500 underline-offset-2 transition-colors hover:text-cyan-400/90 hover:underline focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400/70"
+          >
+            Cimedia
+          </a>
+        </p>
       </div>
     </footer>
   );

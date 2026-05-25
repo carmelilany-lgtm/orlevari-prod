@@ -15,6 +15,8 @@ export type SiteContentKey =
   | "hero_secondary_button"
   | "about_title"
   | "about_text"
+  | "about_image_url"
+  | "about_image_storage_path"
   | "works_title"
   | "services_title"
   | "contact_title"

@@ -89,6 +89,8 @@ VALUES
   ('hero_primary_button', 'View Our Work', 'לעבודות שלנו'),
   ('hero_secondary_button', 'Get in Touch', 'צור קשר'),
   ('about_title', 'About Or', 'אודות אור'),
+  ('about_image_url', '', ''),
+  ('about_image_storage_path', '', ''),
   (
     'about_text',
     'Through my camera and creative craft, I tell stories that matter. Photography, videography, and editing allow me to capture the real emotion behind every moment. I approach each project with heart, precision, and personal attention, creating films and visuals that feel meaningful, authentic, and true to the people, businesses, and memories they represent.',

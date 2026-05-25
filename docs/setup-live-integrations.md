@@ -252,9 +252,52 @@ Editable homepage fields: hero title/subtitle/buttons, about title/text, works t
 
 Text visual mode (`visualEdit=1`) and stills collage mode (`editCollage=1`) are separate. Collage auto-edit from the query param is disabled while `visualEdit=1` is active.
 
+### Add images from the visual editor
+
+1. Open `/?visualEdit=1` as a signed-in admin.
+2. Scroll to the **Works / stills** section — use **Add images to gallery** (or Hebrew equivalent).
+3. Choose one or more JPG/PNG/WebP files (≤ 10MB each). Upload runs via admin-protected server actions; visitors never see this control.
+4. New images appear in the gallery after upload (page refresh/revalidation).
+
+### About image (visual editor)
+
+1. In `/?visualEdit=1`, hover the About section image and click **Change image** / **החלפת תמונה**.
+2. The file uploads immediately to the `about` bucket and updates `site_content` keys `about_image_url` and `about_image_storage_path`.
+
+Public visitors cannot upload or see edit overlays.
+
 ---
 
 ## I. Stills gallery (upload + live collage)
+
+### Hero / header images
+
+1. Admin → **גלריית תמונות**.
+2. For each still, enable **מופיע בהדר** (stored as `still_images.show_in_hero`).
+3. The public hero collage prefers published stills with `show_in_hero = true`; if none are marked, it uses all published stills; if there are no stills, gradient placeholders remain.
+
+Apply migration `004_add_stills_hero_flag.sql` on existing databases:
+
+```sql
+ALTER TABLE public.still_images
+ADD COLUMN IF NOT EXISTS show_in_hero boolean NOT NULL DEFAULT false;
+```
+
+### About image (admin content)
+
+1. Admin → **תוכן האתר** → **אודות** section → **החלפת תמונת אודות**.
+2. Upload JPG/PNG/WebP (≤ 10MB) to the `about` bucket.
+3. Public About section reads `about_image_url` from `site_content`.
+
+Seed keys (safe to re-run):
+
+```sql
+INSERT INTO public.site_content (key, value_en, value_he)
+VALUES
+  ('about_image_url', '', ''),
+  ('about_image_storage_path', '', '')
+ON CONFLICT (key) DO NOTHING;
+```
 
 ### Upload multiple images
 

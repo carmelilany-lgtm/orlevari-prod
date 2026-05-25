@@ -63,6 +63,7 @@ export interface StillImage {
   aspect_ratio: number | null;
   sort_order: number;
   is_published: boolean;
+  show_in_hero?: boolean;
   collage_layout?: CollageLayout | null;
   created_at?: string;
   updated_at?: string;

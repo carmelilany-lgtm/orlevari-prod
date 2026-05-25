@@ -2,9 +2,13 @@
 
 import { EditableText } from "@/components/visual-editor/EditableText";
 import { useVisualEditorActive } from "@/components/visual-editor/VisualEditorProvider";
+import { useSiteData } from "@/components/providers/SiteDataProvider";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/lib/i18n/context";
+import { pickHeroStillImages } from "@/lib/stills/hero-stills";
+import { stillAlt } from "@/types/works";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 
 const COLLAGE_CELLS = 6;
 
@@ -21,8 +25,14 @@ const heroButtonClass =
   "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-medium transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400";
 
 export function Hero() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const visualEdit = useVisualEditorActive();
+  const { stills } = useSiteData();
+
+  const heroCells = useMemo(
+    () => pickHeroStillImages(stills, COLLAGE_CELLS),
+    [stills],
+  );
 
   return (
     <section
@@ -113,22 +123,37 @@ export function Hero() {
           aria-label={t.hero.collageLabel}
         >
           <div className="absolute inset-0 grid grid-cols-3 grid-rows-2 gap-2 rounded-2xl p-2 sm:gap-3">
-            {Array.from({ length: COLLAGE_CELLS }).map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "hero-collage-cell overflow-hidden rounded-lg ring-1 ring-blue-500/10",
-                  i === 0 && "col-span-2 row-span-2",
-                )}
-              >
+            {Array.from({ length: COLLAGE_CELLS }).map((_, i) => {
+              const still = heroCells[i];
+              const hasImage = Boolean(still?.image_url);
+              return (
                 <div
+                  key={still?.id ?? `placeholder-${i}`}
                   className={cn(
-                    "h-full min-h-[80px] w-full bg-gradient-to-br",
-                    cellGradients[i % cellGradients.length],
+                    "hero-collage-cell overflow-hidden rounded-lg ring-1 ring-blue-500/10",
+                    i === 0 && "col-span-2 row-span-2",
                   )}
-                />
-              </div>
-            ))}
+                >
+                  {hasImage && still ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={still.image_url}
+                      alt={stillAlt(still, locale)}
+                      className="h-full min-h-[80px] w-full object-cover"
+                      loading={i < 2 ? "eager" : "lazy"}
+                      decoding="async"
+                    />
+                  ) : (
+                    <div
+                      className={cn(
+                        "h-full min-h-[80px] w-full bg-gradient-to-br",
+                        cellGradients[i % cellGradients.length],
+                      )}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
           <div
             className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-t from-[#070b14]/90 via-transparent to-[#070b14]/20"
