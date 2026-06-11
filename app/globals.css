@@ -36,6 +36,12 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--bg-primary);
+}
+
+html,
+body {
+  overscroll-behavior-y: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -53,7 +59,8 @@ html {
 }
 
 body {
-  background: linear-gradient(
+  background-color: var(--bg-primary);
+  background-image: linear-gradient(
     180deg,
     var(--navy-deep) 0%,
     var(--bg-primary) 40%,

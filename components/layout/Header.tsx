@@ -11,7 +11,16 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        setScrolled((prev) => (prev ? y > 8 : y > 32));
+        ticking = false;
+      });
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -34,9 +43,9 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 isolate transition-[background-color,box-shadow] duration-300",
+        "fixed inset-x-0 top-0 z-50 isolate transform-gpu backface-hidden transition-[box-shadow] duration-300",
         scrolled
-          ? "bg-[#070b14]/95 shadow-[0_1px_0_0_#050a12] backdrop-blur-md supports-[backdrop-filter]:bg-[#070b14]/90"
+          ? "bg-[#070b14] shadow-[0_1px_0_0_#050a12]"
           : "bg-transparent shadow-[0_1px_0_0_transparent]",
       )}
     >
