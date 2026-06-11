@@ -60,7 +60,7 @@ export default function RootLayout({
       lang="en"
       dir="ltr"
       data-scroll-behavior="smooth"
-      className={`${inter.variable} ${heebo.variable} ${cormorant.variable} h-full scroll-smooth bg-[#070b14]`}
+      className={`${inter.variable} ${heebo.variable} ${cormorant.variable} min-h-full scroll-smooth bg-[#050a12]`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-[#070b14] text-slate-100 antialiased">
