@@ -18,9 +18,16 @@ type Props = {
   imageUrl: string | null;
   imageAlt: string;
   className?: string;
+  /** Fill the parent height; show the full image anchored to the bottom. */
+  fillHeight?: boolean;
 };
 
-export function EditableAboutImage({ imageUrl, imageAlt, className }: Props) {
+export function EditableAboutImage({
+  imageUrl,
+  imageAlt,
+  className,
+  fillHeight = false,
+}: Props) {
   const active = useVisualEditorActive();
   const { locale, cmsMap } = useLanguage();
   const router = useRouter();
@@ -78,7 +85,9 @@ export function EditableAboutImage({ imageUrl, imageAlt, className }: Props) {
   return (
     <div
       className={cn(
-        "relative mx-auto aspect-[4/5] w-full max-h-[280px] max-w-[240px] overflow-hidden rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.1)] ring-1 ring-cyan-400/15 sm:max-h-[300px] sm:max-w-[260px] lg:mx-0 lg:max-h-[320px] lg:max-w-none",
+        fillHeight
+          ? "relative h-full w-full overflow-hidden rounded-2xl"
+          : "relative mx-auto aspect-[4/5] w-full max-h-[280px] max-w-[240px] overflow-hidden rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.1)] ring-1 ring-cyan-400/15 sm:max-h-[300px] sm:max-w-[260px] lg:mx-0 lg:max-h-[320px] lg:max-w-none",
         className,
       )}
       role="img"
@@ -89,7 +98,10 @@ export function EditableAboutImage({ imageUrl, imageAlt, className }: Props) {
         <img
           src={displayUrl}
           alt={imageAlt}
-          className="absolute inset-0 h-full w-full object-cover"
+          className={cn(
+            "absolute inset-0 h-full w-full",
+            fillHeight ? "object-cover object-center" : "object-cover",
+          )}
         />
       ) : (
         <>
