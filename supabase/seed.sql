@@ -4,20 +4,19 @@
 -- Video categories
 INSERT INTO public.video_categories (slug, title_en, title_he, sort_order, initial_visible_count)
 VALUES
-  ('corporate', 'Corporate Films', 'סרטי תדמית', 1, 6),
-  ('events', 'Events', 'אירועים', 2, 6),
-  ('family', 'Family Films', 'סרטי משפחה', 3, 6),
-  ('music-shows', 'Music & Shows', 'הופעות ומוזיקה', 4, 6),
-  ('documentary', 'Documentary', 'דוקומנטרי', 5, 6),
-  ('short-films', 'Short Films', 'סרטים קצרים', 6, 6),
-  ('news', 'News & Reports', 'כתבות וחדשות', 7, 6),
-  ('haam-im-hagolan', 'Ha''am Im HaGolan', 'העם עם הגולן', 8, 6),
-  ('cooking', 'Cooking Shows', 'תוכניות בישול', 9, 6)
+  ('corporate', 'Corporate Films', 'סרטי תדמית', 1, 3),
+  ('events', 'Events', 'אירועים', 2, 3),
+  ('family', 'Family Films', 'סרטי משפחה', 3, 3),
+  ('music-shows', 'Music & Shows', 'הופעות ומוזיקה', 4, 3),
+  ('documentary', 'Documentary', 'דוקומנטרי', 5, 3),
+  ('short-films', 'Short Films', 'סרטים קצרים', 6, 3),
+  ('news', 'News & Reports', 'כתבות וחדשות', 7, 3),
+  ('haam-im-hagolan', 'Ha''am Im HaGolan', 'העם עם הגולן', 8, 3),
+  ('cooking', 'Cooking Shows', 'תוכניות בישול', 9, 3)
 ON CONFLICT (slug) DO UPDATE SET
   title_en = EXCLUDED.title_en,
   title_he = EXCLUDED.title_he,
-  sort_order = EXCLUDED.sort_order,
-  initial_visible_count = EXCLUDED.initial_visible_count;
+  sort_order = EXCLUDED.sort_order;
 
 -- Services (rerunnable via icon_key)
 INSERT INTO public.services (title_en, title_he, description_en, description_he, icon_key, sort_order)
@@ -134,3 +133,30 @@ VALUES
 ON CONFLICT (key) DO UPDATE SET
   value_en = EXCLUDED.value_en,
   value_he = EXCLUDED.value_he;
+
+-- About CMS extensions (insert only — does not overwrite existing edited content)
+INSERT INTO public.site_content (key, value_en, value_he)
+VALUES
+  (
+    'about_intro',
+    'Through my camera and creative craft, I tell stories that matter — with heart, precision, and a cinematic eye.',
+    'דרך המצלמה והיצירה, אני מספר סיפורים שיש להם משמעות — מתוך לב, דיוק וראייה קולנועית.'
+  ),
+  (
+    'about_extended_title',
+    'Nice to meet you, I''m Or Lev Ari.',
+    'נעים מאוד, אור לב ארי.'
+  ),
+  (
+    'about_extended_text',
+    'I''m a video creator and editor based in Israel, working with businesses, artists, and families who want their story told with clarity and cinematic quality. From concept to final cut, I handle filming, editing, and production with a fast, attentive workflow — so every project feels personal, polished, and true to the people behind it.',
+    'אני יוצר ועורך וידאו, עובד עם עסקים, אמנים ומשפחות שרוצים לספר את הסיפור שלהם בצורה ברורה, מדויקת וקולנועית. מהרעיון ועד הגזירה הסופית — צילום, עריכה והפקה מלאה, עם יחס אישי, זריזות ועין קולנועית שמביאה כל פרויקט לחיים.'
+  ),
+  (
+    'about_extended_quote',
+    'I believe every project deserves care, clarity and a cinematic point of view.',
+    'אני מאמין שכל פרויקט צריך לקבל יחס אישי, דיוק וראייה קולנועית.'
+  ),
+  ('about_extended_image_url', '', ''),
+  ('about_extended_image_storage_path', '', '')
+ON CONFLICT (key) DO NOTHING;

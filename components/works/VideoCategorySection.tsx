@@ -1,7 +1,10 @@
 "use client";
 
 import { VideoWorkCard } from "@/components/works/VideoWorkCard";
-import { VIDEO_CATEGORY_INITIAL_VISIBLE } from "@/data/works-display-config";
+import {
+  VIDEO_CATEGORY_INITIAL_VISIBLE,
+  VIDEO_CATEGORY_LOAD_MORE_STEP,
+} from "@/data/works-display-config";
 import type { VideoCategory } from "@/data/video-categories";
 import type { Locale } from "@/types/i18n";
 import type { VideoWorkItem } from "@/types/works";
@@ -15,7 +18,7 @@ interface VideoCategorySectionProps {
   loadMoreLabel: string;
   closeLabel: string;
   onOpenVideo: (item: VideoWorkItem) => void;
-  /** Override per-category initial count — future: from Supabase category settings */
+  /** Per-category initial count from Supabase */
   initialVisible?: number;
 }
 
@@ -29,9 +32,15 @@ export function VideoCategorySection({
   onOpenVideo,
   initialVisible = VIDEO_CATEGORY_INITIAL_VISIBLE,
 }: VideoCategorySectionProps) {
-  const [expanded, setExpanded] = useState(false);
-  const visible = expanded ? items : items.slice(0, initialVisible);
-  const hasMore = items.length > initialVisible;
+  const initialCount = Math.max(
+    1,
+    Math.min(initialVisible, VIDEO_CATEGORY_INITIAL_VISIBLE),
+  );
+  const [visibleCount, setVisibleCount] = useState(initialCount);
+
+  const visible = items.slice(0, visibleCount);
+  const hasMore = items.length > visibleCount;
+  const canCollapse = visibleCount > initialCount;
 
   return (
     <section aria-labelledby={`category-${category.id}`}>
@@ -52,15 +61,23 @@ export function VideoCategorySection({
           />
         ))}
       </div>
-      {hasMore ? (
+      {hasMore || canCollapse ? (
         <div className="mt-8 flex justify-center">
           <button
             type="button"
-            onClick={() => setExpanded((e) => !e)}
-            aria-expanded={expanded}
+            onClick={() => {
+              if (hasMore) {
+                setVisibleCount((count) =>
+                  Math.min(count + VIDEO_CATEGORY_LOAD_MORE_STEP, items.length),
+                );
+              } else {
+                setVisibleCount(initialCount);
+              }
+            }}
+            aria-expanded={visibleCount >= items.length}
             className="rounded-full border border-blue-500/30 bg-blue-950/30 px-7 py-3 text-base text-slate-200 transition-all duration-300 hover:border-cyan-400/50 hover:bg-blue-900/40 hover:text-white hover:shadow-[0_0_24px_rgba(59,130,246,0.2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
           >
-            {expanded ? closeLabel : loadMoreLabel}
+            {hasMore ? loadMoreLabel : closeLabel}
           </button>
         </div>
       ) : null}

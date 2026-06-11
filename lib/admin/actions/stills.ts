@@ -5,11 +5,8 @@ import { actionError, actionOk } from "@/lib/admin/action-result";
 import { adminErrors } from "@/lib/admin/copy";
 import { revalidateSiteAndAdminMedia } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
-import {
-  normalizeImageMime,
-  sanitizeFileName,
-  storageExtensionForUpload,
-} from "@/lib/images/sanitize-file-name";
+import { buildStillStoragePath } from "@/lib/images/sanitize-file-name";
+import { resolveImageMime } from "@/lib/images/still-upload-validation";
 import { ensureAdminUserInDatabase } from "@/lib/auth/ensure-admin-user";
 import type { Database } from "@/lib/supabase/types";
 
@@ -113,7 +110,7 @@ export async function uploadStillImage(formData: FormData): Promise<
     return actionError(adminErrors.noImageFile);
   }
 
-  const contentType = normalizeImageMime(file.type);
+  const contentType = resolveImageMime(file.type, file.name);
   if (!contentType) {
     return actionError(adminErrors.invalidImageType);
   }
@@ -123,9 +120,22 @@ export async function uploadStillImage(formData: FormData): Promise<
     return actionError(adminErrors.imageTooLarge);
   }
 
-  const width = Number(formData.get("width"));
-  const height = Number(formData.get("height"));
-  const aspectRatio = Number(formData.get("aspect_ratio"));
+  const widthRaw = formData.get("width");
+  const heightRaw = formData.get("height");
+  const aspectRatioRaw = formData.get("aspect_ratio");
+
+  const width =
+    typeof widthRaw === "string" || typeof widthRaw === "number"
+      ? Number(widthRaw)
+      : NaN;
+  const height =
+    typeof heightRaw === "string" || typeof heightRaw === "number"
+      ? Number(heightRaw)
+      : NaN;
+  const aspectRatio =
+    typeof aspectRatioRaw === "string" || typeof aspectRatioRaw === "number"
+      ? Number(aspectRatioRaw)
+      : NaN;
   const altEn = String(formData.get("alt_en") ?? "").trim();
   const altHe = String(formData.get("alt_he") ?? "").trim();
   const sortOrder = Number(formData.get("sort_order") ?? 0);
@@ -135,10 +145,12 @@ export async function uploadStillImage(formData: FormData): Promise<
   const fileIndex = Number(formData.get("file_index") ?? 0);
   const timestamp = Number.isFinite(batchTimestamp) ? batchTimestamp : Date.now();
   const index = Number.isFinite(fileIndex) ? fileIndex : 0;
-  const safeName = sanitizeFileName(file.name) || "image";
-  const ext = storageExtensionForUpload(file.type, file.name);
-  const random = Math.random().toString(36).slice(2, 10);
-  const storagePath = `stills/${timestamp}-${index}-${random}-${safeName}${ext}`;
+  const storagePath = buildStillStoragePath(
+    timestamp,
+    index,
+    contentType,
+    file.name,
+  );
 
   const arrayBuffer = await file.arrayBuffer();
   const { error: uploadError } = await ctx.supabase.storage
@@ -155,7 +167,7 @@ export async function uploadStillImage(formData: FormData): Promise<
       return actionError(adminErrors.invalidImageType);
     }
     if (msg.includes("policy") || msg.includes("authorized")) {
-      return actionError(adminErrors.accessDenied);
+      return actionError(adminErrors.stillsUploadAccessDenied);
     }
     return actionError(adminErrors.storageUploadFailed);
   }

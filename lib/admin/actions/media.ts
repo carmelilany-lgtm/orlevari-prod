@@ -4,32 +4,30 @@ import type { ActionResult } from "@/lib/admin/action-result";
 import { actionError, actionOk } from "@/lib/admin/action-result";
 import { adminErrors } from "@/lib/admin/copy";
 import { revalidateSiteAndAdminMedia } from "@/lib/admin/revalidate";
-import { requireAdmin } from "@/lib/admin/require-admin";
+import { requireAdmin, type AdminContext } from "@/lib/admin/require-admin";
 import { ensureAdminUserInDatabase } from "@/lib/auth/ensure-admin-user";
-import {
-  normalizeImageMime,
-  sanitizeFileName,
-  storageExtensionForUpload,
-} from "@/lib/images/sanitize-file-name";
+import { buildMediaStoragePath } from "@/lib/images/sanitize-file-name";
+import { resolveImageMime } from "@/lib/images/still-upload-validation";
 
 const ABOUT_BUCKET = "about";
 const ABOUT_IMAGE_KEY = "about_image_url";
 const ABOUT_STORAGE_KEY = "about_image_storage_path";
+const ABOUT_EXTENDED_IMAGE_KEY = "about_extended_image_url";
+const ABOUT_EXTENDED_STORAGE_KEY = "about_extended_image_storage_path";
 
-export async function uploadAboutImage(formData: FormData): Promise<
-  ActionResult<{ url: string }>
-> {
-  const ctx = await requireAdmin();
-  if (!("supabase" in ctx)) return ctx;
-
-  await ensureAdminUserInDatabase(ctx.email);
-
+async function uploadAboutBucketImage(
+  ctx: AdminContext,
+  formData: FormData,
+  imageKey: string,
+  storageKey: string,
+  pathPrefix: string,
+): Promise<ActionResult<{ url: string }>> {
   const file = formData.get("file");
   if (!(file instanceof File)) {
     return actionError(adminErrors.noImageFile);
   }
 
-  const contentType = normalizeImageMime(file.type);
+  const contentType = resolveImageMime(file.type, file.name);
   if (!contentType) {
     return actionError(adminErrors.invalidImageType);
   }
@@ -39,19 +37,22 @@ export async function uploadAboutImage(formData: FormData): Promise<
     return actionError(adminErrors.imageTooLarge);
   }
 
-  const safeName = sanitizeFileName(file.name) || "image";
-  const ext = storageExtensionForUpload(file.type, file.name);
   const timestamp = Date.now();
-  const random = Math.random().toString(36).slice(2, 10);
-  const storagePath = `about/${timestamp}-${random}-${safeName}${ext}`;
+  const storagePath = buildMediaStoragePath(
+    pathPrefix,
+    timestamp,
+    0,
+    contentType,
+    file.name,
+  );
 
   const { data: existingRows } = await ctx.supabase
     .from("site_content")
     .select("key, value_en")
-    .in("key", [ABOUT_STORAGE_KEY]);
+    .in("key", [storageKey]);
 
   const oldPath =
-    existingRows?.find((r) => r.key === ABOUT_STORAGE_KEY)?.value_en?.trim() ||
+    existingRows?.find((r) => r.key === storageKey)?.value_en?.trim() ||
     null;
 
   const arrayBuffer = await file.arrayBuffer();
@@ -71,7 +72,7 @@ export async function uploadAboutImage(formData: FormData): Promise<
     if (msg.includes("policy") || msg.includes("authorized")) {
       return actionError(adminErrors.accessDenied);
     }
-    return actionError(adminErrors.aboutUploadFailed);
+    return actionError(adminErrors.storageUploadFailed);
   }
 
   const {
@@ -79,8 +80,8 @@ export async function uploadAboutImage(formData: FormData): Promise<
   } = ctx.supabase.storage.from(ABOUT_BUCKET).getPublicUrl(storagePath);
 
   const upserts = [
-    { key: ABOUT_IMAGE_KEY, value_en: publicUrl, value_he: publicUrl },
-    { key: ABOUT_STORAGE_KEY, value_en: storagePath, value_he: storagePath },
+    { key: imageKey, value_en: publicUrl, value_he: publicUrl },
+    { key: storageKey, value_en: storagePath, value_he: storagePath },
   ];
 
   for (const row of upserts) {
@@ -100,4 +101,36 @@ export async function uploadAboutImage(formData: FormData): Promise<
 
   revalidateSiteAndAdminMedia();
   return actionOk({ url: publicUrl });
+}
+
+export async function uploadAboutImage(formData: FormData): Promise<
+  ActionResult<{ url: string }>
+> {
+  const ctx = await requireAdmin();
+  if (!("supabase" in ctx)) return ctx;
+
+  await ensureAdminUserInDatabase(ctx.email);
+  return uploadAboutBucketImage(
+    ctx,
+    formData,
+    ABOUT_IMAGE_KEY,
+    ABOUT_STORAGE_KEY,
+    "about",
+  );
+}
+
+export async function uploadAboutExtendedImage(formData: FormData): Promise<
+  ActionResult<{ url: string }>
+> {
+  const ctx = await requireAdmin();
+  if (!("supabase" in ctx)) return ctx;
+
+  await ensureAdminUserInDatabase(ctx.email);
+  return uploadAboutBucketImage(
+    ctx,
+    formData,
+    ABOUT_EXTENDED_IMAGE_KEY,
+    ABOUT_EXTENDED_STORAGE_KEY,
+    "about/extended",
+  );
 }

@@ -1,4 +1,10 @@
-import { normalizeImageMime } from "@/lib/images/sanitize-file-name";
+import {
+  isAllowedStillImageFile,
+  MAX_STILL_UPLOAD_BYTES,
+  resolveImageMime,
+} from "@/lib/images/still-upload-validation";
+
+export { MAX_STILL_UPLOAD_BYTES } from "@/lib/images/still-upload-validation";
 
 export type ImageDimensions = {
   width: number;
@@ -38,15 +44,9 @@ export function getImageDimensionsFromFile(
   });
 }
 
-export const MAX_STILL_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB — matches bucket limit
-
-export const ALLOWED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-] as const;
-
-export function isAllowedImageType(type: string): boolean {
-  return normalizeImageMime(type) != null;
+/** @deprecated Prefer isAllowedStillImageFile(file) for uploads */
+export function isAllowedImageType(type: string, fileName = ""): boolean {
+  return resolveImageMime(type, fileName) != null;
 }
+
+export { isAllowedStillImageFile, resolveImageMime };

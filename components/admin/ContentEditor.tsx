@@ -8,11 +8,13 @@ import {
 } from "@/components/admin/admin-styles";
 import { saveSiteContent } from "@/lib/admin/actions/content";
 import {
+  contentKeyLabel,
   isLongContentKey,
   SITE_CONTENT_SECTIONS,
 } from "@/lib/admin/content-keys";
 import { isWhatsAppContentKey } from "@/lib/admin/whatsapp-content-fields";
 import { AboutImageUpload } from "@/components/admin/AboutImageUpload";
+import { AboutExtendedImageUpload } from "@/components/admin/AboutExtendedImageUpload";
 import { WhatsAppContentFields } from "@/components/admin/WhatsAppContentFields";
 import { adminCopy, contentSectionTitle } from "@/lib/admin/copy";
 import type { SiteContentItem, SiteContentKey } from "@/types/content";
@@ -86,10 +88,18 @@ export function ContentEditor({ initialContent }: Props) {
           </h2>
           <div className="space-y-6">
             {section.title === "About" ? (
-              <AboutImageUpload content={initialContent} />
+              <>
+                <AboutImageUpload content={initialContent} />
+                <AboutExtendedImageUpload content={initialContent} />
+              </>
             ) : null}
             {section.keys.map((key) => {
-              if (key === "about_image_url" || key === "about_image_storage_path") {
+              if (
+                key === "about_image_url" ||
+                key === "about_image_storage_path" ||
+                key === "about_extended_image_url" ||
+                key === "about_extended_image_storage_path"
+              ) {
                 return null;
               }
               if (isWhatsAppContentKey(key)) {
@@ -103,6 +113,9 @@ export function ContentEditor({ initialContent }: Props) {
                   key={key}
                   className="grid gap-4 border-t border-blue-950/60 pt-4 first:border-0 first:pt-0"
                 >
+                  <p className="text-sm font-medium text-slate-300">
+                    {contentKeyLabel(key as SiteContentKey)}
+                  </p>
                   <div className="grid gap-4 sm:grid-cols-2" dir="ltr">
                     {long ? (
                       <>

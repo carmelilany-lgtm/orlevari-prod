@@ -14,18 +14,16 @@ import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import { PublishToggle } from "@/components/admin/PublishToggle";
 import {
   deleteStillImage,
-  getNextStillSortOrder,
   saveStillImageMeta,
   toggleStillPublished,
   updateStillExcludeFromHero,
-  uploadStillImage,
   type StillImageRow,
 } from "@/lib/admin/actions/stills";
+import { runStillBatchUpload } from "@/lib/images/still-batch-upload-client";
 import {
-  getImageDimensionsFromFile,
-  isAllowedImageType,
-  MAX_STILL_UPLOAD_BYTES,
-} from "@/lib/images/get-image-dimensions";
+  MAX_BULK_STILL_UPLOAD_FILES,
+  stillImageAcceptAttribute,
+} from "@/lib/images/still-upload-validation";
 import { adminCopy, adminErrors } from "@/lib/admin/copy";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -60,6 +58,17 @@ export function StillsManager({ initialStills }: Props) {
   const [query, setQuery] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  const uploadMessages = useMemo(
+    () => ({
+      invalidType: adminErrors.invalidImageType,
+      tooLarge: adminErrors.imageTooLarge,
+      uploadFailed: adminErrors.stillUploadFailed,
+      dimensionsUnreadable: adminErrors.dimensionsUnreadable,
+      maxFiles: () => adminCopy.stills.uploadMaxBatch,
+    }),
+    [],
+  );
+
   const filteredStills = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return stills;
@@ -89,130 +98,52 @@ export function StillsManager({ initialStills }: Props) {
     const files = Array.from(fileList);
     if (files.length === 0) return;
 
+    if (files.length > MAX_BULK_STILL_UPLOAD_FILES) {
+      setError(adminCopy.stills.uploadMaxBatch);
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+
     setError("");
     setSuccess("");
     setFileErrors([]);
-
-    const validFiles: File[] = [];
-    const skipped: string[] = [];
-
-    for (const file of files) {
-      if (!isAllowedImageType(file.type)) {
-        skipped.push(`${file.name}: ${adminErrors.invalidImageType}`);
-        continue;
-      }
-      if (file.size > MAX_STILL_UPLOAD_BYTES) {
-        skipped.push(`${file.name}: ${adminErrors.imageTooLarge}`);
-        continue;
-      }
-      validFiles.push(file);
-    }
-
-    if (validFiles.length === 0) {
-      setFileErrors(skipped);
-      setError(skipped[0] ?? adminErrors.noImageFile);
-      if (fileRef.current) fileRef.current.value = "";
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      setPreviewUrl(null);
-      return;
-    }
-
-    const sortBaseResult = await getNextStillSortOrder();
-    if (!sortBaseResult.success || sortBaseResult.data == null) {
-      setError(
-        sortBaseResult.success ? adminErrors.processUploadFailed : sortBaseResult.error,
-      );
-      return;
-    }
-    let nextSortOrder = sortBaseResult.data;
-    const batchTimestamp = Date.now();
-
     setUploading(true);
-    setUploadProgress({
-      current: 0,
-      total: validFiles.length,
-      succeeded: 0,
-      failed: 0,
-    });
-
-    let succeeded = 0;
-    let failed = 0;
-    const uploadErrors: string[] = [...skipped];
+    setUploadProgress({ current: 0, total: files.length, succeeded: 0, failed: 0 });
 
     try {
-      for (let i = 0; i < validFiles.length; i++) {
-        const file = validFiles[i];
-        setUploadProgress({
-          current: i + 1,
-          total: validFiles.length,
-          succeeded,
-          failed,
-        });
+      const result = await runStillBatchUpload({
+        files,
+        altEn,
+        altHe,
+        isPublished: published,
+        messages: uploadMessages,
+        concurrency: 3,
+        onProgress: setUploadProgress,
+      });
 
-        let width: number | null = null;
-        let height: number | null = null;
-        let aspectRatio: number | null = null;
+      setFileErrors(result.errors);
 
-        try {
-          const dims = await getImageDimensionsFromFile(file);
-          width = dims.width;
-          height = dims.height;
-          aspectRatio = dims.aspectRatio;
-        } catch {
-          // Upload without dimensions when detection fails
-        }
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("batch_timestamp", String(batchTimestamp));
-        formData.append("file_index", String(i));
-        if (width != null) formData.append("width", String(width));
-        if (height != null) formData.append("height", String(height));
-        if (aspectRatio != null) {
-          formData.append("aspect_ratio", String(aspectRatio));
-        }
-        formData.append("alt_en", altEn);
-        formData.append("alt_he", altHe);
-        formData.append("sort_order", String(nextSortOrder));
-        formData.append("is_published", published ? "true" : "false");
-
-        const result = await uploadStillImage(formData);
-        if (!result.success) {
-          failed += 1;
-          uploadErrors.push(
-            `${file.name}: ${result.error || adminErrors.stillUploadFailed}`,
-          );
-        } else {
-          succeeded += 1;
-          nextSortOrder += 1;
-        }
-      }
-
-      setFileErrors(uploadErrors);
-
-      if (succeeded > 0 && failed === 0 && skipped.length === 0) {
+      if (result.succeeded > 0 && result.failed === 0 && result.skipped === 0) {
         setSuccess(
-          succeeded === 1
+          result.succeeded === 1
             ? adminCopy.stills.uploaded
-            : adminCopy.stills.uploadedMany(succeeded),
+            : adminCopy.stills.uploadedMany(result.succeeded),
         );
-      } else if (succeeded > 0) {
+      } else if (result.succeeded > 0) {
         setSuccess(
-          `${adminCopy.stills.uploadSummary(succeeded, validFiles.length)}${
-            failed > 0 ? `. ${adminCopy.stills.uploadFailedCount(failed)}` : ""
+          `${adminCopy.stills.uploadSummary(result.succeeded, files.length)}${
+            result.failed + result.skipped > 0
+              ? `. ${adminCopy.stills.uploadFailedCount(result.failed + result.skipped)}`
+              : ""
           }`,
         );
-        if (failed > 0 || skipped.length > 0) {
-          setError(
-            failed > 0
-              ? adminCopy.stills.uploadFailedCount(failed + skipped.length)
-              : skipped[0] ?? "",
-          );
+        if (result.failed > 0 || result.skipped > 0) {
+          setError(result.errors[0] ?? adminErrors.stillUploadPartialFailed);
         }
       } else {
         setError(
-          uploadErrors[0] ??
-            `${adminErrors.stillUploadFailed} ${adminCopy.stills.uploadFailedHint}`,
+          result.errors[0] ??
+            `${adminErrors.stillUploadFailed} ${adminCopy.stills.uploadRetryHint}`.trim(),
         );
       }
 
@@ -220,7 +151,7 @@ export function StillsManager({ initialStills }: Props) {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
 
-      if (succeeded > 0) {
+      if (result.succeeded > 0) {
         router.refresh();
       }
     } catch (err) {
@@ -229,7 +160,7 @@ export function StillsManager({ initialStills }: Props) {
         err instanceof Error && err.message.includes("Body exceeded")
           ? adminErrors.imageTooLarge
           : adminErrors.processUploadFailed;
-      setError(`${detail} ${adminCopy.stills.uploadFailedHint}`);
+      setError(detail);
     } finally {
       setUploading(false);
       setUploadProgress(null);
@@ -359,13 +290,12 @@ export function StillsManager({ initialStills }: Props) {
             className="max-h-40 rounded-lg border border-blue-900/40 object-contain"
           />
         )}
-        <p className="text-sm text-slate-400">{adminCopy.stills.uploadMultiHint}</p>
         <label className="inline-block">
           <span className="sr-only">{adminCopy.stills.uploadChoose}</span>
           <input
             ref={fileRef}
             type="file"
-            accept="image/*"
+            accept={stillImageAcceptAttribute()}
             multiple
             onChange={handleFileSelect}
             disabled={uploading}

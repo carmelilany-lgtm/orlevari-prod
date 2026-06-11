@@ -1,8 +1,8 @@
 "use client";
 
 import { AdminAlert } from "@/components/admin/AdminAlert";
-import { uploadAboutImage } from "@/lib/admin/actions/media";
-import { getAboutImageUrl } from "@/lib/i18n/about-image";
+import { uploadAboutExtendedImage } from "@/lib/admin/actions/media";
+import { getAboutExtendedImageUrl } from "@/lib/i18n/about-image";
 import {
   isAllowedStillImageFile,
   MAX_STILL_UPLOAD_BYTES,
@@ -17,14 +17,14 @@ type Props = {
   content: SiteContentItem[];
 };
 
-export function AboutImageUpload({ content }: Props) {
+export function AboutExtendedImageUpload({ content }: Props) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const cmsMap = useMemo(
     () => Object.fromEntries(content.map((r) => [r.key, r])),
     [content],
   );
-  const currentUrl = getAboutImageUrl(cmsMap);
+  const currentUrl = getAboutExtendedImageUrl(cmsMap);
 
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -54,7 +54,7 @@ export function AboutImageUpload({ content }: Props) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const result = await uploadAboutImage(formData);
+    const result = await uploadAboutExtendedImage(formData);
     setUploading(false);
 
     if (!result.success) {
@@ -65,14 +65,14 @@ export function AboutImageUpload({ content }: Props) {
     if (result.data?.url) {
       setPreviewUrl(result.data.url);
     }
-    setSuccess(adminCopy.content.aboutImageSaved);
+    setSuccess(adminCopy.content.aboutExtendedImageSaved);
     router.refresh();
   }
 
   return (
     <div className="space-y-3 border-b border-blue-950/60 pb-6">
       <h3 className="text-base font-semibold text-white">
-        {adminCopy.content.aboutImageTitle}
+        {adminCopy.content.aboutExtendedImageTitle}
       </h3>
       <AdminAlert variant="error" message={error} />
       <AdminAlert variant="success" message={success} />
@@ -80,8 +80,8 @@ export function AboutImageUpload({ content }: Props) {
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={displayUrl}
-          alt={adminCopy.content.aboutImageTitle}
-          className="max-h-56 w-full max-w-xs rounded-lg border border-blue-900/40 object-cover"
+          alt={adminCopy.content.aboutExtendedImageTitle}
+          className="max-h-56 w-full max-w-md rounded-lg border border-blue-900/40 object-cover"
         />
       ) : (
         <p className="text-sm text-slate-500">
@@ -89,7 +89,7 @@ export function AboutImageUpload({ content }: Props) {
         </p>
       )}
       <label className="inline-block">
-        <span className="sr-only">{adminCopy.content.aboutImageReplace}</span>
+        <span className="sr-only">{adminCopy.content.aboutExtendedImageReplace}</span>
         <input
           ref={fileRef}
           type="file"
@@ -102,7 +102,7 @@ export function AboutImageUpload({ content }: Props) {
       <p className="text-xs text-slate-500">
         {uploading
           ? adminCopy.content.aboutImageUploading
-          : adminCopy.content.aboutImageReplace}
+          : adminCopy.content.aboutExtendedImageReplace}
       </p>
     </div>
   );

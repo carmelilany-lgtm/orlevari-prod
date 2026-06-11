@@ -40,3 +40,26 @@ export function normalizeImageMime(type: string): string | null {
   if (t in EXT_BY_MIME) return t;
   return null;
 }
+
+/** Storage path for still uploads — extension only from MIME/name, not original basename. */
+export function buildStillStoragePath(
+  timestamp: number,
+  index: number,
+  mime: string,
+  fileName: string,
+): string {
+  return buildMediaStoragePath("stills", timestamp, index, mime, fileName);
+}
+
+/** Generic media storage path under a bucket folder prefix. */
+export function buildMediaStoragePath(
+  prefix: string,
+  timestamp: number,
+  index: number,
+  mime: string,
+  fileName: string,
+): string {
+  const ext = storageExtensionForUpload(mime, fileName);
+  const random = Math.random().toString(36).slice(2, 10);
+  return `${prefix}/${timestamp}-${index}-${random}${ext}`;
+}

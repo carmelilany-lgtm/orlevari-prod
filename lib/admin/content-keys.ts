@@ -15,7 +15,14 @@ export const SITE_CONTENT_SECTIONS: {
   },
   {
     title: "About",
-    keys: ["about_title", "about_text"],
+    keys: [
+      "about_title",
+      "about_intro",
+      "about_text",
+      "about_extended_title",
+      "about_extended_text",
+      "about_extended_quote",
+    ],
   },
   {
     title: "Works",
@@ -50,9 +57,20 @@ export const SITE_CONTENT_SECTIONS: {
   },
 ];
 
+/** Hebrew admin labels for CMS keys */
+export const CONTENT_KEY_LABELS: Partial<Record<SiteContentKey, string>> = {
+  about_intro: "תקציר אודות קצר",
+  about_extended_title: "כותרת אודות מורחבת",
+  about_extended_text: "טקסט אודות מורחב",
+  about_extended_quote: "ציטוט / משפט מסכם באודות",
+  about_extended_image_url: "תמונת אודות מורחבת",
+};
+
 const LONG_TEXT_KEYS = new Set<SiteContentKey>([
   "hero_subtitle",
   "about_text",
+  "about_intro",
+  "about_extended_text",
   "contact_intro",
   "whatsapp_message_en",
   "whatsapp_message_he",
@@ -62,4 +80,8 @@ const LONG_TEXT_KEYS = new Set<SiteContentKey>([
 
 export function isLongContentKey(key: SiteContentKey): boolean {
   return LONG_TEXT_KEYS.has(key);
+}
+
+export function contentKeyLabel(key: SiteContentKey): string {
+  return CONTENT_KEY_LABELS[key] ?? key;
 }

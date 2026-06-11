@@ -21,7 +21,12 @@ export type TranslationKeys = {
   about: {
     title: string;
     imageAlt: string;
+    intro: string;
     body: string;
+    extendedTitle: string;
+    extendedText: string;
+    extendedQuote: string;
+    extendedImageAlt: string;
   };
   works: {
     title: string;
@@ -126,7 +131,15 @@ const en: TranslationKeys = {
   about: {
     title: "About",
     imageAlt: "Portrait of Or, Lev Ari Productions",
+    intro:
+      "Through my camera and creative craft, I tell stories that matter — with heart, precision, and a cinematic eye.",
     body: "Through my camera and creative craft, I tell stories that matter. Photography, videography, and editing allow me to capture the real emotion behind every moment. I approach each project with heart, precision, and personal attention, creating films and visuals that feel meaningful, authentic, and true to the people, businesses, and memories they represent.",
+    extendedTitle: "Nice to meet you, I'm Or Lev Ari.",
+    extendedText:
+      "I'm a video creator and editor based in Israel, working with businesses, artists, and families who want their story told with clarity and cinematic quality. From concept to final cut, I handle filming, editing, and production with a fast, attentive workflow — so every project feels personal, polished, and true to the people behind it.",
+    extendedQuote:
+      "I believe every project deserves care, clarity and a cinematic point of view.",
+    extendedImageAlt: "Or Lev Ari at work",
   },
   works: {
     title: "Works",
@@ -232,7 +245,15 @@ const he: TranslationKeys = {
   about: {
     title: "אודות",
     imageAlt: "דיוקן של אור, לב ארי הפקות",
+    intro:
+      "דרך המצלמה והיצירה, אני מספר סיפורים שיש להם משמעות — מתוך לב, דיוק וראייה קולנועית.",
     body: "דרך המצלמה והיצירה, אני מספר סיפורים שיש להם משמעות. צילום, וידאו ועריכה מאפשרים לי לתפוס את הרגש האמיתי שמאחורי כל רגע. כל פרויקט נעשה מתוך לב, דיוק ויחס אישי, כדי ליצור תוצאה שמרגישה אותנטית, משמעותית ונאמנה לאנשים, לעסקים ולזיכרונות שהיא מייצגת.",
+    extendedTitle: "נעים מאוד, אור לב ארי.",
+    extendedText:
+      "אני יוצר ועורך וידאו, עובד עם עסקים, אמנים ומשפחות שרוצים לספר את הסיפור שלהם בצורה ברורה, מדויקת וקולנועית. מהרעיון ועד הגזירה הסופית — צילום, עריכה והפקה מלאה, עם יחס אישי, זריזות ועין קולנועית שמביאה כל פרויקט לחיים.",
+    extendedQuote:
+      "אני מאמין שכל פרויקט צריך לקבל יחס אישי, דיוק וראייה קולנועית.",
+    extendedImageAlt: "אור לב ארי בעבודה",
   },
   works: {
     title: "עבודות",

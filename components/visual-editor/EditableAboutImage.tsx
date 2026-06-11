@@ -4,9 +4,10 @@ import { uploadAboutImage } from "@/lib/admin/actions/media";
 import { getAboutImageUrl } from "@/lib/i18n/about-image";
 import { visualUploadMessages } from "@/lib/images/visual-upload-messages";
 import {
-  isAllowedImageType,
+  isAllowedStillImageFile,
   MAX_STILL_UPLOAD_BYTES,
-} from "@/lib/images/get-image-dimensions";
+  stillImageAcceptAttribute,
+} from "@/lib/images/still-upload-validation";
 import { useVisualEditorActive } from "@/components/visual-editor/VisualEditorProvider";
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
@@ -41,7 +42,7 @@ export function EditableAboutImage({ imageUrl, imageAlt, className }: Props) {
     setError("");
     setMessage("");
 
-    if (!isAllowedImageType(file.type)) {
+    if (!isAllowedStillImageFile(file)) {
       setError(copy.invalidType);
       return;
     }
@@ -111,7 +112,7 @@ export function EditableAboutImage({ imageUrl, imageAlt, className }: Props) {
             <input
               ref={fileRef}
               type="file"
-              accept="image/jpeg,image/png,image/webp"
+              accept={stillImageAcceptAttribute()}
               className="sr-only"
               disabled={uploading}
               onChange={(e) => void handleFile(e)}

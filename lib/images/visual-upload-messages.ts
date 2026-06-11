@@ -5,6 +5,9 @@ const messages = {
     invalidType: "סוג הקובץ לא נתמך",
     tooLarge: "הקובץ גדול מדי",
     uploadFailed: "העלאת התמונה נכשלה",
+    dimensionsUnreadable:
+      "לא ניתן לקרוא את התמונה, אבל ננסה להעלות אותה ללא ממדים.",
+    maxFiles: (max: number) => `ניתן להעלות עד ${max} תמונות בכל פעם.`,
     addToGallery: "הוספת תמונות לגלריה",
     chooseImages: "בחר תמונות",
     uploading: "מעלה...",
@@ -21,6 +24,9 @@ const messages = {
     invalidType: "Unsupported file type",
     tooLarge: "File is too large",
     uploadFailed: "Image upload failed",
+    dimensionsUnreadable:
+      "Couldn't read image dimensions, but we will try uploading without dimensions.",
+    maxFiles: (max: number) => `You can upload up to ${max} images at a time.`,
     addToGallery: "Add images to gallery",
     chooseImages: "Choose images",
     uploading: "Uploading...",

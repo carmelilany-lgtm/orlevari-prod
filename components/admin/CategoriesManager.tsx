@@ -36,7 +36,7 @@ const emptyForm = {
   title_he: "",
   slug: "",
   sort_order: 0,
-  initial_visible_count: 6,
+  initial_visible_count: 3,
   is_published: true,
 };
 
@@ -178,11 +178,12 @@ export function CategoriesManager({ initialCategories }: Props) {
               name="initial_visible_count"
               type="number"
               min={1}
+              hint={adminCopy.categories.initialVisibleHint}
               value={form.initial_visible_count}
               onChange={(v) =>
                 setForm((f) => ({
                   ...f,
-                  initial_visible_count: Math.max(1, Number(v) || 6),
+                  initial_visible_count: Math.max(1, Number(v) || 3),
                 }))
               }
             />

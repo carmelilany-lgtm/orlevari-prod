@@ -93,7 +93,9 @@ export const adminCopy = {
     titleHe: "כותרת בעברית",
     slug: "מזהה כתובת (Slug)",
     slugHint: "מזהה ייחודי לכתובת URL",
-    initialVisible: "מספר פריטים ראשוני",
+    initialVisible: "מספר סרטונים ראשוני",
+    initialVisibleHint:
+      "מומלץ 3 כדי להציג שורה אחת לפני כפתור ׳טען עוד׳.",
     sortOrder: "סדר הופעה",
     sortHint: "מספרים נמוכים יותר מוצגים קודם",
     emptyTitle: "לא נמצאו קטגוריות.",
@@ -139,16 +141,19 @@ export const adminCopy = {
   stills: {
     collageLink: "עריכת קולאז׳",
     uploadHelper:
-      "גוררים, מעלים, מסדרים — בלי לפתוח קבוצת תמיכה עם כרמל.",
+      "ניתן לבחור עד 40 תמונות יחד. מומלץ להעלות קבצי JPG, PNG או WebP עד 10MB לתמונה.",
     uploadTitle: "העלאת תמונות",
     uploadChoose: "בחר תמונות",
-    uploadMultiHint: "ניתן לבחור כמה תמונות יחד",
+    uploadMultiHint: "",
+    uploadMaxBatch: "ניתן להעלות עד 40 תמונות בכל פעם.",
+    uploadRetryHint: "ניתן לנסות שוב.",
     uploadProgress: (current: number, total: number) =>
       `מעלה ${current} מתוך ${total}`,
     uploadingMany: "מעלה תמונות…",
     uploadSummary: (ok: number, total: number) =>
       `הועלו ${ok} מתוך ${total} תמונות`,
-    uploadFailedCount: (n: number) => `${n} תמונות נכשלו בהעלאה`,
+    uploadFailedCount: (n: number) =>
+      `${n} תמונות לא הועלו. ניתן לנסות שוב.`,
     editTitle: "עריכת תמונה",
     altEn: "טקסט חלופי באנגלית",
     altHe: "טקסט חלופי בעברית",
@@ -164,7 +169,7 @@ export const adminCopy = {
     deleteTitle: "למחוק את התמונה?",
     deleteMessage: "הרשומה יימחקו מהמסד, וקובץ האחסון יוסר אם אפשר.",
     uploading: "מעלה תמונה…",
-    uploadFailedHint: "בדקו את סוג הקובץ (JPG, PNG, WebP) וגודל (עד 10MB).",
+    uploadFailedHint: "",
     excludeFromHero: "אל תציג בהדר",
     excludeFromHeroHint:
       "ברירת המחדל: תמונות פעילות יכולות להופיע בהדר. סמנו כאן רק תמונות שלא תרצו שיופיעו שם.",
@@ -199,6 +204,9 @@ export const adminCopy = {
     aboutImageUploading: "מעלה תמונה...",
     aboutImageSaved: "תמונת האודות עודכנה בהצלחה",
     aboutImageNoPreview: "לא הוגדרה תמונה — מוצגת תמונת ברירת מחדל באתר.",
+    aboutExtendedImageTitle: "תמונת אודות מורחבת",
+    aboutExtendedImageReplace: "החלפת תמונת אודות מורחבת",
+    aboutExtendedImageSaved: "תמונת האודות המורחבת עודכנה בהצלחה",
     heroStillsNote:
       "ניהול תמונות ההדר מתבצע דרך גלריית התמונות — סמנו תמונות כ׳מופיע בהדר׳.",
     intro:
@@ -287,6 +295,7 @@ export const adminErrors = {
   supabaseNotConfiguredShort: "Supabase לא מוגדר.",
   notSignedIn: "יש להתחבר כדי לבצע פעולה זו.",
   accessDenied: "אין הרשאה לגשת למערכת הניהול.",
+  stillsUploadAccessDenied: "אין הרשאה להעלות תמונות.",
   titleEnRequired: "כותרת באנגלית היא שדה חובה.",
   titleHeRequired: "כותרת בעברית היא שדה חובה.",
   slugRequired: "מזהה כתובת (Slug) הוא שדה חובה.",
@@ -298,17 +307,19 @@ export const adminErrors = {
   categoryDeleteBlocked:
     "לא ניתן למחוק קטגוריה שיש בה סרטונים. יש להעביר או למחוק את הסרטונים קודם.",
   noImageFile: "לא נבחר קובץ תמונה.",
-  invalidImageType: "סוג הקובץ לא נתמך",
-  imageTooLarge: "הקובץ גדול מדי",
-  stillUploadFailed: "העלאת התמונה נכשלה",
+  invalidImageType: "סוג הקובץ לא נתמך.",
+  imageTooLarge: "הקובץ גדול מדי. ניתן להעלות עד 10MB לתמונה.",
+  stillUploadFailed: "אירעה שגיאה בהעלאת חלק מהתמונות.",
+  stillUploadPartialFailed: "אירעה שגיאה בהעלאת חלק מהתמונות.",
   uploadFailed: (msg: string) => `ההעלאה נכשלה: ${msg}`,
   storageDeleteFailed: (msg: string) => `לא ניתן למחוק מהאחסון: ${msg}`,
   saveContentFailed: (key: string, msg: string) =>
     `שמירת "${key}" נכשלה: ${msg}`,
-  processUploadFailed: "עיבוד העלאת התמונה נכשל.",
-  dimensionsUnreadable: "לא ניתן לקרוא את ממדי התמונה",
-  storageUploadFailed: "העלאה ל־Storage נכשלה",
-  dbInsertFailed: "שמירת התמונה במסד הנתונים נכשלה",
+  processUploadFailed: "אירעה שגיאה בהעלאת חלק מהתמונות.",
+  dimensionsUnreadable:
+    "לא ניתן לקרוא את התמונה, אבל ננסה להעלות אותה ללא ממדים.",
+  storageUploadFailed: "העלאה ל־Storage נכשלה.",
+  dbInsertFailed: "שמירת התמונה במסד הנתונים נכשלה.",
   aboutUploadFailed: "העלאת תמונת האודות נכשלה",
   invalidFileName: "שם הקובץ לא תקין",
   collageSaveFailed: "שמירת הפריסה נכשלה.",
