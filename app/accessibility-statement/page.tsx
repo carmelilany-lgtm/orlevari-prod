@@ -1,5 +1,6 @@
 import { LegalPageClient } from "@/components/legal/LegalPageClient";
 import { AppProviders } from "@/components/providers/AppProviders";
+import { getRequestLocale } from "@/lib/i18n/request-locale";
 import { buildPublicPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata = buildPublicPageMetadata({
@@ -9,9 +10,11 @@ export const metadata = buildPublicPageMetadata({
   path: "/accessibility-statement",
 });
 
-export default function AccessibilityStatementPage() {
+export default async function AccessibilityStatementPage() {
+  const initialLocale = await getRequestLocale();
+
   return (
-    <AppProviders>
+    <AppProviders initialLocale={initialLocale}>
       <LegalPageClient kind="accessibility" />
     </AppProviders>
   );

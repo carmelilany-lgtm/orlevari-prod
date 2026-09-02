@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
-import { Fraunces, Noto_Sans_Hebrew, Outfit } from "next/font/google";
+import { Noto_Sans_Hebrew } from "next/font/google";
 import { LOCALE_BOOTSTRAP_SCRIPT } from "@/lib/i18n/locale-storage";
+import { getRequestLocale } from "@/lib/i18n/request-locale";
 import {
   DEFAULT_DESCRIPTION,
   DEFAULT_TITLE,
@@ -10,29 +11,21 @@ import {
 import { getMetadataBase } from "@/lib/seo/site-url";
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-sans",
-  subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
 const notoSansHebrew = Noto_Sans_Hebrew({
-  variable: "--font-hebrew",
-  subsets: ["hebrew", "latin"],
+  variable: "--font-sans",
+  subsets: ["hebrew", "latin", "latin-ext"],
   weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const fraunces = Fraunces({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 
 const metadataBase = getMetadataBase();
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 /** Fallback for non-home routes; homepage overrides via generateMetadata */
 export const metadata: Metadata = {
@@ -53,17 +46,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getRequestLocale();
+  const dir = locale === "he" ? "rtl" : "ltr";
+
   return (
     <html
-      lang="en"
-      dir="ltr"
+      lang={locale}
+      dir={dir}
       data-scroll-behavior="smooth"
-      className={`${outfit.variable} ${notoSansHebrew.variable} ${fraunces.variable} min-h-full scroll-smooth bg-[#050a12]`}
+      className={`${notoSansHebrew.variable} min-h-full scroll-smooth bg-[#050a12]`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-[#070b14] text-slate-100 antialiased">

@@ -158,5 +158,6 @@ VALUES
     'אני מאמין שכל פרויקט צריך לקבל יחס אישי, דיוק וראייה קולנועית.'
   ),
   ('about_extended_image_url', '', ''),
-  ('about_extended_image_storage_path', '', '')
+  ('about_extended_image_storage_path', '', ''),
+  ('about_extended_title_size', 'md', 'md')
 ON CONFLICT (key) DO NOTHING;

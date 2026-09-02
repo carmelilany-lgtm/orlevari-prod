@@ -7,9 +7,24 @@ import {
   getAboutExtendedImageUrl,
   getAboutImageUrl,
 } from "@/lib/i18n/about-image";
-import { resolveCmsText } from "@/lib/i18n/cms";
+import {
+  ABOUT_TITLE_SIZE_CLASSES,
+  DEFAULT_ABOUT_TITLE_SIZE,
+  parseAboutTitleSize,
+} from "@/lib/about/title-size";
+import { resolveCmsSetting, resolveCmsText } from "@/lib/i18n/cms";
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
+
+function withTypographicQuotes(text: string): string {
+  const trimmed = text.trim();
+  if (!trimmed) return trimmed;
+  const inner = trimmed
+    .replace(/^[“"„«״]\s*/, "")
+    .replace(/\s*[”"»״]$/, "");
+  if (!inner) return trimmed;
+  return `“${inner}”`;
+}
 
 export function About() {
   const { t, locale, cmsMap, dir } = useLanguage();
@@ -30,11 +45,15 @@ export function About() {
     locale,
     t.about.extendedText,
   );
-  const extendedQuote = resolveCmsText(
+  const quoteRaw = resolveCmsText(
     cmsMap,
     "about_extended_quote",
     locale,
     t.about.extendedQuote,
+  );
+  const extendedQuote = withTypographicQuotes(quoteRaw);
+  const titleSize = parseAboutTitleSize(
+    resolveCmsSetting(cmsMap, "about_extended_title_size", DEFAULT_ABOUT_TITLE_SIZE),
   );
 
   return (
@@ -64,7 +83,10 @@ export function About() {
                 id="about-heading"
                 contentKey="about_extended_title"
                 fallback={extendedTitle}
-                className="font-display text-2xl font-semibold text-white sm:text-3xl lg:text-4xl"
+                className={cn(
+                  "font-display font-semibold text-white",
+                  ABOUT_TITLE_SIZE_CLASSES[titleSize],
+                )}
               />
               <EditableText
                 as="p"
@@ -73,19 +95,16 @@ export function About() {
                 className="max-w-prose text-base font-light leading-relaxed text-slate-300 sm:text-lg sm:leading-8"
               />
               {extendedQuote.trim() || visualEdit ? (
-                <blockquote className="relative max-w-prose ps-8 font-display text-sm font-normal italic leading-relaxed text-slate-400 sm:text-base">
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute start-0 top-0 font-semibold not-italic text-2xl leading-none text-cyan-300/85"
-                  >
-                    “
-                  </span>
-                  <EditableText
-                    as="span"
-                    contentKey="about_extended_quote"
-                    fallback={extendedQuote}
-                    className="after:ms-1.5 after:inline-block after:translate-y-[0.12em] after:align-baseline after:font-semibold after:not-italic after:text-2xl after:leading-none after:text-cyan-300/85 after:content-['”']"
-                  />
+                <blockquote className="max-w-prose font-display text-sm font-normal italic leading-relaxed text-slate-400 sm:text-base">
+                  {visualEdit ? (
+                    <EditableText
+                      as="span"
+                      contentKey="about_extended_quote"
+                      fallback={quoteRaw}
+                    />
+                  ) : (
+                    extendedQuote
+                  )}
                 </blockquote>
               ) : null}
             </div>

@@ -19,6 +19,7 @@ const defaultData: SitePortfolioData = {
     id: s.id,
     title: s.title,
     description: s.description,
+    iconKey: s.iconKey ?? s.id,
   })),
   isLiveData: false,
 };

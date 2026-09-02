@@ -4,39 +4,43 @@ import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/types/i18n";
 
-export function LanguageToggle({ className }: { className?: string }) {
-  const { locale, setLocale, t } = useLanguage();
+const OPTIONS: { value: Locale; label: string; name: string }[] = [
+  { value: "en", label: "EN", name: "English" },
+  { value: "he", label: "HE", name: "Hebrew" },
+];
 
-  const options: { value: Locale; label: string }[] = [
-    { value: "en", label: t.langToggle.en },
-    { value: "he", label: t.langToggle.he },
-  ];
+export function LanguageToggle({ className }: { className?: string }) {
+  const { locale, setLocale } = useLanguage();
 
   return (
     <div
       role="group"
       aria-label="Language"
       dir="ltr"
-      className={cn(
-        "inline-flex rounded-full border border-zinc-700/80 bg-zinc-900/60 p-0.5 text-xs",
-        className,
-      )}
+      className={cn("inline-flex items-center gap-1.5 text-[11px] font-medium tracking-[0.16em]", className)}
     >
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          onClick={() => setLocale(opt.value)}
-          aria-pressed={locale === opt.value}
-          className={cn(
-            "rounded-full px-3 py-1.5 font-medium transition-colors duration-200",
-            locale === opt.value
-              ? "bg-blue-600 text-white shadow-sm"
-              : "text-zinc-400 hover:text-zinc-200",
-          )}
-        >
-          {opt.label}
-        </button>
+      {OPTIONS.map((opt, index) => (
+        <span key={opt.value} className="inline-flex items-center gap-1.5">
+          {index > 0 ? (
+            <span aria-hidden className="font-light text-zinc-600">
+              /
+            </span>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => setLocale(opt.value)}
+            aria-label={opt.name}
+            aria-pressed={locale === opt.value}
+            className={cn(
+              "transition-colors duration-200",
+              locale === opt.value
+                ? "text-white"
+                : "text-zinc-500 hover:text-zinc-300",
+            )}
+          >
+            {opt.label}
+          </button>
+        </span>
       ))}
     </div>
   );

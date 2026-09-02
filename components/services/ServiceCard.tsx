@@ -1,5 +1,6 @@
 "use client";
 
+import { ServiceIcon } from "@/components/services/ServiceIcon";
 import type { ServiceItem } from "@/types/works";
 import type { Locale } from "@/types/i18n";
 
@@ -11,6 +12,13 @@ interface ServiceCardProps {
 export function ServiceCard({ service, locale }: ServiceCardProps) {
   return (
     <article className="card-surface group rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
+      <div className="mb-4 text-cyan-300" aria-hidden>
+        <ServiceIcon
+          iconKey={service.iconKey}
+          serviceId={service.id}
+          title={`${service.title.en} ${service.title.he}`}
+        />
+      </div>
       <h3 className="font-display text-xl font-medium text-slate-50">
         {service.title[locale]}
       </h3>

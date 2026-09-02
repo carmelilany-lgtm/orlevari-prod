@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 const HEADER_LOGO_ROOT_MARGIN = "-72px 0px 0px 0px";
 
 export function Header() {
-  const { t, dir } = useLanguage();
+  const { t, dir, locale } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
   const [heroLogoInView, setHeroLogoInView] = useState(true);
   const headerVisible = !heroLogoInView;
@@ -64,15 +64,19 @@ export function Header() {
         )}
       >
         <div
-          dir={dir}
+          dir="ltr"
           className="container-wide flex h-16 items-center gap-4 px-4 sm:h-18 sm:px-6 lg:px-8"
         >
+          <LanguageToggle
+            className={cn("shrink-0", locale === "en" && "order-last ms-auto")}
+          />
           <div
+            dir={dir}
             className={cn(
-              "flex items-center gap-3 transition-[opacity,transform] duration-300",
+              "flex min-w-0 items-center gap-3 transition-[opacity,transform] duration-300 md:gap-8",
               headerVisible
-                ? "min-w-0 flex-1 translate-y-0 opacity-100"
-                : "pointer-events-none w-0 min-w-0 overflow-hidden opacity-0",
+                ? "flex-1 translate-y-0 opacity-100"
+                : "pointer-events-none w-0 overflow-hidden opacity-0",
             )}
             aria-hidden={!headerVisible}
           >
@@ -114,7 +118,7 @@ export function Header() {
             <BrandLogoLink href="#hero" alt={t.brand} />
             <nav
               aria-label="Main"
-              className="ms-auto hidden items-center gap-8 md:flex"
+              className="hidden items-center gap-8 md:flex"
             >
               {navItems.map((item) => (
                 <a
@@ -128,8 +132,6 @@ export function Header() {
               ))}
             </nav>
           </div>
-
-          <LanguageToggle className="ms-auto shrink-0" />
         </div>
 
         <div

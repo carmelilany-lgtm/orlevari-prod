@@ -35,3 +35,13 @@ export function resolveCmsText(
 ): string {
   return getCmsRawValue(map, key, locale) ?? fallback;
 }
+
+/** Locale-agnostic CMS setting — prefers English, then Hebrew */
+export function resolveCmsSetting(
+  map: SiteContentMap | undefined,
+  key: SiteContentKey,
+  fallback: string,
+): string {
+  const row = map?.[key];
+  return row?.value_en?.trim() || row?.value_he?.trim() || fallback;
+}

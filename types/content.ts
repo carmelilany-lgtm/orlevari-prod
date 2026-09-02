@@ -19,6 +19,7 @@ export type SiteContentKey =
   | "about_extended_title"
   | "about_extended_text"
   | "about_extended_quote"
+  | "about_extended_title_size"
   | "about_image_url"
   | "about_image_storage_path"
   | "about_extended_image_url"

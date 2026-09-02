@@ -16,10 +16,8 @@ export const SITE_CONTENT_SECTIONS: {
   {
     title: "About",
     keys: [
-      "about_title",
-      "about_intro",
-      "about_text",
       "about_extended_title",
+      "about_extended_title_size",
       "about_extended_text",
       "about_extended_quote",
     ],
@@ -59,11 +57,25 @@ export const SITE_CONTENT_SECTIONS: {
 
 /** Hebrew admin labels for CMS keys */
 export const CONTENT_KEY_LABELS: Partial<Record<SiteContentKey, string>> = {
-  about_intro: "תקציר אודות קצר",
-  about_extended_title: "כותרת אודות מורחבת",
-  about_extended_text: "טקסט אודות מורחב",
+  hero_title: "כותרת ראשית",
+  hero_subtitle: "משפט פתיחה",
+  hero_primary_button: "כפתור ראשי",
+  hero_secondary_button: "כפתור משני",
+  about_extended_title: "כותרת אודות",
+  about_extended_title_size: "גודל כותרת אודות",
+  about_extended_text: "טקסט אודות",
   about_extended_quote: "ציטוט / משפט מסכם באודות",
-  about_extended_image_url: "תמונת אודות מורחבת",
+  about_extended_image_url: "תמונת אודות",
+  works_title: "כותרת עבודות",
+  services_title: "כותרת שירותים",
+  contact_title: "כותרת צור קשר",
+  contact_intro: "טקסט צור קשר",
+  phone: "טלפון",
+  email: "אימייל",
+  seo_title_en: "כותרת SEO באנגלית",
+  seo_title_he: "כותרת SEO בעברית",
+  seo_description_en: "תיאור SEO באנגלית",
+  seo_description_he: "תיאור SEO בעברית",
 };
 
 const LONG_TEXT_KEYS = new Set<SiteContentKey>([
@@ -80,6 +92,10 @@ const LONG_TEXT_KEYS = new Set<SiteContentKey>([
 
 export function isLongContentKey(key: SiteContentKey): boolean {
   return LONG_TEXT_KEYS.has(key);
+}
+
+export function isLocaleAgnosticContentKey(key: SiteContentKey): boolean {
+  return key === "about_extended_title_size";
 }
 
 export function contentKeyLabel(key: SiteContentKey): string {

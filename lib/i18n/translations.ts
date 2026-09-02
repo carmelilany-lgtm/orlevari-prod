@@ -139,7 +139,7 @@ const en: TranslationKeys = {
     extendedText:
       "I'm a video creator and editor based in Israel, working with businesses, artists, and families who want their story told with clarity and cinematic quality. From concept to final cut, I handle filming, editing, and production with a fast, attentive workflow — so every project feels personal, polished, and true to the people behind it.",
     extendedQuote:
-      "I believe every project deserves care, clarity and a cinematic point of view.",
+      "“I believe every project deserves care, clarity and a cinematic point of view.”",
     extendedImageAlt: "Or Lev Ari at work",
   },
   works: {
@@ -255,7 +255,7 @@ const he: TranslationKeys = {
     extendedText:
       "אני יוצר ועורך וידאו, עובד עם עסקים, אמנים ומשפחות שרוצים לספר את הסיפור שלהם בצורה ברורה, מדויקת וקולנועית. מהרעיון ועד הגזירה הסופית — צילום, עריכה והפקה מלאה, עם יחס אישי, זריזות ועין קולנועית שמביאה כל פרויקט לחיים.",
     extendedQuote:
-      "אני מאמין שכל פרויקט צריך לקבל יחס אישי, דיוק וראייה קולנועית.",
+      "“אני מאמין שכל פרויקט צריך לקבל יחס אישי, דיוק וראייה קולנועית.”",
     extendedImageAlt: "אור לב ארי בעבודה",
   },
   works: {

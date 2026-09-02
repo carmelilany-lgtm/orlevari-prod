@@ -37,6 +37,7 @@ export const MOCK_SERVICES: ServiceDisplay[] = SERVICES.map((s) => ({
   id: s.id,
   title: s.title,
   description: s.description,
+  iconKey: s.id,
 }));
 
 /** @deprecated Use MOCK_PORTFOLIO_VIDEO_WORKS — kept for lib/api fallback name */

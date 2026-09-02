@@ -59,10 +59,6 @@ function getLocaleSnapshot(): Locale {
   return readLocaleFromStorage();
 }
 
-function getLocaleServerSnapshot(): Locale {
-  return DEFAULT_LOCALE;
-}
-
 function persistLocale(locale: Locale) {
   writeLocaleToStorage(locale);
   applyDocumentLocale(locale);
@@ -74,16 +70,18 @@ export function LanguageProvider({
   cmsMap,
   isLiveData = false,
   whatsappEnvFallback,
+  initialLocale = DEFAULT_LOCALE,
 }: {
   children: ReactNode;
   cmsMap?: SiteContentMap;
   isLiveData?: boolean;
   whatsappEnvFallback?: string;
+  initialLocale?: Locale;
 }) {
   const locale = useSyncExternalStore(
     subscribeLocale,
     getLocaleSnapshot,
-    getLocaleServerSnapshot,
+    () => initialLocale,
   );
 
   useEffect(() => {

@@ -63,4 +63,5 @@ export interface ServiceItem {
   id: string;
   title: { en: string; he: string };
   description: { en: string; he: string };
+  iconKey?: string;
 }

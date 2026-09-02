@@ -9,6 +9,7 @@ import { AppProviders } from "@/components/providers/AppProviders";
 import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
 import { getSiteContentMap } from "@/lib/api/content";
 import { loadSitePortfolioData } from "@/lib/data/site-data";
+import { getRequestLocale } from "@/lib/i18n/request-locale";
 import { buildHomeMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata() {
@@ -25,12 +26,14 @@ export default async function HomePage() {
   ]);
 
   const whatsappEnvFallback = process.env.WHATSAPP_PHONE?.trim() || undefined;
+  const initialLocale = await getRequestLocale();
 
   return (
     <AppProviders
       siteData={siteData}
       cmsMap={cmsMap}
       whatsappEnvFallback={whatsappEnvFallback}
+      initialLocale={initialLocale}
     >
       <Header />
       <main id="main-content">

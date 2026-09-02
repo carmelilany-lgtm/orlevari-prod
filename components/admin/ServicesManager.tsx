@@ -22,6 +22,7 @@ import {
   type ServiceRow,
 } from "@/lib/admin/actions/services";
 import { adminCopy } from "@/lib/admin/copy";
+import { SERVICE_ICON_OPTIONS } from "@/lib/services/icon-options";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -165,11 +166,21 @@ export function ServicesManager({ initialServices }: Props) {
               onChange={(v) => setForm((f) => ({ ...f, description_he: v }))}
             />
             <AdminFormField
+              as="select"
               label={adminCopy.services.iconKey}
-              dir="ltr"
+              dir="rtl"
               value={form.icon_key}
               hint={adminCopy.services.iconHint}
               onChange={(v) => setForm((f) => ({ ...f, icon_key: v }))}
+              options={
+                form.icon_key &&
+                !SERVICE_ICON_OPTIONS.some((opt) => opt.value === form.icon_key)
+                  ? [
+                      { value: form.icon_key, label: form.icon_key },
+                      ...SERVICE_ICON_OPTIONS,
+                    ]
+                  : [...SERVICE_ICON_OPTIONS]
+              }
             />
             <SortOrderField
               value={form.sort_order}

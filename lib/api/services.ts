@@ -42,5 +42,6 @@ export async function getPublishedServiceItems(): Promise<ServiceItem[]> {
     id: s.id,
     title: s.title,
     description: s.description,
+    iconKey: s.iconKey,
   }));
 }

@@ -6,9 +6,6 @@ export const VISUAL_CONTENT_KEYS = [
   "hero_subtitle",
   "hero_primary_button",
   "hero_secondary_button",
-  "about_title",
-  "about_intro",
-  "about_text",
   "about_extended_title",
   "about_extended_text",
   "about_extended_quote",
@@ -29,8 +26,6 @@ export function isVisualContentKey(key: string): key is VisualContentKey {
 /** Multiline fields in the visual editor */
 export const VISUAL_MULTILINE_KEYS = new Set<VisualContentKey>([
   "hero_subtitle",
-  "about_intro",
-  "about_text",
   "about_extended_text",
   "contact_intro",
 ]);
@@ -45,11 +40,8 @@ export const VISUAL_FIELD_LABELS: Record<VisualContentKey, string> = {
   hero_subtitle: "משפט פתיחה",
   hero_primary_button: "כפתור ראשי",
   hero_secondary_button: "כפתור משני",
-  about_title: "כותרת אודות",
-  about_intro: "תקציר אודות קצר",
-  about_text: "טקסט אודות",
-  about_extended_title: "כותרת אודות מורחבת",
-  about_extended_text: "טקסט אודות מורחב",
+  about_extended_title: "כותרת אודות",
+  about_extended_text: "טקסט אודות",
   about_extended_quote: "ציטוט / משפט מסכם באודות",
   works_title: "כותרת עבודות",
   services_title: "כותרת שירותים",
