@@ -3,12 +3,19 @@ import Script from "next/script";
 import { Noto_Sans_Hebrew } from "next/font/google";
 import { LOCALE_BOOTSTRAP_SCRIPT } from "@/lib/i18n/locale-storage";
 import { A11Y_BOOTSTRAP_SCRIPT } from "@/lib/a11y/prefs";
+import {
+  PRIVACY_BOOTSTRAP_SCRIPT,
+  PRIVACY_CONSENT_KEY,
+  PRIVACY_DECIDED_ATTR,
+  parsePrivacyConsentText,
+} from "@/lib/privacy/consent";
 import { getRequestLocale } from "@/lib/i18n/request-locale";
 import {
   DEFAULT_DESCRIPTION,
   DEFAULT_TITLE,
 } from "@/lib/seo/metadata";
 import { getMetadataBase } from "@/lib/seo/site-url";
+import { cookies } from "next/headers";
 import "./globals.css";
 
 const notoSansHebrew = Noto_Sans_Hebrew({
@@ -51,12 +58,16 @@ export default async function RootLayout({
 }>) {
   const locale = await getRequestLocale();
   const dir = locale === "he" ? "rtl" : "ltr";
+  const consentCookie = (await cookies()).get(PRIVACY_CONSENT_KEY)?.value;
+  const privacyDecided =
+    parsePrivacyConsentText(consentCookie)?.decided === true;
 
   return (
     <html
       lang={locale}
       dir={dir}
       data-scroll-behavior="smooth"
+      {...(privacyDecided ? { [PRIVACY_DECIDED_ATTR]: "1" } : {})}
       className={`${notoSansHebrew.variable} min-h-full scroll-smooth bg-[#050a12]`}
       suppressHydrationWarning
     >
@@ -70,6 +81,11 @@ export default async function RootLayout({
           id="lev-ari-a11y-bootstrap"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: A11Y_BOOTSTRAP_SCRIPT }}
+        />
+        <Script
+          id="lev-ari-privacy-bootstrap"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: PRIVACY_BOOTSTRAP_SCRIPT }}
         />
         {children}
       </body>

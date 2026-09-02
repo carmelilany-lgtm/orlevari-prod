@@ -42,6 +42,14 @@ html {
   background-color: var(--navy-deep);
 }
 
+html[data-privacy-decided="1"] #privacy-consent-banner {
+  display: none !important;
+}
+
+html[data-privacy-decided="1"] #lev-ari-floating-whatsapp {
+  bottom: 1.5rem;
+}
+
 html,
 body {
   overscroll-behavior: none;

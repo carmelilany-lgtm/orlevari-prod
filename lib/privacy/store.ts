@@ -1,9 +1,12 @@
 import {
   DEFAULT_PRIVACY_CONSENT,
   PRIVACY_CONSENT_KEY,
+  PRIVACY_DECIDED_ATTR,
   parsePrivacyConsent,
   type PrivacyConsent,
 } from "@/lib/privacy/consent";
+
+const CONSENT_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 let snapshot: PrivacyConsent = DEFAULT_PRIVACY_CONSENT;
 let loaded = false;
@@ -20,8 +23,21 @@ function readStored(): PrivacyConsent {
 }
 
 function persist(next: PrivacyConsent) {
+  const encoded = JSON.stringify(next);
   try {
-    localStorage.setItem(PRIVACY_CONSENT_KEY, JSON.stringify(next));
+    localStorage.setItem(PRIVACY_CONSENT_KEY, encoded);
+  } catch {
+    /* private mode */
+  }
+  if (typeof document === "undefined") return;
+  try {
+    if (next.decided) {
+      document.documentElement.setAttribute(PRIVACY_DECIDED_ATTR, "1");
+      document.cookie = `${PRIVACY_CONSENT_KEY}=${encodeURIComponent(encoded)}; Path=/; Max-Age=${CONSENT_COOKIE_MAX_AGE}; SameSite=Lax`;
+    } else {
+      document.documentElement.removeAttribute(PRIVACY_DECIDED_ATTR);
+      document.cookie = `${PRIVACY_CONSENT_KEY}=; Path=/; Max-Age=0; SameSite=Lax`;
+    }
   } catch {
     /* private mode */
   }
@@ -31,6 +47,7 @@ function ensureLoaded() {
   if (loaded || typeof window === "undefined") return;
   snapshot = readStored();
   loaded = true;
+  if (snapshot.decided) persist(snapshot);
 }
 
 function emit(next: PrivacyConsent) {

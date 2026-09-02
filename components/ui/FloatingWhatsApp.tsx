@@ -27,6 +27,7 @@ export function FloatingWhatsApp() {
 
   return (
     <a
+      id="lev-ari-floating-whatsapp"
       href={href}
       target="_blank"
       rel="noopener noreferrer"

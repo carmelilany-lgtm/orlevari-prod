@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/lib/i18n/context";
+import { PRIVACY_BANNER_ID } from "@/lib/privacy/consent";
 import {
   getPrivacyConsentServerSnapshot,
   getPrivacyConsentSnapshot,
@@ -24,6 +25,7 @@ export function PrivacyConsentBanner() {
 
   return (
     <div
+      id={PRIVACY_BANNER_ID}
       className="fixed inset-x-0 bottom-0 z-[45] border-t border-blue-500/25 bg-[#0a1020]/95 px-4 py-4 shadow-[0_-12px_40px_rgba(0,0,0,0.45)] backdrop-blur-md sm:px-6"
       role="dialog"
       aria-labelledby="privacy-banner-title"

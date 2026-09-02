@@ -1,7 +1,7 @@
 const STILLS_MOBILE_COLUMNS = 2;
 export const STILLS_MOBILE_INITIAL = 2;
 /** Desktop shows a larger first batch than the phone (2). */
-export const STILLS_DESKTOP_INITIAL = 8;
+export const STILLS_DESKTOP_INITIAL = 12;
 /** Clicks needed after the first screen to reveal every photo. */
 export const STILLS_LOAD_MORE_CLICKS = 2;
 
