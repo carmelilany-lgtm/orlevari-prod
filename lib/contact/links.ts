@@ -26,6 +26,16 @@ export function buildTelHref(phone: string): string | null {
   return `tel:${digits}`;
 }
 
+/** Display Israeli local numbers as 0XX-XXXXXXX without changing the tel: href. */
+export function formatPhoneForDisplay(phone: string): string {
+  const trimmed = phone.trim();
+  const digits = stripPhoneDigits(trimmed);
+  if (digits.startsWith("0") && digits.length === 10) {
+    return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  }
+  return trimmed;
+}
+
 export function buildMailtoHref(email: string): string | null {
   const trimmed = email.trim();
   if (!trimmed || !trimmed.includes("@")) return null;

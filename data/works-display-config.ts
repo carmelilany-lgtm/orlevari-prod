@@ -12,3 +12,8 @@ export const VIDEO_CATEGORY_MOCK_COUNT = 6;
 
 /** Stills shown in masonry — future: paginate or lazy-load from Supabase */
 export const STILLS_MOCK_COUNT = 40;
+
+/** First batch on the mobile stills grid (2×4), then Load more */
+export const STILLS_MOBILE_INITIAL_VISIBLE = 8;
+
+export const STILLS_MOBILE_LOAD_MORE_STEP = 8;

@@ -18,6 +18,10 @@ import {
   parseCollageLayout,
 } from "@/lib/stills/collage-layout";
 import { CdnImage } from "@/components/media/CdnImage";
+import {
+  STILLS_MOBILE_INITIAL_VISIBLE,
+  STILLS_MOBILE_LOAD_MORE_STEP,
+} from "@/data/works-display-config";
 import { STILL_TILE_SIZES } from "@/lib/images/cdn-sizes";
 import { cn } from "@/lib/utils";
 import {
@@ -77,6 +81,7 @@ function StillTile({
   onSelect,
   collageTile = false,
   positionalTile = false,
+  squareTile = false,
   colSpan = 1,
   rowSpan = 1,
   gridPosition,
@@ -89,6 +94,7 @@ function StillTile({
   onSelect: (item: StillWorkItem) => void;
   collageTile?: boolean;
   positionalTile?: boolean;
+  squareTile?: boolean;
   colSpan?: number;
   rowSpan?: number;
   gridPosition?: { x: number; y: number; w: number; h: number };
@@ -131,12 +137,13 @@ function StillTile({
         "still-mosaic-item group cursor-pointer",
         collageTile && "stills-collage-tile h-full min-h-0",
         positionalTile && "stills-collage-positional-tile",
+        squareTile && "still-square-tile aspect-square h-auto w-full",
         editMode && selected && "ring-2 ring-cyan-400 ring-offset-2 ring-offset-[#070b14]",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-cyan-400",
       )}
     >
       {item.image_url ? (
-        collageTile || positionalTile ? (
+        collageTile || positionalTile || squareTile ? (
           <CdnImage
             src={item.image_url}
             alt={label}
@@ -160,8 +167,9 @@ function StillTile({
             "still-placeholder relative block w-full bg-gradient-to-br",
             gradient,
             collageTile && "h-full min-h-[5rem]",
+            squareTile && "h-full min-h-0",
           )}
-          style={aspectStyle}
+          style={squareTile ? undefined : aspectStyle}
         >
           <div
             className="pointer-events-none absolute inset-0 opacity-50"
@@ -173,6 +181,68 @@ function StillTile({
         </div>
       )}
     </button>
+  );
+}
+
+function MobileStillsGrid({
+  items,
+  locale,
+  openLabel,
+  loadMoreLabel,
+  loadMoreCount,
+  onSelect,
+  preview = false,
+}: {
+  items: StillWorkItem[];
+  locale: "en" | "he";
+  openLabel: string;
+  loadMoreLabel: string;
+  loadMoreCount: (count: number) => string;
+  onSelect: (item: StillWorkItem) => void;
+  preview?: boolean;
+}) {
+  const [visibleCount, setVisibleCount] = useState(STILLS_MOBILE_INITIAL_VISIBLE);
+  const shown = items.slice(
+    0,
+    preview ? Math.min(4, items.length) : visibleCount,
+  );
+  const remaining = preview ? 0 : Math.max(0, items.length - shown.length);
+
+  return (
+    <div className={cn("md:hidden", preview && "pointer-events-none opacity-60")}>
+      <ul className="grid grid-cols-2 gap-[3px]" role="list">
+        {shown.map((item) => (
+          <li key={item.id} className="min-w-0">
+            <StillTile
+              item={item}
+              locale={locale}
+              openLabel={openLabel}
+              onSelect={onSelect}
+              squareTile
+            />
+          </li>
+        ))}
+      </ul>
+      <p className="sr-only" aria-live="polite">
+        {shown.length} / {items.length}
+      </p>
+      {remaining > 0 ? (
+        <div className="mt-6 flex justify-center">
+          <button
+            type="button"
+            onClick={() =>
+              setVisibleCount((count) =>
+                Math.min(count + STILLS_MOBILE_LOAD_MORE_STEP, items.length),
+              )
+            }
+            aria-label={loadMoreCount(remaining)}
+            className="min-h-11 rounded-full border border-blue-500/30 bg-blue-950/30 px-7 py-3 text-base text-slate-200 transition-all duration-300 hover:border-cyan-400/50 hover:bg-blue-900/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
+          >
+            {loadMoreLabel}
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -415,18 +485,15 @@ export function StillsMasonryGallery() {
             onSelect={setSelectedId}
             onLayoutDraftChange={setDraftLayout}
           />
-          <div className="masonry-columns md:hidden opacity-60 pointer-events-none">
-            {sortedStills.map((item) => (
-              <StillTile
-                key={item.id}
-                item={item}
-                locale={locale}
-                openLabel={t.works.openStill}
-                onSelect={openLightbox}
-                editMode
-              />
-            ))}
-          </div>
+          <MobileStillsGrid
+            items={sortedStills}
+            locale={locale}
+            openLabel={t.works.openStill}
+            loadMoreLabel={t.works.loadMore}
+            loadMoreCount={t.works.loadMoreCount}
+            onSelect={openLightbox}
+            preview
+          />
         </>
       ) : useCollageLayout && usePositionalLayout ? (
         <>
@@ -452,17 +519,14 @@ export function StillsMasonryGallery() {
               );
             })}
           </div>
-          <div className="masonry-columns md:hidden">
-            {sortedStills.map((item) => (
-              <StillTile
-                key={item.id}
-                item={item}
-                locale={locale}
-                openLabel={t.works.openStill}
-                onSelect={openLightbox}
-              />
-            ))}
-          </div>
+          <MobileStillsGrid
+            items={sortedStills}
+            locale={locale}
+            openLabel={t.works.openStill}
+            loadMoreLabel={t.works.loadMore}
+            loadMoreCount={t.works.loadMoreCount}
+            onSelect={openLightbox}
+          />
         </>
       ) : useCollageLayout ? (
         <>
@@ -486,8 +550,27 @@ export function StillsMasonryGallery() {
               );
             })}
           </div>
-          <div className="masonry-columns md:hidden">
-            {sortedStills.map((item) => (
+          <MobileStillsGrid
+            items={sortedStills}
+            locale={locale}
+            openLabel={t.works.openStill}
+            loadMoreLabel={t.works.loadMore}
+            loadMoreCount={t.works.loadMoreCount}
+            onSelect={openLightbox}
+          />
+        </>
+      ) : (
+        <>
+          <MobileStillsGrid
+            items={sortedStills}
+            locale={locale}
+            openLabel={t.works.openStill}
+            loadMoreLabel={t.works.loadMore}
+            loadMoreCount={t.works.loadMoreCount}
+            onSelect={openLightbox}
+          />
+          <div className="masonry-columns hidden md:block">
+            {visibleStills.map((item) => (
               <StillTile
                 key={item.id}
                 item={item}
@@ -498,18 +581,6 @@ export function StillsMasonryGallery() {
             ))}
           </div>
         </>
-      ) : (
-        <div className="masonry-columns">
-          {visibleStills.map((item) => (
-            <StillTile
-              key={item.id}
-              item={item}
-              locale={locale}
-              openLabel={t.works.openStill}
-              onSelect={openLightbox}
-            />
-          ))}
-        </div>
       )}
 
       {!editMode && (

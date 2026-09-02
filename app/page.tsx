@@ -36,8 +36,8 @@ export default async function HomePage() {
       <main id="main-content">
         <Hero />
         <About />
-        <Works />
         <Services />
+        <Works />
         <Contact />
       </main>
       <Footer />

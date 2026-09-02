@@ -6,6 +6,7 @@ import { adminErrors } from "@/lib/admin/copy";
 import { revalidateSiteAndAdminMedia } from "@/lib/admin/revalidate";
 import { requireAdmin, type AdminContext } from "@/lib/admin/require-admin";
 import { ensureAdminUserInDatabase } from "@/lib/auth/ensure-admin-user";
+import { optimizeImageForPublicStorage } from "@/lib/images/optimize-upload";
 import { buildMediaStoragePath } from "@/lib/images/sanitize-file-name";
 import { resolveImageMime } from "@/lib/images/still-upload-validation";
 
@@ -38,12 +39,29 @@ async function uploadAboutBucketImage(
   }
 
   const timestamp = Date.now();
+  const arrayBuffer = await file.arrayBuffer();
+  let uploadBody: Buffer | ArrayBuffer = arrayBuffer;
+  let uploadType = contentType;
+  let uploadName = file.name;
+
+  try {
+    const optimized = await optimizeImageForPublicStorage(arrayBuffer);
+    uploadBody = optimized.buffer;
+    uploadType = optimized.contentType;
+    uploadName = optimized.fileName;
+  } catch (error) {
+    console.error(
+      "[lev-ari] about image optimize:",
+      error instanceof Error ? error.message : error,
+    );
+  }
+
   const storagePath = buildMediaStoragePath(
     pathPrefix,
     timestamp,
     0,
-    contentType,
-    file.name,
+    uploadType,
+    uploadName,
   );
 
   const { data: existingRows } = await ctx.supabase
@@ -55,11 +73,10 @@ async function uploadAboutBucketImage(
     existingRows?.find((r) => r.key === storageKey)?.value_en?.trim() ||
     null;
 
-  const arrayBuffer = await file.arrayBuffer();
   const { error: uploadError } = await ctx.supabase.storage
     .from(ABOUT_BUCKET)
-    .upload(storagePath, arrayBuffer, {
-      contentType,
+    .upload(storagePath, uploadBody, {
+      contentType: uploadType,
       upsert: false,
     });
 

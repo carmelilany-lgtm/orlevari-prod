@@ -5,6 +5,7 @@ import { actionError, actionOk } from "@/lib/admin/action-result";
 import { adminErrors } from "@/lib/admin/copy";
 import { revalidateSiteAndAdminMedia } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
+import { optimizeImageForPublicStorage } from "@/lib/images/optimize-upload";
 import { buildStillStoragePath } from "@/lib/images/sanitize-file-name";
 import { resolveImageMime } from "@/lib/images/still-upload-validation";
 import { ensureAdminUserInDatabase } from "@/lib/auth/ensure-admin-user";
@@ -145,18 +146,41 @@ export async function uploadStillImage(formData: FormData): Promise<
   const fileIndex = Number(formData.get("file_index") ?? 0);
   const timestamp = Number.isFinite(batchTimestamp) ? batchTimestamp : Date.now();
   const index = Number.isFinite(fileIndex) ? fileIndex : 0;
+  const arrayBuffer = await file.arrayBuffer();
+  let uploadBody: Buffer | ArrayBuffer = arrayBuffer;
+  let uploadType = contentType;
+  let uploadName = file.name;
+  let storedWidth = Number.isFinite(width) ? width : null;
+  let storedHeight = Number.isFinite(height) ? height : null;
+  let storedAspect = Number.isFinite(aspectRatio) ? aspectRatio : null;
+
+  try {
+    const optimized = await optimizeImageForPublicStorage(arrayBuffer);
+    uploadBody = optimized.buffer;
+    uploadType = optimized.contentType;
+    uploadName = optimized.fileName;
+    storedWidth = optimized.width;
+    storedHeight = optimized.height;
+    storedAspect =
+      optimized.height > 0 ? optimized.width / optimized.height : storedAspect;
+  } catch (error) {
+    console.error(
+      "[lev-ari] still image optimize:",
+      error instanceof Error ? error.message : error,
+    );
+  }
+
   const storagePath = buildStillStoragePath(
     timestamp,
     index,
-    contentType,
-    file.name,
+    uploadType,
+    uploadName,
   );
 
-  const arrayBuffer = await file.arrayBuffer();
   const { error: uploadError } = await ctx.supabase.storage
     .from(STILLS_BUCKET)
-    .upload(storagePath, arrayBuffer, {
-      contentType,
+    .upload(storagePath, uploadBody, {
+      contentType: uploadType,
       upsert: false,
     });
 
@@ -183,9 +207,9 @@ export async function uploadStillImage(formData: FormData): Promise<
       storage_path: storagePath,
       alt_en: altEn || null,
       alt_he: altHe || null,
-      width: Number.isFinite(width) ? width : null,
-      height: Number.isFinite(height) ? height : null,
-      aspect_ratio: Number.isFinite(aspectRatio) ? aspectRatio : null,
+      width: storedWidth,
+      height: storedHeight,
+      aspect_ratio: storedAspect,
       sort_order: Number.isFinite(sortOrder) ? sortOrder : 0,
       is_published: isPublished,
     })

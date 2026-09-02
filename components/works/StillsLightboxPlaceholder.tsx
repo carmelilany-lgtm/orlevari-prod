@@ -144,7 +144,7 @@ export function StillsLightboxPlaceholder({
           width={current.width ?? 1920}
           height={current.height ?? 1280}
           sizes={LIGHTBOX_SIZES}
-          quality={85}
+          quality={75}
           priority
           className="h-auto max-h-[85vh] w-auto max-w-full rounded-lg object-contain"
         />

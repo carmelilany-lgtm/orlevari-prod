@@ -12,8 +12,8 @@ export function LegalDocument({ content }: { content: LegalPageContent }) {
         <h1 className="font-display text-3xl font-semibold text-slate-50 sm:text-4xl">
           {content.title}
         </h1>
-        <p className="mt-3 text-sm text-slate-500">{content.updatedLabel}</p>
-        <p className="mt-6 text-lg leading-relaxed text-slate-300">
+        <p className="mt-3 text-sm font-light text-slate-500">{content.updatedLabel}</p>
+        <p className="mt-6 text-lg font-light leading-relaxed text-slate-300">
           {content.intro}
         </p>
       </header>

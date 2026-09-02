@@ -2,6 +2,7 @@
 
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { BrandLogoLink } from "@/components/brand/BrandLogo";
 import { adminCopy } from "@/lib/admin/copy";
 import { useState } from "react";
 
@@ -21,11 +22,14 @@ export function AdminShell({ email, publicSiteUrl, children }: Props) {
           sidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="border-b border-blue-900/40 px-4 py-5 text-right">
-          <p className="font-display text-lg font-semibold text-white">
-            {adminCopy.brand.title}
-          </p>
-          <p className="text-xs text-slate-500">{adminCopy.brand.subtitle}</p>
+        <div className="border-b border-blue-900/40 px-4 py-5">
+          <BrandLogoLink
+            href="/"
+            alt={adminCopy.brand.loginBrand}
+            heightClassName="h-8"
+            className="max-w-full"
+          />
+          <p className="mt-2 text-xs text-slate-500">{adminCopy.brand.subtitle}</p>
         </div>
         <AdminSidebar onNavigate={() => setSidebarOpen(false)} />
       </aside>

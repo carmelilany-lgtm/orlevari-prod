@@ -1,5 +1,7 @@
 import "server-only";
 
+import { absolutePublicUrl } from "@/lib/seo/site-url";
+
 const HTML_ESCAPE_MAP: Record<string, string> = {
   "&": "&amp;",
   "<": "&lt;",
@@ -94,6 +96,11 @@ export function wrapEmailDocument(options: {
   bodyHtml: string;
 }): string {
   const { lang, dir, title, bodyHtml } = options;
+  const logoUrl = absolutePublicUrl("/brand/levari-productions-logo.png");
+  const brandHeader = logoUrl
+    ? `<img src="${escapeHtml(logoUrl)}" alt="Lev Ari Productions" width="220" height="49" style="display:block;height:48px;width:auto;max-width:220px;border:0;" />`
+    : `<p style="margin:0;font-size:18px;font-weight:700;color:#e2e8f0;">Lev Ari Productions</p>
+              <p style="margin:4px 0 0;font-size:13px;color:#94a3b8;">לב ארי הפקות</p>`;
 
   return `<!DOCTYPE html>
 <html lang="${lang}" dir="${dir}">
@@ -109,8 +116,7 @@ export function wrapEmailDocument(options: {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:12px;border:1px solid #cbd5e1;overflow:hidden;">
           <tr>
             <td style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%);padding:20px 24px;">
-              <p style="margin:0;font-size:18px;font-weight:700;color:#e2e8f0;">Lev Ari Productions</p>
-              <p style="margin:4px 0 0;font-size:13px;color:#94a3b8;">לב ארי הפקות</p>
+              ${brandHeader}
             </td>
           </tr>
           <tr>

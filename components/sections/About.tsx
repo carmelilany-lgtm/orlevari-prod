@@ -1,6 +1,5 @@
 "use client";
 
-import { EditableSectionHeading } from "@/components/visual-editor/EditableSectionHeading";
 import { EditableText } from "@/components/visual-editor/EditableText";
 import { EditableAboutImage } from "@/components/visual-editor/EditableAboutImage";
 import { useVisualEditorActive } from "@/components/visual-editor/VisualEditorProvider";
@@ -44,16 +43,10 @@ export function About() {
       aria-labelledby="about-heading"
       className="section-padding section-surface border-t border-blue-900/25"
     >
-      <div className="container-narrow space-y-10 lg:space-y-12">
-        <EditableSectionHeading
-          id="about-heading"
-          titleKey="about_title"
-          titleFallback={t.about.title}
-        />
-
+      <div className="container-narrow">
         <div
           className={cn(
-            "relative overflow-hidden rounded-3xl border border-blue-400/15 bg-gradient-to-br from-[#0a1628] via-[#0c1a32] to-[#070d18] p-6 shadow-[0_0_60px_rgba(37,99,235,0.12)] sm:p-8 lg:p-10",
+            "relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0a1628] via-[#0c1a32] to-[#070d18] p-6 shadow-[0_0_60px_rgba(37,99,235,0.12)] sm:p-8 lg:p-10",
             dir === "rtl" ? "text-right" : "text-left",
           )}
         >
@@ -61,13 +54,43 @@ export function About() {
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(56,189,248,0.08),transparent_55%)]"
             aria-hidden
           />
-          <div className="relative grid items-center gap-8 lg:grid-cols-2 lg:gap-10">
-            <div
-              className={cn(
-                "relative mx-auto aspect-[3/4] w-full max-w-[280px] justify-self-center overflow-hidden rounded-2xl bg-[#070b14] ring-1 ring-cyan-400/15 sm:max-w-[300px] lg:max-w-[340px]",
-                dir === "rtl" ? "lg:order-2" : "lg:order-1",
-              )}
-            >
+          <div
+            dir={dir}
+            className="relative grid items-center gap-8 lg:grid-cols-2 lg:gap-10"
+          >
+            <div className="order-2 flex flex-col gap-5 lg:order-1">
+              <EditableText
+                as="h2"
+                id="about-heading"
+                contentKey="about_extended_title"
+                fallback={extendedTitle}
+                className="font-display text-2xl font-semibold text-white sm:text-3xl lg:text-4xl"
+              />
+              <EditableText
+                as="p"
+                contentKey="about_extended_text"
+                fallback={extendedText}
+                className="max-w-prose text-base font-light leading-relaxed text-slate-300 sm:text-lg sm:leading-8"
+              />
+              {extendedQuote.trim() || visualEdit ? (
+                <blockquote className="relative max-w-prose ps-8 font-display text-sm font-normal italic leading-relaxed text-slate-400 sm:text-base">
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute start-0 top-0 font-semibold not-italic text-2xl leading-none text-cyan-300/85"
+                  >
+                    “
+                  </span>
+                  <EditableText
+                    as="span"
+                    contentKey="about_extended_quote"
+                    fallback={extendedQuote}
+                    className="after:ms-1.5 after:inline-block after:translate-y-[0.12em] after:align-baseline after:font-semibold after:not-italic after:text-2xl after:leading-none after:text-cyan-300/85 after:content-['”']"
+                  />
+                </blockquote>
+              ) : null}
+            </div>
+
+            <div className="relative order-1 mx-auto aspect-[3/4] w-full max-w-[280px] justify-self-center overflow-hidden rounded-2xl bg-[#070b14] ring-1 ring-cyan-400/15 sm:max-w-[300px] lg:order-2 lg:max-w-[340px]">
               {displayImageUrl ? (
                 <EditableAboutImage
                   imageUrl={displayImageUrl}
@@ -84,36 +107,6 @@ export function About() {
                   />
                 </>
               )}
-            </div>
-
-            <div
-              className={cn(
-                "flex flex-col gap-5",
-                dir === "rtl" ? "lg:order-1" : "lg:order-2",
-              )}
-            >
-              <EditableText
-                as="div"
-                contentKey="about_extended_title"
-                fallback={extendedTitle}
-                className="font-display text-2xl font-medium text-white sm:text-3xl lg:text-4xl"
-              />
-              <EditableText
-                as="p"
-                contentKey="about_extended_text"
-                fallback={extendedText}
-                className="max-w-prose text-base leading-relaxed text-slate-300 sm:text-lg sm:leading-8"
-              />
-              {extendedQuote.trim() || visualEdit ? (
-                <blockquote className="rounded-2xl border border-cyan-400/20 bg-blue-950/40 px-5 py-4 text-base italic leading-relaxed text-cyan-100/90 sm:text-lg">
-                  <EditableText
-                    as="span"
-                    contentKey="about_extended_quote"
-                    fallback={extendedQuote}
-                    className="block"
-                  />
-                </blockquote>
-              ) : null}
             </div>
           </div>
         </div>

@@ -38,6 +38,7 @@ export const WHATSAPP_FIELD_META: Record<WhatsAppSiteContentKey, WhatsAppFieldMe
   whatsapp_enabled: {
     label: "הצגת WhatsApp באזור צור קשר",
     kind: "boolean",
+    helper: "לא בשימוש באתר הציבורי — וואטסאפ מוצג רק בכפתור הצף",
   },
   whatsapp_floating_enabled: {
     label: "הצגת כפתור WhatsApp צף",

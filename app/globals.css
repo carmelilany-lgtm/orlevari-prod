@@ -59,6 +59,35 @@ body {
   }
 }
 
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-enter {
+    animation: hero-fade-up 0.75s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .hero-enter-delay-1 {
+    animation-delay: 90ms;
+  }
+
+  .hero-enter-delay-2 {
+    animation-delay: 180ms;
+  }
+
+  .hero-enter-delay-3 {
+    animation-delay: 280ms;
+  }
+}
+
 body {
   background-color: var(--bg-primary);
   background-image: linear-gradient(
@@ -70,15 +99,26 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 1rem;
+  font-weight: 400;
   line-height: 1.65;
+}
+
+html[lang="en"] body {
+  letter-spacing: 0.01em;
 }
 
 html[lang="he"] body {
   font-family: var(--font-hebrew), var(--font-sans), system-ui, sans-serif;
+  letter-spacing: 0;
 }
 
 .font-display {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-display), var(--font-sans), Georgia, serif;
+  font-optical-sizing: auto;
+}
+
+html[lang="he"] .font-display {
+  font-family: var(--font-hebrew), var(--font-sans), system-ui, sans-serif;
 }
 
 ::selection {
@@ -220,7 +260,50 @@ html[lang="he"] body {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.still-square-tile {
+  margin-bottom: 0;
+  height: 100%;
+}
+
+.still-square-tile .image-skeleton-frame,
+.still-square-tile .still-mosaic-image,
+.still-square-tile img {
+  width: 100%;
+  height: 100%;
+}
+
+.still-square-tile .still-mosaic-image,
+.still-square-tile img {
+  object-fit: cover;
+}
+
+.image-skeleton-frame {
   background-color: var(--bg-card);
+}
+
+.image-skeleton {
+  background: linear-gradient(
+    105deg,
+    #0c1222 0%,
+    #152038 38%,
+    #1a2c4a 50%,
+    #152038 62%,
+    #0c1222 100%
+  );
+  background-size: 220% 100%;
+  animation: image-skeleton-shimmer 1.35s ease-in-out infinite;
+  transition: opacity 0.3s ease-out;
+}
+
+@keyframes image-skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 /* Admin-saved collage layout (desktop/tablet); mobile falls back to masonry */
@@ -245,11 +328,16 @@ html[lang="he"] body {
   min-height: 0;
 }
 
+.stills-collage-tile .image-skeleton-frame,
 .stills-collage-tile .still-mosaic-image,
 .stills-collage-tile img {
   width: 100%;
   height: 100%;
   min-height: 5rem;
+}
+
+.stills-collage-tile .still-mosaic-image,
+.stills-collage-tile img {
   object-fit: cover;
 }
 
@@ -265,11 +353,16 @@ html[lang="he"] body {
   min-height: 0;
 }
 
+.stills-collage-positional-tile .image-skeleton-frame,
 .stills-collage-positional-tile .still-mosaic-image,
 .stills-collage-positional-tile img {
   width: 100%;
   height: 100%;
   min-height: 5rem;
+}
+
+.stills-collage-positional-tile .still-mosaic-image,
+.stills-collage-positional-tile img {
   object-fit: cover;
 }
 

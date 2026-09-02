@@ -1,5 +1,6 @@
 "use client";
 
+import { BrandLogoLink, HERO_BRAND_LOGO_ID } from "@/components/brand/BrandLogo";
 import { EditableText } from "@/components/visual-editor/EditableText";
 import { useVisualEditorActive } from "@/components/visual-editor/VisualEditorProvider";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
@@ -42,10 +43,10 @@ const cellGradients = [
 ];
 
 const heroButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-medium transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400";
+  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-semibold transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400";
 
 export function Hero() {
-  const { t, locale } = useLanguage();
+  const { t, locale, dir } = useLanguage();
   const visualEdit = useVisualEditorActive();
   const { stills } = useSiteData();
 
@@ -76,28 +77,29 @@ export function Hero() {
         <div className="blue-radial-glow absolute inset-0" aria-hidden />
       </div>
 
-      <div className="container-wide relative z-10 grid min-h-[100svh] items-center gap-10 px-4 pb-16 pt-28 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:pt-32">
-        <div className="max-w-xl">
-          <h1
-            id="hero-title"
-            className="font-display text-4xl font-semibold leading-tight tracking-tight text-slate-50 sm:text-5xl lg:text-6xl"
-          >
-            <span className="gradient-text block">
-              <EditableText
-                as="span"
-                contentKey="hero_title"
-                fallback={t.hero.title}
-                className="font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
-              />
-            </span>
-          </h1>
+      <div
+        dir={dir}
+        className="container-wide relative z-10 flex min-h-[100svh] flex-col items-center justify-center gap-12 px-4 pb-16 pt-28 sm:px-6 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 lg:pt-32"
+      >
+        <div className="flex w-full flex-col items-center text-center lg:max-w-xl lg:items-start lg:text-start">
+          <BrandLogoLink
+            id={HERO_BRAND_LOGO_ID}
+            href="#hero"
+            alt={t.brand}
+            priority
+            heightClassName="h-16 sm:h-18 lg:h-20"
+            sizes="(max-width: 640px) 288px, (max-width: 1024px) 352px, 384px"
+            className="hero-enter mb-8 self-center"
+            imageClassName="max-w-[min(100%,18rem)] sm:max-w-[22rem] lg:max-w-[24rem]"
+          />
           <EditableText
-            as="p"
+            as="h1"
+            id="hero-title"
             contentKey="hero_subtitle"
             fallback={t.hero.subtitle}
-            className="mt-6 text-lg leading-relaxed text-slate-300 sm:text-xl"
+            className="hero-enter hero-enter-delay-1 font-display max-w-4xl text-center text-2xl font-medium leading-snug tracking-tight text-slate-200 sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-tight"
           />
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div className="hero-enter hero-enter-delay-2 mt-10 flex w-full flex-wrap justify-center gap-4">
             {visualEdit ? (
               <>
                 <span
@@ -147,7 +149,7 @@ export function Hero() {
         </div>
 
         <div
-          className="relative aspect-[4/3] w-full max-lg:max-h-[50vh] lg:aspect-square"
+          className="hero-enter hero-enter-delay-3 relative aspect-[4/3] w-full max-lg:max-h-[50vh] lg:aspect-square"
           role="img"
           aria-label={t.hero.collageLabel}
         >
@@ -169,7 +171,8 @@ export function Hero() {
                       alt={stillAlt(still, locale)}
                       fill
                       sizes={i === 0 ? HERO_FEATURE_SIZES : HERO_CELL_SIZES}
-                      priority={i < 2}
+                      priority={i === 0}
+                      fetchPriority={i === 0 ? "high" : "low"}
                       className="object-cover"
                     />
                   ) : (

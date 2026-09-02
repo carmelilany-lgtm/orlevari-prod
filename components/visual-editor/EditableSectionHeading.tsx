@@ -35,7 +35,7 @@ export function EditableSectionHeading({
           as="p"
           contentKey={subtitleKey}
           fallback={subtitleFallback}
-          className="mt-4 text-lg leading-relaxed text-slate-400 sm:text-xl"
+          className="mt-4 text-lg font-light leading-relaxed text-slate-400 sm:text-xl"
         />
       ) : null}
     </header>

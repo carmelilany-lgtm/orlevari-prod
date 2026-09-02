@@ -1,5 +1,6 @@
 "use client";
 
+import { BrandLogoLink } from "@/components/brand/BrandLogo";
 import { useLanguage } from "@/lib/i18n/context";
 
 const CIMEDIA_URL = "https://cimedia.co.il";
@@ -15,15 +16,18 @@ export function Footer() {
   return (
     <footer className="border-t border-blue-900/30 bg-[#050a12]">
       <div className="container-wide flex flex-col items-center justify-between gap-6 px-4 py-10 sm:flex-row sm:px-6 lg:px-8">
-        <p className="text-center text-base text-slate-500 sm:text-start">
-          {t.footer.rights}
-        </p>
+        <div className="flex flex-col items-center gap-3 sm:items-start">
+          <BrandLogoLink href="/#hero" alt={t.brand} />
+          <p className="text-center text-sm font-light text-slate-500 sm:text-start">
+            {t.footer.rights}
+          </p>
+        </div>
         <nav aria-label="Footer" className="flex flex-wrap justify-center gap-6">
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-base text-slate-400 transition-colors hover:text-cyan-300"
+              className="text-base font-medium text-slate-400 transition-colors hover:text-cyan-300"
             >
               {link.label}
             </a>

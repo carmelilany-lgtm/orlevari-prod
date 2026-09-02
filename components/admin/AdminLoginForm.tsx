@@ -1,6 +1,7 @@
 "use client";
 
 import { AdminAlert } from "@/components/admin/AdminAlert";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import {
   adminBtnPrimary,
   adminCardClass,
@@ -50,11 +51,13 @@ export function AdminLoginForm() {
         onSubmit={handleSubmit}
         className={`${adminCardClass} w-full max-w-md space-y-5 text-right`}
       >
-        <div className="text-center">
-          <p className="text-xs uppercase tracking-wider text-blue-400">
-            {adminCopy.brand.loginBrand}
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold text-white">
+        <div className="flex flex-col items-center text-center">
+          <BrandLogo
+            alt={adminCopy.brand.loginBrand}
+            heightClassName="h-11 sm:h-12"
+            priority
+          />
+          <h1 className="mt-4 text-2xl font-semibold text-white">
             {adminCopy.auth.loginTitle}
           </h1>
         </div>

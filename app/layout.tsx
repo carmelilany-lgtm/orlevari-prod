@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
-import { Cormorant_Garamond, Heebo, Inter } from "next/font/google";
+import { Fraunces, Noto_Sans_Hebrew, Outfit } from "next/font/google";
 import { LOCALE_BOOTSTRAP_SCRIPT } from "@/lib/i18n/locale-storage";
 import {
   DEFAULT_DESCRIPTION,
@@ -10,22 +10,25 @@ import {
 import { getMetadataBase } from "@/lib/seo/site-url";
 import "./globals.css";
 
-const inter = Inter({
+const outfit = Outfit({
   variable: "--font-sans",
   subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
-const heebo = Heebo({
+const notoSansHebrew = Noto_Sans_Hebrew({
   variable: "--font-hebrew",
   subsets: ["hebrew", "latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
+const fraunces = Fraunces({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -60,7 +63,7 @@ export default function RootLayout({
       lang="en"
       dir="ltr"
       data-scroll-behavior="smooth"
-      className={`${inter.variable} ${heebo.variable} ${cormorant.variable} min-h-full scroll-smooth bg-[#050a12]`}
+      className={`${outfit.variable} ${notoSansHebrew.variable} ${fraunces.variable} min-h-full scroll-smooth bg-[#050a12]`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-[#070b14] text-slate-100 antialiased">

@@ -3,13 +3,14 @@
 import {
   buildMailtoHref,
   buildTelHref,
+  formatPhoneForDisplay,
 } from "@/lib/contact/links";
 import { resolveWhatsAppPublicSettings } from "@/lib/contact/whatsapp-settings";
 import { useLanguage } from "@/lib/i18n/context";
 import { useMemo } from "react";
 
 export interface PublicContactLink {
-  kind: "phone" | "email" | "whatsapp";
+  kind: "phone" | "email";
   label: string;
   href: string;
   value: string;
@@ -31,8 +32,7 @@ export function useWhatsAppPublicSettings() {
 }
 
 export function usePublicContactLinks(): PublicContactLink[] {
-  const { locale, t, cmsRaw, isLiveData } = useLanguage();
-  const whatsapp = useWhatsAppPublicSettings();
+  const { t, cmsRaw, isLiveData } = useLanguage();
 
   return useMemo(() => {
     const links: PublicContactLink[] = [];
@@ -46,7 +46,7 @@ export function usePublicContactLinks(): PublicContactLink[] {
         kind: "phone",
         label: t.contact.links.phone,
         href: phoneHref,
-        value: phone,
+        value: formatPhoneForDisplay(phone),
       });
     }
 
@@ -63,17 +63,8 @@ export function usePublicContactLinks(): PublicContactLink[] {
       });
     }
 
-    if (whatsapp.contactEnabled && whatsapp.href) {
-      links.push({
-        kind: "whatsapp",
-        label: t.contact.links.whatsapp,
-        href: whatsapp.href,
-        value: t.contact.links.whatsapp,
-      });
-    }
-
     return links;
-  }, [t, cmsRaw, isLiveData, whatsapp.contactEnabled, whatsapp.href]);
+  }, [t, cmsRaw, isLiveData]);
 }
 
 export function useFloatingWhatsAppHref(): string | null {

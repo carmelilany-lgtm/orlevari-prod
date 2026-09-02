@@ -22,7 +22,7 @@ export function SectionHeading({
         {title}
       </h2>
       {subtitle ? (
-        <p className="mt-4 text-lg leading-relaxed text-slate-400 sm:text-xl">
+        <p className="mt-4 text-lg font-light leading-relaxed text-slate-400 sm:text-xl">
           {subtitle}
         </p>
       ) : null}

@@ -1,3 +1,4 @@
+import { BrandLogoLink } from "@/components/brand/BrandLogo";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 
@@ -7,6 +8,13 @@ export default function NotFound() {
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_20%,rgba(37,99,235,0.15),transparent_55%)]"
         aria-hidden
+      />
+      <BrandLogoLink
+        href="/"
+        alt="Lev Ari Productions"
+        heightClassName="h-10 sm:h-12"
+        className="relative mb-8"
+        priority
       />
       <p className="font-display text-8xl font-semibold tracking-tight text-blue-500/30 sm:text-9xl">
         404

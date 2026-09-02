@@ -14,7 +14,7 @@ export function ServiceCard({ service, locale }: ServiceCardProps) {
       <h3 className="font-display text-xl font-medium text-slate-50">
         {service.title[locale]}
       </h3>
-      <p className="mt-3 text-base leading-relaxed text-slate-400">
+      <p className="mt-3 text-base font-light leading-relaxed text-slate-400">
         {service.description[locale]}
       </p>
       <div

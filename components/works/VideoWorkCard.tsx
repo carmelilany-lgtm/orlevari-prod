@@ -66,7 +66,7 @@ export function VideoWorkCard({
           </div>
         </div>
         <div className="border-t border-blue-500/10 p-4 sm:p-5">
-          <h3 className="text-lg font-medium leading-snug text-slate-100 sm:text-xl">
+          <h3 className="text-lg font-semibold leading-snug text-slate-100 sm:text-xl">
             {item.title[locale]}
           </h3>
         </div>

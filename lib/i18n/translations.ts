@@ -37,6 +37,7 @@ export type TranslationKeys = {
       stills: string;
     };
     loadMore: string;
+    loadMoreCount: (count: number) => string;
     close: string;
     videoSectionLabel: string;
     stillsSectionLabel: string;
@@ -149,7 +150,9 @@ const en: TranslationKeys = {
       video: "Video",
       stills: "Stills",
     },
-    loadMore: "Load More",
+    loadMore: "Load more",
+    loadMoreCount: (count: number) =>
+      count === 1 ? "Load 1 more photo" : `Load ${count} more photos`,
     close: "Close",
     videoSectionLabel: "Video productions",
     stillsSectionLabel: "Photography stills",
@@ -264,6 +267,8 @@ const he: TranslationKeys = {
       stills: "סטילס",
     },
     loadMore: "טען עוד",
+    loadMoreCount: (count: number) =>
+      count === 1 ? "טען תמונה נוספת" : `טען עוד ${count} תמונות`,
     close: "סגור",
     videoSectionLabel: "הפקות וידאו",
     stillsSectionLabel: "צילומי סטילס",

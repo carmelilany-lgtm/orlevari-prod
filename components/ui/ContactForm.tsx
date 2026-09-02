@@ -252,7 +252,7 @@ export function ContactForm() {
           <div className="min-w-0">
             <label
               htmlFor="fullName"
-              className={cn("mb-2 block text-base text-slate-400", labelAlign)}
+              className={cn("mb-2 block text-base font-medium text-slate-400", labelAlign)}
             >
               {t.contact.form.fullName}
               <RequiredIndicator label={t.contact.form.requiredMark} />
@@ -286,7 +286,7 @@ export function ContactForm() {
           <div className="min-w-0">
             <label
               htmlFor="phone"
-              className={cn("mb-2 block text-base text-slate-400", labelAlign)}
+              className={cn("mb-2 block text-base font-medium text-slate-400", labelAlign)}
             >
               {t.contact.form.phone}
               <RequiredIndicator label={t.contact.form.requiredMark} />
@@ -321,7 +321,7 @@ export function ContactForm() {
         <div className="min-w-0">
           <label
             htmlFor="email"
-            className={cn("mb-2 block text-base text-slate-400", labelAlign)}
+            className={cn("mb-2 block text-base font-medium text-slate-400", labelAlign)}
           >
             {t.contact.form.email}
             <RequiredIndicator label={t.contact.form.requiredMark} />
@@ -352,7 +352,7 @@ export function ContactForm() {
         <div className="min-w-0">
           <label
             htmlFor="serviceType"
-            className={cn("mb-2 block text-base text-slate-400", labelAlign)}
+            className={cn("mb-2 block text-base font-medium text-slate-400", labelAlign)}
           >
             {t.contact.form.serviceType}
             <RequiredIndicator label={t.contact.form.requiredMark} />
@@ -387,7 +387,7 @@ export function ContactForm() {
         <div className="min-w-0">
           <label
             htmlFor="message"
-            className={cn("mb-2 block text-base text-slate-400", labelAlign)}
+            className={cn("mb-2 block text-base font-medium text-slate-400", labelAlign)}
           >
             {t.contact.form.message}
           </label>
