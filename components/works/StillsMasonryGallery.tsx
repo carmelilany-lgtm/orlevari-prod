@@ -17,6 +17,8 @@ import {
   hasPositionalCollageLayout,
   parseCollageLayout,
 } from "@/lib/stills/collage-layout";
+import { CdnImage } from "@/components/media/CdnImage";
+import { STILL_TILE_SIZES } from "@/lib/images/cdn-sizes";
 import { cn } from "@/lib/utils";
 import {
   stillAlt,
@@ -134,16 +136,24 @@ function StillTile({
       )}
     >
       {item.image_url ? (
-        // eslint-disable-next-line @next/next/no-img-element -- Supabase uploads, lazy + async decode
-        <img
-          src={item.image_url}
-          alt={label}
-          width={item.width}
-          height={item.height}
-          loading="lazy"
-          decoding="async"
-          className="still-mosaic-image"
-        />
+        collageTile || positionalTile ? (
+          <CdnImage
+            src={item.image_url}
+            alt={label}
+            fill
+            sizes={STILL_TILE_SIZES}
+            className="still-mosaic-image object-cover"
+          />
+        ) : (
+          <CdnImage
+            src={item.image_url}
+            alt={label}
+            width={item.width ?? 1600}
+            height={item.height ?? 1200}
+            sizes={STILL_TILE_SIZES}
+            className="still-mosaic-image"
+          />
+        )
       ) : (
         <div
           className={cn(

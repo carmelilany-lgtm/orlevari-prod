@@ -132,6 +132,7 @@ html[lang="he"] body {
 }
 
 .hero-collage-cell {
+  min-height: 80px;
   background: linear-gradient(
     135deg,
     rgba(30, 58, 95, 0.55) 0%,
@@ -207,7 +208,7 @@ html[lang="he"] body {
 }
 
 .still-mosaic-item {
-  @apply block w-full break-inside-avoid overflow-hidden;
+  @apply relative block w-full break-inside-avoid overflow-hidden;
   margin-bottom: 4px;
 }
 

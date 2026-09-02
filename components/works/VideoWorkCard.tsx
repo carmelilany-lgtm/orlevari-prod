@@ -1,5 +1,7 @@
 "use client";
 
+import { CdnImage } from "@/components/media/CdnImage";
+import { VIDEO_THUMB_SIZES } from "@/lib/images/cdn-sizes";
 import { getVideoThumbnailSrc } from "@/lib/youtube/client";
 import type { VideoWorkItem } from "@/types/works";
 import type { Locale } from "@/types/i18n";
@@ -20,7 +22,6 @@ export function VideoWorkCard({
 }: VideoWorkCardProps) {
   const thumbnailSrc = getVideoThumbnailSrc(item);
   const [thumbFailed, setThumbFailed] = useState(false);
-  const showThumbnail = thumbnailSrc && !thumbFailed;
 
   return (
     <article className="group card-surface overflow-hidden rounded-xl transition-all duration-300 hover:-translate-y-1">
@@ -31,14 +32,13 @@ export function VideoWorkCard({
         aria-label={`${playLabel}: ${item.title[locale]}`}
       >
         <div className="relative aspect-video overflow-hidden bg-[#0a1220]">
-          {showThumbnail ? (
-            // eslint-disable-next-line @next/next/no-img-element -- YouTube CDN + Supabase covers
-            <img
+          {thumbnailSrc && !thumbFailed ? (
+            <CdnImage
               src={thumbnailSrc}
               alt={item.title[locale]}
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 h-full w-full object-cover"
+              fill
+              sizes={VIDEO_THUMB_SIZES}
+              className="object-cover"
               onError={() => setThumbFailed(true)}
             />
           ) : (

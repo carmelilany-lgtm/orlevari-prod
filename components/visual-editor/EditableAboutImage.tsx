@@ -10,6 +10,8 @@ import {
 } from "@/lib/images/still-upload-validation";
 import { useVisualEditorActive } from "@/components/visual-editor/VisualEditorProvider";
 import { useLanguage } from "@/lib/i18n/context";
+import { CdnImage } from "@/components/media/CdnImage";
+import { ABOUT_IMAGE_SIZES } from "@/lib/images/cdn-sizes";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -94,14 +96,12 @@ export function EditableAboutImage({
       aria-label={imageAlt}
     >
       {displayUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <CdnImage
           src={displayUrl}
           alt={imageAlt}
-          className={cn(
-            "absolute inset-0 h-full w-full",
-            fillHeight ? "object-cover object-center" : "object-cover",
-          )}
+          fill
+          sizes={ABOUT_IMAGE_SIZES}
+          className={fillHeight ? "object-cover object-center" : "object-cover"}
         />
       ) : (
         <>

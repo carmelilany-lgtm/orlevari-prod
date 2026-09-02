@@ -1,5 +1,7 @@
 "use client";
 
+import { CdnImage } from "@/components/media/CdnImage";
+import { LIGHTBOX_SIZES } from "@/lib/images/cdn-sizes";
 import { stillAlt, type StillWorkItem } from "@/types/works";
 import type { Locale } from "@/types/i18n";
 import { useEffect, useId, useRef } from "react";
@@ -81,6 +83,7 @@ export function StillsLightboxPlaceholder({
   if (!open || !current?.image_url) return null;
 
   const alt = stillAlt(current, locale);
+  const imageUrl = current.image_url;
 
   return (
     <div
@@ -135,12 +138,15 @@ export function StillsLightboxPlaceholder({
           </>
         ) : null}
 
-        {/* eslint-disable-next-line @next/next/no-img-element -- Supabase public URLs */}
-        <img
-          src={current.image_url}
+        <CdnImage
+          src={imageUrl}
           alt={alt}
-          className="max-h-[85vh] w-auto max-w-full rounded-lg object-contain"
-          decoding="async"
+          width={current.width ?? 1920}
+          height={current.height ?? 1280}
+          sizes={LIGHTBOX_SIZES}
+          quality={85}
+          priority
+          className="h-auto max-h-[85vh] w-auto max-w-full rounded-lg object-contain"
         />
       </div>
     </div>

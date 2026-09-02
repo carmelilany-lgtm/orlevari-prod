@@ -4,6 +4,8 @@ import {
   gridLayoutToCollageLayouts,
   stillsToGridLayout,
 } from "@/lib/stills/collage-grid";
+import { CdnImage } from "@/components/media/CdnImage";
+import { STILL_TILE_SIZES } from "@/lib/images/cdn-sizes";
 import { cn } from "@/lib/utils";
 import { stillAlt, type StillWorkItem } from "@/types/works";
 import dynamic from "next/dynamic";
@@ -78,18 +80,19 @@ export function StillsCollageLiveEditor({
                 }
               }}
               className={cn(
-                "stills-rgl-item overflow-hidden rounded-sm",
+                "stills-rgl-item relative overflow-hidden rounded-sm",
                 selected && "ring-2 ring-cyan-400 ring-offset-2 ring-offset-[#070b14]",
               )}
               aria-label={label}
               aria-pressed={selected}
             >
               {item.image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <CdnImage
                   src={item.image_url}
                   alt={label}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes={STILL_TILE_SIZES}
+                  className="object-cover"
                   draggable={false}
                 />
               ) : (

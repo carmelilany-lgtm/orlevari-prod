@@ -10,6 +10,11 @@ import {
   pickHeroStillImagesRandom,
 } from "@/lib/stills/hero-stills";
 import { stillAlt } from "@/types/works";
+import { CdnImage } from "@/components/media/CdnImage";
+import {
+  HERO_CELL_SIZES,
+  HERO_FEATURE_SIZES,
+} from "@/lib/images/cdn-sizes";
 import { cn } from "@/lib/utils";
 import { useMemo, useSyncExternalStore } from "react";
 
@@ -154,18 +159,18 @@ export function Hero() {
                 <div
                   key={still?.id ?? `placeholder-${i}`}
                   className={cn(
-                    "hero-collage-cell overflow-hidden rounded-lg ring-1 ring-blue-500/10",
+                    "hero-collage-cell relative overflow-hidden rounded-lg ring-1 ring-blue-500/10",
                     i === 0 && "col-span-2 row-span-2",
                   )}
                 >
-                  {hasImage && still ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                  {hasImage && still?.image_url ? (
+                    <CdnImage
                       src={still.image_url}
                       alt={stillAlt(still, locale)}
-                      className="h-full min-h-[80px] w-full object-cover"
-                      loading={i < 2 ? "eager" : "lazy"}
-                      decoding="async"
+                      fill
+                      sizes={i === 0 ? HERO_FEATURE_SIZES : HERO_CELL_SIZES}
+                      priority={i < 2}
+                      className="object-cover"
                     />
                   ) : (
                     <div
