@@ -5,7 +5,11 @@ import { useState, type SyntheticEvent } from "react";
 import { canOptimizeImageSrc } from "@/lib/images/can-optimize-src";
 import { cn } from "@/lib/utils";
 
-type CdnImageProps = Omit<ImageProps, "src"> & { src: string };
+type CdnImageProps = Omit<ImageProps, "src"> & {
+  src: string;
+  /** When set, the parent controls when the photo becomes visible (e.g. reveal a group together). */
+  revealed?: boolean;
+};
 
 /**
  * Public photos go through Next.js / Vercel Image Optimization (edge CDN + AVIF/WebP).
@@ -17,11 +21,15 @@ export function CdnImage({
   className,
   onLoad,
   onError,
+  revealed,
   ...rest
 }: CdnImageProps) {
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
   const isPriority = Boolean(rest.priority);
-  const loaded = isPriority || loadedSrc === src;
+  const loaded =
+    revealed !== undefined
+      ? revealed
+      : isPriority || loadedSrc === src;
   const fill = Boolean(rest.fill);
 
   function handleLoad(event: SyntheticEvent<HTMLImageElement>) {
