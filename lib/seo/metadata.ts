@@ -16,6 +16,29 @@ const DEFAULT_DESCRIPTION = `${DEFAULT_SEO_DESCRIPTION_EN} ${DEFAULT_SEO_DESCRIP
 
 export { DEFAULT_TITLE, DEFAULT_DESCRIPTION };
 
+/** Stable public paths (no Next.js content hashes) for WhatsApp and iOS. */
+export const SITE_ICONS = {
+  icon: [
+    { url: "/favicon.ico", sizes: "48x48" },
+    { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+  ],
+  apple: [
+    {
+      url: "/apple-touch-icon.png",
+      sizes: "180x180",
+      type: "image/png",
+    },
+  ],
+} as const satisfies Metadata["icons"];
+
+export const SITE_SHARE_IMAGE = {
+  url: "/og-image.png",
+  width: 1200,
+  height: 630,
+  type: "image/png",
+  alt: "Lev Ari Productions",
+} as const;
+
 type PublicPageMetaInput = {
   title: string;
   description: string;
@@ -36,17 +59,20 @@ export function buildPublicPageMetadata({
     description,
     ...(metadataBase ? { metadataBase } : {}),
     ...(canonical ? { alternates: { canonical } } : {}),
+    icons: SITE_ICONS,
     openGraph: {
       title,
       description,
       type: "website",
       siteName: "Lev Ari Productions",
+      images: [SITE_SHARE_IMAGE],
       ...(canonical ? { url: canonical } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [SITE_SHARE_IMAGE.url],
     },
   };
 }
@@ -73,6 +99,7 @@ export async function buildHomeMetadata(): Promise<Metadata> {
     description,
     ...(metadataBase ? { metadataBase } : {}),
     ...(canonical ? { alternates: { canonical } } : {}),
+    icons: SITE_ICONS,
     openGraph: {
       title,
       description,
@@ -80,12 +107,14 @@ export async function buildHomeMetadata(): Promise<Metadata> {
       type: "website",
       locale: locale === "he" ? "he_IL" : "en_US",
       alternateLocale: [locale === "he" ? "en_US" : "he_IL"],
+      images: [SITE_SHARE_IMAGE],
       ...(canonical ? { url: canonical } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [SITE_SHARE_IMAGE.url],
     },
   };
 }

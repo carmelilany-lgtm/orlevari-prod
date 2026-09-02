@@ -13,6 +13,8 @@ import { getRequestLocale } from "@/lib/i18n/request-locale";
 import {
   DEFAULT_DESCRIPTION,
   DEFAULT_TITLE,
+  SITE_ICONS,
+  SITE_SHARE_IMAGE,
 } from "@/lib/seo/metadata";
 import { getMetadataBase } from "@/lib/seo/site-url";
 import { cookies } from "next/headers";
@@ -39,15 +41,18 @@ export const metadata: Metadata = {
     template: "%s | Lev Ari Productions",
   },
   description: DEFAULT_DESCRIPTION,
+  icons: SITE_ICONS,
   ...(metadataBase ? { metadataBase } : {}),
   openGraph: {
     siteName: "Lev Ari Productions",
     type: "website",
     locale: "en_US",
     alternateLocale: ["he_IL"],
+    images: [SITE_SHARE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
+    images: [SITE_SHARE_IMAGE.url],
   },
 };
 

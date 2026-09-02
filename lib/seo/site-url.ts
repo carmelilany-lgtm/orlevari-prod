@@ -1,13 +1,22 @@
-/** Production site URL from NEXT_PUBLIC_SITE_URL (no trailing slash). */
-export function getSiteUrl(): string | undefined {
-  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!raw) return undefined;
+function originFromEnv(raw: string | undefined): string | undefined {
+  if (!raw?.trim()) return undefined;
   try {
-    const parsed = new URL(raw);
-    return parsed.origin;
+    const withProtocol = raw.includes("://") ? raw.trim() : `https://${raw.trim()}`;
+    return new URL(withProtocol).origin;
   } catch {
     return undefined;
   }
+}
+
+/**
+ * Production site origin. Prefers NEXT_PUBLIC_SITE_URL, then Vercel's
+ * production host so Open Graph / WhatsApp previews still get absolute URLs.
+ */
+export function getSiteUrl(): string | undefined {
+  return (
+    originFromEnv(process.env.NEXT_PUBLIC_SITE_URL) ||
+    originFromEnv(process.env.VERCEL_PROJECT_PRODUCTION_URL)
+  );
 }
 
 export function getMetadataBase(): URL | undefined {
