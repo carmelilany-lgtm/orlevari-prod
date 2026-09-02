@@ -30,7 +30,8 @@ Copy `.env.example` to `.env.local` when connecting Supabase, Resend, and admin 
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | No | Public reads + lead insert (RLS) |
 | `SUPABASE_SERVICE_ROLE_KEY` | No | Server-only admin/bootstrap |
 | `ADMIN_ALLOWED_EMAILS` | No | Step 3 admin login fallback |
-| `NEXT_PUBLIC_SITE_URL` | No | Auth redirects, SEO `metadataBase`, Open Graph |
+| `NEXT_PUBLIC_SITE_URL` | No | Auth redirects, SEO `metadataBase`, Open Graph, sitemap |
+| `GOOGLE_SITE_VERIFICATION` | No | Google Search Console HTML-tag token (server-only) |
 | `WHATSAPP_PHONE` | No | Fallback WhatsApp number if CMS `whatsapp_number` is empty (server → public) |
 | `RESEND_API_KEY` | No | Server-only - contact form emails |
 | `EMAIL_FROM` | No | Verified Resend sender (e.g. `Lev Ari Productions <noreply@yourdomain.com>`) |
@@ -116,14 +117,15 @@ types/                  # language, portfolio, content, services, leads, works
 
 - Contact **Service Type** dropdown: published services only (active language), plus “Other” / “אחר”.
 - WhatsApp priority: CMS `whatsapp_number` → `WHATSAPP_PHONE` env → hidden on live site if both missing.
-- Homepage SEO: `generateMetadata` uses CMS `seo_*` keys (English default); `NEXT_PUBLIC_SITE_URL` sets `metadataBase` when set.
+- Homepage SEO: `generateMetadata` uses CMS `seo_*` keys (Hebrew at `/he`, English at `/en`); `NEXT_PUBLIC_SITE_URL` sets `metadataBase` when set.
 - Admin saves call `revalidatePath('/')`; homepage is `force-dynamic` for fresh public data.
 
 ## Languages
 
-- Default: English (LTR)
-- Secondary: Hebrew (RTL)
-- Toggle in header; preference stored in `localStorage` (`lev-ari-locale`)
+- Default / `x-default`: Hebrew (`/he`, RTL)
+- English: `/en` (LTR)
+- Unprefixed public URLs (`/`, `/privacy-policy`, …) redirect to the Hebrew URL
+- Toggle in header; preference stored in `localStorage` (`lev-ari-locale`) and the URL prefix
 
 ## Deploy (Vercel)
 

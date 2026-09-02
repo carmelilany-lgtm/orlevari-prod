@@ -2,7 +2,8 @@ export type Locale = "en" | "he";
 
 export const LOCALES: Locale[] = ["en", "he"];
 
-export const DEFAULT_LOCALE: Locale = "en";
+/** Hebrew-first: Google and first visits without a locale prefix. */
+export const DEFAULT_LOCALE: Locale = "he";
 
 export const LOCALE_STORAGE_KEY = "lev-ari-locale";
 

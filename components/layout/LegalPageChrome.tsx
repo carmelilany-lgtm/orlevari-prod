@@ -6,10 +6,12 @@ import { AccessibilityWidget } from "@/components/a11y/AccessibilityWidget";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
 import { useLanguage } from "@/lib/i18n/context";
+import { withLocalePrefix } from "@/lib/i18n/locale-path";
 import Link from "next/link";
 
 export function LegalPageChrome({ children }: { children: React.ReactNode }) {
-  const { t, dir } = useLanguage();
+  const { t, dir, locale } = useLanguage();
+  const homeHref = withLocalePrefix(locale, "/");
 
   return (
     <>
@@ -21,10 +23,10 @@ export function LegalPageChrome({ children }: { children: React.ReactNode }) {
       </a>
       <header className="sticky top-0 z-50 isolate bg-[#070b14]/95 shadow-[0_1px_0_0_#050a12] backdrop-blur-md supports-[backdrop-filter]:bg-[#070b14]/90">
         <div className="container-wide flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <BrandLogoLink href="/" alt={t.brand} priority />
+          <BrandLogoLink href={homeHref} alt={t.brand} priority />
           <div className="flex items-center gap-4">
             <Link
-              href="/"
+              href={homeHref}
               className="text-sm text-slate-400 transition-colors hover:text-cyan-200 sm:text-base"
             >
               {t.legal.backToHome}

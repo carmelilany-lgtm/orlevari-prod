@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/lib/i18n/context";
+import { withLocalePrefix } from "@/lib/i18n/locale-path";
 import { PRIVACY_BANNER_ID } from "@/lib/privacy/consent";
 import {
   getPrivacyConsentServerSnapshot,
@@ -12,7 +13,7 @@ import Link from "next/link";
 import { useSyncExternalStore } from "react";
 
 export function PrivacyConsentBanner() {
-  const { t, dir } = useLanguage();
+  const { t, dir, locale } = useLanguage();
   const consent = useSyncExternalStore(
     subscribePrivacyConsent,
     getPrivacyConsentSnapshot,
@@ -46,7 +47,7 @@ export function PrivacyConsentBanner() {
           >
             {copy.body}{" "}
             <Link
-              href="/privacy-policy"
+              href={withLocalePrefix(locale, "/privacy-policy")}
               className="text-cyan-300/90 underline underline-offset-2 hover:text-cyan-200"
             >
               {copy.policy}

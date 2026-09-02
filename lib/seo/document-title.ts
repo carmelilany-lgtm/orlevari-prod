@@ -7,13 +7,15 @@ import { translations } from "@/lib/i18n/translations";
 import type { SiteContentMap } from "@/types/content";
 import type { Locale } from "@/types/i18n";
 
-export const DEFAULT_SEO_TITLE_EN = "Lev Ari Productions | Cinematic Video";
-export const DEFAULT_SEO_TITLE_HE = "לב ארי הפקות | הפקות וידאו קולנועיות";
+export const DEFAULT_SEO_TITLE_EN =
+  "Lev Ari Productions | Cinematic Video Production in Israel";
+export const DEFAULT_SEO_TITLE_HE =
+  "לב ארי הפקות | הפקות וידאו וסרטוני תדמית בישראל";
 
 export const DEFAULT_SEO_DESCRIPTION_EN =
-  "Cinematic video production for businesses, events & artists.";
+  "Cinematic video production in Israel for businesses, events, and artists — corporate films, event coverage, music videos, and stills.";
 export const DEFAULT_SEO_DESCRIPTION_HE =
-  "הפקות וידאו קולנועיות לעסקים, אירועים ואמנים.";
+  "הפקות וידאו קולנועיות בישראל לעסקים, אירועים ואמנים. סרטוני תדמית, צילום אירועים, קליפים וסטילס — לב ארי הפקות.";
 
 export function resolveSeoTitle(
   cmsMap: SiteContentMap | undefined,

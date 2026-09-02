@@ -64,7 +64,28 @@ export async function resolvePublicOrigin(): Promise<string | undefined> {
   }
 }
 
-/** Absolute URL for a public path (e.g. `/privacy-policy`). */
+/** Origin for crawler files (sitemap/robots). May be localhost in local preview. */
+export async function resolveCrawlerOrigin(): Promise<string | undefined> {
+  const configured = getSiteUrl();
+  if (configured) return configured;
+
+  try {
+    const h = await headers();
+    const hostHeader = h.get("x-forwarded-host") ?? h.get("host");
+    const host = hostHeader?.split(",")[0]?.trim();
+    if (!host) return undefined;
+    const proto = (h.get("x-forwarded-proto") || "https")
+      .split(",")[0]
+      ?.trim();
+    const protocol = isLocalHostname(host)
+      ? proto || "http"
+      : proto || "https";
+    return `${protocol}://${host}`;
+  } catch {
+    return undefined;
+  }
+}
+
 export function absolutePublicUrl(path: string): string | undefined {
   const base = getSiteUrl();
   if (!base) return undefined;

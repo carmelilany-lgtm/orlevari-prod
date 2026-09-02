@@ -169,7 +169,7 @@ After Supabase is connected, the homepage loads **published** rows only (no mock
 
 **WhatsApp:** Controlled in `/admin/content` (number, EN/HE messages, contact + floating toggles). CMS `whatsapp_number` first, then optional `WHATSAPP_PHONE` in `.env.local`. Buttons stay hidden until a valid number exists. On an existing DB, run **[whatsapp-cms-upsert.sql](./whatsapp-cms-upsert.sql)** once, then set the number in admin and save.
 
-**SEO:** Edit `seo_title_en`, `seo_description_en`, etc. in content admin; set `NEXT_PUBLIC_SITE_URL` for canonical/Open Graph base.
+**SEO:** Edit `seo_title_he` / `seo_description_he` (and the English pair) in content admin. Hebrew is the default indexed URL (`/he`); English is `/en`. Set `NEXT_PUBLIC_SITE_URL` for canonical/Open Graph/sitemap. Optional `GOOGLE_SITE_VERIFICATION` for Search Console HTML-tag verification.
 
 Admin mutations revalidate `/` automatically.
 

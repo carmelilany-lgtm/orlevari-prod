@@ -15,6 +15,7 @@ import {
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { LEAD_MESSAGE_MAX_LENGTH } from "@/types/leads";
+import { withLocalePrefix } from "@/lib/i18n/locale-path";
 import Link from "next/link";
 import { type FormEvent, useId, useMemo, useState } from "react";
 
@@ -441,7 +442,7 @@ export function ContactForm() {
             <span>
               {t.contact.form.privacyAgree}{" "}
               <Link
-                href="/privacy-policy"
+                href={withLocalePrefix(locale, "/privacy-policy")}
                 className="text-cyan-300/90 underline underline-offset-2 transition-colors hover:text-cyan-200"
               >
                 {t.contact.form.privacyLink}

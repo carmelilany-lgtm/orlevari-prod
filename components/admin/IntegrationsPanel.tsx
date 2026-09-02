@@ -71,6 +71,10 @@ export function IntegrationsPanel({ status }: Props) {
           ok={status.contactNotificationEmailConfigured}
         />
         <StatusRow label={L.siteUrl} ok={status.siteUrlConfigured} />
+        <StatusRow
+          label={L.googleVerification}
+          ok={status.googleSiteVerificationConfigured}
+        />
       </section>
 
       <section className={`${adminCardClass} space-y-1`}>

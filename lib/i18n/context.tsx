@@ -16,6 +16,10 @@ import {
   readLocaleFromStorage,
   writeLocaleToStorage,
 } from "@/lib/i18n/locale-storage";
+import {
+  stripLocalePrefix,
+  withLocalePrefix,
+} from "@/lib/i18n/locale-path";
 import { documentTitleForPath } from "@/lib/seo/document-title";
 import { DEFAULT_LOCALE, LOCALE_STORAGE_KEY, type Locale } from "@/types/i18n";
 
@@ -97,6 +101,16 @@ export function LanguageProvider({
   const setLocale = useCallback(
     (next: Locale) => {
       persistLocale(next);
+      const nextPath = withLocalePrefix(
+        next,
+        stripLocalePrefix(window.location.pathname),
+      );
+      const nextUrl = `${nextPath}${window.location.search}${window.location.hash}`;
+      const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      if (nextUrl !== current) {
+        window.location.assign(nextUrl);
+        return;
+      }
       document.title = documentTitleForPath(
         window.location.pathname,
         next,

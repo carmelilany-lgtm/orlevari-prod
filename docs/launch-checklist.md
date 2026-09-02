@@ -13,6 +13,7 @@ Use this checklist before and after deploying to production. Do not commit secre
   - `SUPABASE_SERVICE_ROLE_KEY` (server only)
   - `ADMIN_ALLOWED_EMAILS`
   - `NEXT_PUBLIC_SITE_URL` - production URL (HTTPS, no trailing slash), used for SEO `metadataBase`, sitemap, robots, auth redirects
+  - `GOOGLE_SITE_VERIFICATION` - optional Search Console HTML-tag token
   - `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_NOTIFICATION_EMAIL`
   - Optional: `WHATSAPP_PHONE`
 - [ ] `NEXT_PUBLIC_SITE_URL` matches the live domain
@@ -40,9 +41,11 @@ Use this checklist before and after deploying to production. Do not commit secre
 
 ### SEO technical
 
-- [ ] `https://<domain>/sitemap.xml` lists `/`, `/privacy-policy`, `/accessibility-statement` (no `/admin`)
-- [ ] `https://<domain>/robots.txt` allows public site, disallows `/admin`, references sitemap
-- [ ] Page titles/descriptions and Open Graph tags render correctly
+- [ ] `https://<domain>/sitemap.xml` lists `/he`, `/en`, and the localized legal pages (no `/admin`)
+- [ ] `https://<domain>/robots.txt` allows public site, disallows `/admin` and `/api/`, references sitemap
+- [ ] Unprefixed `/` redirects to `/he`; `/en` serves English metadata (`hreflang` he-IL / en-US / x-default)
+- [ ] Page titles/descriptions, Open Graph, and JSON-LD render in the page language
+- [ ] Google Search Console: domain or URL-prefix property matches `NEXT_PUBLIC_SITE_URL`; sitemap submitted; `GOOGLE_SITE_VERIFICATION` set if using the HTML-tag method
 - [ ] Custom 404 page (`app/not-found.tsx`) loads for unknown public URLs
 
 ### Anti-spam
@@ -58,7 +61,7 @@ Use this checklist before and after deploying to production. Do not commit secre
 ### Public site
 
 - [ ] Homepage loads over HTTPS
-- [ ] EN/HE language toggle works; RTL layout correct in Hebrew
+- [ ] EN/HE language toggle works (`/he` ↔ `/en`); RTL layout correct in Hebrew
 - [ ] Works: video categories, YouTube modal opens on click (iframe only after click)
 - [ ] Stills gallery and lightbox work on mobile
 - [ ] Services and contact sections show live CMS/DB data

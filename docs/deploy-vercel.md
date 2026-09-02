@@ -60,6 +60,7 @@ Production deployment checklist. **Never commit `.env.local` or paste real secre
 | `EMAIL_FROM` | **No** | Verified domain in Resend |
 | `CONTACT_NOTIFICATION_EMAIL` | **No** | Inbox for lead alerts |
 | `NEXT_PUBLIC_SITE_URL` | Yes | **Production URL**, e.g. `https://yourdomain.com` |
+| `GOOGLE_SITE_VERIFICATION` | **No** | Optional Search Console HTML-tag token |
 | `WHATSAPP_PHONE` | Public-like | As configured locally |
 
 Copy values from `.env.local` except `NEXT_PUBLIC_SITE_URL` - use the real production domain on Vercel Production.
@@ -112,9 +113,9 @@ Run `npm run verify:setup` after creating the Auth user to confirm `admin_users`
 
 ## Legal pages (public)
 
-- `/privacy-policy` - bilingual (EN default, HE via site language toggle)
-- `/accessibility-statement` - same language behavior
-- Footer links point to these routes (not `#`)
+- `/he/privacy-policy` and `/en/privacy-policy` - Hebrew and English
+- `/he/accessibility-statement` and `/en/accessibility-statement`
+- Unprefixed `/privacy-policy` redirects to the Hebrew URL
 
 ---
 

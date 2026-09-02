@@ -15,6 +15,8 @@ import {
   DEFAULT_TITLE,
   SITE_ICONS,
   SITE_SHARE_IMAGE,
+  googleVerificationMetadata,
+  localeOpenGraph,
 } from "@/lib/seo/metadata";
 import { getMetadataBase, resolvePublicOrigin } from "@/lib/seo/site-url";
 import { cookies } from "next/headers";
@@ -40,16 +42,16 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: {
       default: DEFAULT_TITLE,
-      template: "%s | Lev Ari Productions",
+      template: "%s | לב ארי הפקות",
     },
     description: DEFAULT_DESCRIPTION,
     icons: SITE_ICONS,
+    ...googleVerificationMetadata(),
     ...(metadataBase ? { metadataBase } : {}),
     openGraph: {
-      siteName: "Lev Ari Productions",
+      siteName: "לב ארי הפקות",
       type: "website",
-      locale: "en_US",
-      alternateLocale: ["he_IL"],
+      ...localeOpenGraph("he"),
       images: [SITE_SHARE_IMAGE],
     },
     twitter: {

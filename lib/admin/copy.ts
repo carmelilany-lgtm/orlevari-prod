@@ -272,6 +272,7 @@ export const adminCopy = {
       emailFrom: "EMAIL_FROM מוגדר",
       contactEmail: "CONTACT_NOTIFICATION_EMAIL מוגדר",
       siteUrl: "כתובת האתר מוגדרת",
+      googleVerification: "אימות Google Search Console מוגדר",
       publicClient: "ניתן להשתמש בלקוח Supabase הציבורי",
       adminClient: "ניתן להשתמש בלקוח admin (service role)",
       resendReady: "Resend מוכן (מפתח API + EMAIL_FROM)",

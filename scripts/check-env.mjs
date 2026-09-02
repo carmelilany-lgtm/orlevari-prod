@@ -44,6 +44,7 @@ const REQUIRED = [
   { key: "EMAIL_FROM", critical: false, group: "Resend" },
   { key: "CONTACT_NOTIFICATION_EMAIL", critical: false, group: "Resend" },
   { key: "NEXT_PUBLIC_SITE_URL", critical: false, group: "Site" },
+  { key: "GOOGLE_SITE_VERIFICATION", critical: false, group: "Site" },
   { key: "WHATSAPP_PHONE", critical: false, group: "Site" },
 ];
 

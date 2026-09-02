@@ -15,6 +15,7 @@ import {
   subscribeA11yPrefs,
 } from "@/lib/a11y/store";
 import { useLanguage } from "@/lib/i18n/context";
+import { withLocalePrefix } from "@/lib/i18n/locale-path";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import {
@@ -265,13 +266,13 @@ export function AccessibilityWidget({
 
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
             <Link
-              href="/accessibility-statement"
+              href={withLocalePrefix(locale, "/accessibility-statement")}
               className="text-cyan-300/90 underline-offset-2 hover:underline"
             >
               {copy.statement}
             </Link>
             <Link
-              href="/#contact"
+              href={`${withLocalePrefix(locale, "/")}#contact`}
               className="text-cyan-300/90 underline-offset-2 hover:underline"
             >
               {copy.contact}

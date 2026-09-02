@@ -2,22 +2,29 @@
 
 import { BrandLogoLink } from "@/components/brand/BrandLogo";
 import { useLanguage } from "@/lib/i18n/context";
+import { withLocalePrefix } from "@/lib/i18n/locale-path";
 
 const CIMEDIA_URL = "https://cimedia.co.il";
 
 export function Footer() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
 
   const links = [
-    { href: "/privacy-policy", label: t.footer.privacy },
-    { href: "/accessibility-statement", label: t.footer.accessibility },
+    {
+      href: withLocalePrefix(locale, "/privacy-policy"),
+      label: t.footer.privacy,
+    },
+    {
+      href: withLocalePrefix(locale, "/accessibility-statement"),
+      label: t.footer.accessibility,
+    },
   ];
 
   return (
     <footer className="border-t border-blue-900/30 bg-[#050a12]">
       <div className="container-wide flex flex-col items-center justify-between gap-6 px-4 py-10 sm:flex-row sm:px-6 lg:px-8">
         <div className="flex flex-col items-center gap-3 sm:items-start">
-          <BrandLogoLink href="/#hero" alt={t.brand} />
+          <BrandLogoLink href={`${withLocalePrefix(locale, "/")}#hero`} alt={t.brand} />
           <p className="text-center text-sm font-light text-slate-500 sm:text-start">
             {t.footer.rights}
           </p>

@@ -21,6 +21,7 @@ export type IntegrationConfigStatus = {
   emailFromConfigured: boolean;
   contactNotificationEmailConfigured: boolean;
   siteUrlConfigured: boolean;
+  googleSiteVerificationConfigured: boolean;
   canUseSupabasePublicClient: boolean;
   canUseSupabaseAdminClient: boolean;
   canUseResend: boolean;
@@ -61,6 +62,9 @@ export function getIntegrationConfigStatus(): IntegrationConfigStatus {
     process.env.CONTACT_NOTIFICATION_EMAIL,
   );
   const siteUrlConfigured = envPresent(process.env.NEXT_PUBLIC_SITE_URL);
+  const googleSiteVerificationConfigured = envPresent(
+    process.env.GOOGLE_SITE_VERIFICATION,
+  );
 
   const canUseSupabasePublicClient =
     supabaseUrlConfigured && supabaseAnonKeyConfigured;
@@ -79,6 +83,7 @@ export function getIntegrationConfigStatus(): IntegrationConfigStatus {
     emailFromConfigured,
     contactNotificationEmailConfigured,
     siteUrlConfigured,
+    googleSiteVerificationConfigured,
     canUseSupabasePublicClient,
     canUseSupabaseAdminClient,
     canUseResend,

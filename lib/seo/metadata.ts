@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getSiteContentMap } from "@/lib/api/content";
 import { getRequestLocale } from "@/lib/i18n/request-locale";
+import { withLocalePrefix } from "@/lib/i18n/locale-path";
 import {
   DEFAULT_SEO_DESCRIPTION_EN,
   DEFAULT_SEO_DESCRIPTION_HE,
@@ -9,10 +10,11 @@ import {
   resolveSeoDescription,
   resolveSeoTitle,
 } from "@/lib/seo/document-title";
-import { absolutePublicUrl, resolvePublicOrigin } from "@/lib/seo/site-url";
+import { absolutePublicUrl, resolveCrawlerOrigin, resolvePublicOrigin } from "@/lib/seo/site-url";
+import type { Locale } from "@/types/i18n";
 
-const DEFAULT_TITLE = `${DEFAULT_SEO_TITLE_EN} | ${DEFAULT_SEO_TITLE_HE}`;
-const DEFAULT_DESCRIPTION = `${DEFAULT_SEO_DESCRIPTION_EN} ${DEFAULT_SEO_DESCRIPTION_HE}`;
+const DEFAULT_TITLE = `${DEFAULT_SEO_TITLE_HE} | ${DEFAULT_SEO_TITLE_EN}`;
+const DEFAULT_DESCRIPTION = `${DEFAULT_SEO_DESCRIPTION_HE} ${DEFAULT_SEO_DESCRIPTION_EN}`;
 
 export { DEFAULT_TITLE, DEFAULT_DESCRIPTION };
 
@@ -36,38 +38,86 @@ export const SITE_SHARE_IMAGE = {
   width: 1200,
   height: 630,
   type: "image/png",
-  alt: "Lev Ari Productions",
+  alt: "Lev Ari Productions | לב ארי הפקות",
 } as const;
+
+export function googleVerificationMetadata(): Pick<Metadata, "verification"> {
+  const google = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+  if (!google) return {};
+  return { verification: { google } };
+}
+
+export function localeOpenGraph(locale: Locale) {
+  return {
+    locale: locale === "he" ? "he_IL" : "en_US",
+    alternateLocale: [locale === "he" ? "en_US" : "he_IL"] as string[],
+  };
+}
+
+function localizedAbsoluteUrl(
+  origin: string | undefined,
+  locale: Locale,
+  path: string,
+): string | undefined {
+  const prefixed = withLocalePrefix(locale, path);
+  if (origin) return `${origin}${prefixed}`;
+  return absolutePublicUrl(prefixed);
+}
+
+export function hreflangAlternates(
+  origin: string | undefined,
+  path: string,
+  locale: Locale,
+): NonNullable<Metadata["alternates"]> {
+  const he = localizedAbsoluteUrl(origin, "he", path);
+  const en = localizedAbsoluteUrl(origin, "en", path);
+  const canonical = localizedAbsoluteUrl(origin, locale, path);
+  return {
+    ...(canonical ? { canonical } : {}),
+    languages: {
+      ...(he ? { "he-IL": he, "x-default": he } : {}),
+      ...(en ? { "en-US": en } : {}),
+    },
+  };
+}
 
 type PublicPageMetaInput = {
   title: string;
   description: string;
   path: string;
+  locale: Locale;
 };
 
-/** Shared Open Graph, Twitter, and canonical for public static pages */
+/** Shared Open Graph, Twitter, canonical, and hreflang for public static pages */
 export async function buildPublicPageMetadata({
   title,
   description,
   path,
+  locale,
 }: PublicPageMetaInput): Promise<Metadata> {
-  const origin = await resolvePublicOrigin();
-  const metadataBase = origin ? new URL(origin) : undefined;
-  const canonical = origin
-    ? `${origin}${path.startsWith("/") ? path : `/${path}`}`
-    : absolutePublicUrl(path);
+  const [publicOrigin, crawlerOrigin] = await Promise.all([
+    resolvePublicOrigin(),
+    resolveCrawlerOrigin(),
+  ]);
+  const origin = publicOrigin ?? crawlerOrigin;
+  const metadataBase = publicOrigin ? new URL(publicOrigin) : undefined;
+  const canonical = localizedAbsoluteUrl(origin, locale, path);
+  const siteName = locale === "he" ? "לב ארי הפקות" : "Lev Ari Productions";
 
   return {
     title,
     description,
     ...(metadataBase ? { metadataBase } : {}),
-    ...(canonical ? { alternates: { canonical } } : {}),
+    alternates: hreflangAlternates(origin, path, locale),
+    ...googleVerificationMetadata(),
+    robots: { index: true, follow: true },
     icons: SITE_ICONS,
     openGraph: {
       title,
       description,
       type: "website",
-      siteName: "Lev Ari Productions",
+      siteName,
+      ...localeOpenGraph(locale),
       images: [SITE_SHARE_IMAGE],
       ...(canonical ? { url: canonical } : {}),
     },
@@ -82,13 +132,15 @@ export async function buildPublicPageMetadata({
 
 /** Homepage metadata for the request locale, with CMS overrides */
 export async function buildHomeMetadata(): Promise<Metadata> {
-  const [cmsMap, locale, origin] = await Promise.all([
+  const [cmsMap, locale, publicOrigin, crawlerOrigin] = await Promise.all([
     getSiteContentMap(),
     getRequestLocale(),
     resolvePublicOrigin(),
+    resolveCrawlerOrigin(),
   ]);
-  const metadataBase = origin ? new URL(origin) : undefined;
-  const canonical = origin ? `${origin}/` : undefined;
+  const origin = publicOrigin ?? crawlerOrigin;
+  const metadataBase = publicOrigin ? new URL(publicOrigin) : undefined;
+  const canonical = localizedAbsoluteUrl(origin, locale, "/");
 
   const title = resolveSeoTitle(cmsMap, locale);
   const description = resolveSeoDescription(cmsMap, locale);
@@ -101,15 +153,16 @@ export async function buildHomeMetadata(): Promise<Metadata> {
     },
     description,
     ...(metadataBase ? { metadataBase } : {}),
-    ...(canonical ? { alternates: { canonical } } : {}),
+    alternates: hreflangAlternates(origin, "/", locale),
+    ...googleVerificationMetadata(),
+    robots: { index: true, follow: true },
     icons: SITE_ICONS,
     openGraph: {
       title,
       description,
       siteName,
       type: "website",
-      locale: locale === "he" ? "he_IL" : "en_US",
-      alternateLocale: [locale === "he" ? "en_US" : "he_IL"],
+      ...localeOpenGraph(locale),
       images: [SITE_SHARE_IMAGE],
       ...(canonical ? { url: canonical } : {}),
     },
