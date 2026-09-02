@@ -6,7 +6,7 @@ import { buildPublicPageMetadata } from "@/lib/seo/metadata";
 export const metadata = buildPublicPageMetadata({
   title: "Privacy Policy",
   description:
-    "How Lev Ari Productions collects and uses information on the public website and contact form.",
+    "Privacy policy under the Israeli Privacy Protection Law, including Amendment 13: what we collect, consent, cookies, and your rights.",
   path: "/privacy-policy",
 });
 

@@ -45,7 +45,6 @@ html {
 html,
 body {
   overscroll-behavior: none;
-  touch-action: pan-x pan-y;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -368,7 +367,7 @@ html[lang="he"] .font-display {
   object-fit: cover;
 }
 
-/* Live edit mode — react-grid-layout */
+/* Live edit mode - react-grid-layout */
 .stills-collage-edit-surface .react-grid-layout {
   min-height: 12rem;
 }
@@ -388,7 +387,7 @@ html[lang="he"] .font-display {
   border-end-end-radius: 2px;
 }
 
-/* Custom pickers — thin scrollbar, no OS menu chrome */
+/* Custom pickers - thin scrollbar, no OS menu chrome */
 .select-list-scroll {
   scrollbar-width: thin;
   scrollbar-color: rgba(59, 130, 246, 0.45) transparent;
@@ -401,4 +400,92 @@ html[lang="he"] .font-display {
 .select-list-scroll::-webkit-scrollbar-thumb {
   border-radius: 999px;
   background: rgba(59, 130, 246, 0.45);
+}
+
+/* User-controlled accessibility preferences (classes on <html>, not DOM rewrites) */
+html.a11y-text-115 {
+  font-size: 115%;
+}
+html.a11y-text-130 {
+  font-size: 130%;
+}
+html.a11y-text-150 {
+  font-size: 150%;
+}
+
+html.a11y-contrast-high {
+  --bg-primary: #000000;
+  --text-primary: #ffffff;
+  --text-secondary: #ffffff;
+  --text-muted: #e5e5e5;
+  --focus-ring: #ffff00;
+  background-color: #000;
+  color: #fff;
+}
+html.a11y-contrast-high body {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+html.a11y-contrast-high a {
+  color: #ffff00;
+}
+
+html.a11y-contrast-invert {
+  filter: invert(1) hue-rotate(180deg);
+}
+html.a11y-contrast-invert img,
+html.a11y-contrast-invert video,
+html.a11y-contrast-invert picture,
+html.a11y-contrast-invert iframe {
+  filter: invert(1) hue-rotate(180deg);
+}
+html.a11y-contrast-invert #a11y-widget-root {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+html.a11y-lines-relaxed p,
+html.a11y-lines-relaxed li,
+html.a11y-lines-relaxed label,
+html.a11y-lines-relaxed input,
+html.a11y-lines-relaxed textarea,
+html.a11y-lines-relaxed button {
+  line-height: 1.7 !important;
+}
+html.a11y-lines-loose p,
+html.a11y-lines-loose li,
+html.a11y-lines-loose label,
+html.a11y-lines-loose input,
+html.a11y-lines-loose textarea,
+html.a11y-lines-loose button {
+  line-height: 2 !important;
+}
+
+html.a11y-links a {
+  text-decoration: underline !important;
+  text-underline-offset: 0.18em;
+}
+
+html.a11y-readable-font,
+html.a11y-readable-font body,
+html.a11y-readable-font .font-display {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif !important;
+}
+
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+@media print {
+  html.a11y-contrast-high,
+  html.a11y-contrast-invert,
+  html.a11y-text-115,
+  html.a11y-text-130,
+  html.a11y-text-150 {
+    filter: none;
+    font-size: 100%;
+  }
 }

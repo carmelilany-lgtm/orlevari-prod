@@ -14,7 +14,7 @@ export function getEligibleHeroStills(stills: StillWorkItem[]): StillWorkItem[] 
 }
 
 /**
- * Deterministic hero order (sort_order) — used for SSR and first client paint
+ * Deterministic hero order (sort_order) - used for SSR and first client paint
  * so server and client markup match before shuffle.
  */
 export function pickHeroStillImagesForRender(
@@ -42,7 +42,7 @@ function shuffleInPlace<T>(arr: T[]): void {
 }
 
 /**
- * Random hero order — call only after mount (client) to avoid hydration mismatch.
+ * Random hero order - call only after mount (client) to avoid hydration mismatch.
  */
 export function pickHeroStillImagesRandom(
   stills: StillWorkItem[],
@@ -60,7 +60,7 @@ export function pickHeroStillImagesRandom(
   return result;
 }
 
-/** @deprecated Use pickHeroStillImagesForRender — kept for tests importing old name */
+/** @deprecated Use pickHeroStillImagesForRender - kept for tests importing old name */
 export function pickHeroStillImages(
   stills: StillWorkItem[],
   count = HERO_CELL_COUNT,

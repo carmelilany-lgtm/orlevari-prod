@@ -103,6 +103,42 @@ export type TranslationKeys = {
   legal: {
     backToHome: string;
   };
+  privacyBanner: {
+    title: string;
+    body: string;
+    policy: string;
+    necessary: string;
+    acceptAnalytics: string;
+    manageTitle: string;
+    manageBody: string;
+    analyticsStatus: string;
+    analyticsOn: string;
+    analyticsOff: string;
+  };
+  a11y: {
+    open: string;
+    close: string;
+    title: string;
+    subtitle: string;
+    textSize: string;
+    contrast: string;
+    contrastOff: string;
+    contrastHigh: string;
+    contrastInvert: string;
+    spacing: string;
+    spacingNormal: string;
+    spacingRelaxed: string;
+    spacingLoose: string;
+    highlightLinks: string;
+    readableFont: string;
+    reduceMotion: string;
+    on: string;
+    off: string;
+    reset: string;
+    statement: string;
+    contact: string;
+    shortcutHint: string;
+  };
   floatingWhatsapp: string;
   langToggle: {
     en: string;
@@ -124,7 +160,7 @@ const en: TranslationKeys = {
   hero: {
     title: "Lev Ari Productions",
     subtitle:
-      "Cinematic video production for businesses, events & artists — turning real moments into meaningful stories.",
+      "Cinematic video production for businesses, events & artists - turning real moments into meaningful stories.",
     ctaWorks: "View Works",
     ctaContact: "Contact Me",
     collageLabel: "Featured work collage preview",
@@ -133,11 +169,11 @@ const en: TranslationKeys = {
     title: "About",
     imageAlt: "Portrait of Or, Lev Ari Productions",
     intro:
-      "Through my camera and creative craft, I tell stories that matter — with heart, precision, and a cinematic eye.",
+      "Through my camera and creative craft, I tell stories that matter - with heart, precision, and a cinematic eye.",
     body: "Through my camera and creative craft, I tell stories that matter. Photography, videography, and editing allow me to capture the real emotion behind every moment. I approach each project with heart, precision, and personal attention, creating films and visuals that feel meaningful, authentic, and true to the people, businesses, and memories they represent.",
     extendedTitle: "Nice to meet you, I'm Or Lev Ari.",
     extendedText:
-      "I'm a video creator and editor based in Israel, working with businesses, artists, and families who want their story told with clarity and cinematic quality. From concept to final cut, I handle filming, editing, and production with a fast, attentive workflow — so every project feels personal, polished, and true to the people behind it.",
+      "I'm a video creator and editor based in Israel, working with businesses, artists, and families who want their story told with clarity and cinematic quality. From concept to final cut, I handle filming, editing, and production with a fast, attentive workflow - so every project feels personal, polished, and true to the people behind it.",
     extendedQuote:
       "“I believe every project deserves care, clarity and a cinematic point of view.”",
     extendedImageAlt: "Or Lev Ari at work",
@@ -150,9 +186,9 @@ const en: TranslationKeys = {
       video: "Video",
       stills: "Stills",
     },
-    loadMore: "Load more",
+    loadMore: "Show more",
     loadMoreCount: (count: number) =>
-      count === 1 ? "Load 1 more photo" : `Load ${count} more photos`,
+      count === 1 ? "Show 1 more photo" : `Show ${count} more photos`,
     close: "Close",
     videoSectionLabel: "Video productions",
     stillsSectionLabel: "Photography stills",
@@ -181,14 +217,14 @@ const en: TranslationKeys = {
   },
   contact: {
     title: "Contact",
-    subtitle: "Tell me about your project — I will get back to you soon.",
+    subtitle: "Tell me about your project - I will get back to you soon.",
     form: {
       fullName: "Full Name",
       phone: "Phone",
       email: "Email",
       serviceType: "Subject / Service Type",
       message: "Message (optional)",
-      privacyAgree: "I agree to the",
+      privacyAgree: "I agree that Lev Ari Productions may use these details only to handle this inquiry, as described in the",
       privacyLink: "Privacy Policy",
       submit: "Send Message",
       submitting: "Sending…",
@@ -219,6 +255,42 @@ const en: TranslationKeys = {
   legal: {
     backToHome: "Back to home",
   },
+  privacyBanner: {
+    title: "Cookies",
+    body: "We use cookies needed to run the site, such as language and display preferences. Statistics cookies run only if you agree. This follows the Israeli Privacy Protection Law, including Amendment 13.",
+    policy: "Privacy policy",
+    necessary: "Necessary only",
+    acceptAnalytics: "Accept all",
+    manageTitle: "Cookie preferences",
+    manageBody: "You can allow or decline cookies that measure how the site is used. Cookies needed to run the site stay on either way, and you can change this at any time.",
+    analyticsStatus: "Statistics cookies",
+    analyticsOn: "on",
+    analyticsOff: "off",
+  },
+  a11y: {
+    open: "Open accessibility menu",
+    close: "Close",
+    title: "Accessibility",
+    subtitle: "Display preferences for this visit. They do not replace assistive technology.",
+    textSize: "Text size",
+    contrast: "Contrast",
+    contrastOff: "Default",
+    contrastHigh: "High",
+    contrastInvert: "Inverted",
+    spacing: "Line spacing",
+    spacingNormal: "Default",
+    spacingRelaxed: "Relaxed",
+    spacingLoose: "Wide",
+    highlightLinks: "Highlight links",
+    readableFont: "Readable font",
+    reduceMotion: "Stop animations",
+    on: "On",
+    off: "Off",
+    reset: "Reset preferences",
+    statement: "Accessibility statement",
+    contact: "Report an issue",
+    shortcutHint: "Keyboard shortcut: Alt + A",
+  },
   floatingWhatsapp: "Chat on WhatsApp",
   langToggle: {
     en: "English",
@@ -240,7 +312,7 @@ const he: TranslationKeys = {
   hero: {
     title: "לב ארי הפקות",
     subtitle:
-      "הפקות וידאו קולנועיות לעסקים, אירועים ואמנים — הופכים רגעים אמיתיים לסיפורים משמעותיים.",
+      "הפקות וידאו קולנועיות לעסקים, אירועים ואמנים - הופכים רגעים אמיתיים לסיפורים משמעותיים.",
     ctaWorks: "צפייה בעבודות",
     ctaContact: "יצירת קשר",
     collageLabel: "תצוגת קולאז' עבודות נבחרות",
@@ -249,11 +321,11 @@ const he: TranslationKeys = {
     title: "אודות",
     imageAlt: "דיוקן של אור, לב ארי הפקות",
     intro:
-      "דרך המצלמה והיצירה, אני מספר סיפורים שיש להם משמעות — מתוך לב, דיוק וראייה קולנועית.",
+      "דרך המצלמה והיצירה, אני מספר סיפורים שיש להם משמעות - מתוך לב, דיוק וראייה קולנועית.",
     body: "דרך המצלמה והיצירה, אני מספר סיפורים שיש להם משמעות. צילום, וידאו ועריכה מאפשרים לי לתפוס את הרגש האמיתי שמאחורי כל רגע. כל פרויקט נעשה מתוך לב, דיוק ויחס אישי, כדי ליצור תוצאה שמרגישה אותנטית, משמעותית ונאמנה לאנשים, לעסקים ולזיכרונות שהיא מייצגת.",
     extendedTitle: "נעים מאוד, אור לב ארי.",
     extendedText:
-      "אני יוצר ועורך וידאו, עובד עם עסקים, אמנים ומשפחות שרוצים לספר את הסיפור שלהם בצורה ברורה, מדויקת וקולנועית. מהרעיון ועד הגזירה הסופית — צילום, עריכה והפקה מלאה, עם יחס אישי, זריזות ועין קולנועית שמביאה כל פרויקט לחיים.",
+      "אני יוצר ועורך וידאו, עובד עם עסקים, אמנים ומשפחות שרוצים לספר את הסיפור שלהם בצורה ברורה, מדויקת וקולנועית. מהרעיון ועד הגזירה הסופית - צילום, עריכה והפקה מלאה, עם יחס אישי, זריזות ועין קולנועית שמביאה כל פרויקט לחיים.",
     extendedQuote:
       "“אני מאמין שכל פרויקט צריך לקבל יחס אישי, דיוק וראייה קולנועית.”",
     extendedImageAlt: "אור לב ארי בעבודה",
@@ -266,9 +338,9 @@ const he: TranslationKeys = {
       video: "וידאו",
       stills: "סטילס",
     },
-    loadMore: "טען עוד",
+    loadMore: "הצג עוד",
     loadMoreCount: (count: number) =>
-      count === 1 ? "טען תמונה נוספת" : `טען עוד ${count} תמונות`,
+      count === 1 ? "הצג תמונה נוספת" : `הצג עוד ${count} תמונות`,
     close: "סגור",
     videoSectionLabel: "הפקות וידאו",
     stillsSectionLabel: "צילומי סטילס",
@@ -297,14 +369,15 @@ const he: TranslationKeys = {
   },
   contact: {
     title: "יצירת קשר",
-    subtitle: "ספרו לי על הפרויקט — אחזור אליכם בהקדם.",
+    subtitle: "ספרו לי על הפרויקט - אחזור אליכם בהקדם.",
     form: {
       fullName: "שם מלא",
       phone: "טלפון",
       email: "אימייל",
       serviceType: "נושא / סוג שירות",
       message: "הודעה (אופציונלי)",
-      privacyAgree: "אני מאשר/ת את",
+      privacyAgree:
+        "אני מאשר/ת שלב ארי הפקות תשתמש בפרטים אלה רק לטיפול בפנייה זו, כמפורט ב",
       privacyLink: "מדיניות הפרטיות",
       submit: "שליחת הודעה",
       submitting: "שולח…",
@@ -333,6 +406,42 @@ const he: TranslationKeys = {
   },
   legal: {
     backToHome: "חזרה לדף הבית",
+  },
+  privacyBanner: {
+    title: "שימוש בעוגיות",
+    body: "באתר נעשה שימוש בעוגיות הנחוצות להפעלתו, למשל שמירת שפת האתר והעדפות תצוגה. עוגיות לניתוח שימוש באתר יופעלו רק אם תאשרו. בהתאם לחוק הגנת הפרטיות, לרבות תיקון 13.",
+    policy: "מדיניות הפרטיות",
+    necessary: "רק הכרחיות",
+    acceptAnalytics: "אישור הכל",
+    manageTitle: "העדפות עוגיות",
+    manageBody: "אפשר לאשר או לדחות עוגיות לניתוח שימוש באתר. העוגיות הנחוצות להפעלת האתר יישארו פעילות בכל מקרה, וניתן לשנות את הבחירה בכל עת.",
+    analyticsStatus: "עוגיות סטטיסטיות",
+    analyticsOn: "פעילות",
+    analyticsOff: "כבויות",
+  },
+  a11y: {
+    open: "פתיחת תפריט נגישות",
+    close: "סגירה",
+    title: "נגישות",
+    subtitle: "העדפות תצוגה לאתר זה. הן אינן מחליפות טכנולוגיה מסייעת.",
+    textSize: "גודל טקסט",
+    contrast: "ניגודיות",
+    contrastOff: "רגיל",
+    contrastHigh: "גבוהה",
+    contrastInvert: "היפוך צבעים",
+    spacing: "ריווח שורות",
+    spacingNormal: "רגיל",
+    spacingRelaxed: "מוגדל",
+    spacingLoose: "רחב",
+    highlightLinks: "הדגשת קישורים",
+    readableFont: "גופן קריא",
+    reduceMotion: "עצירת אנימציות",
+    on: "פעיל",
+    off: "כבוי",
+    reset: "איפוס העדפות",
+    statement: "הצהרת נגישות",
+    contact: "דיווח על בעיית נגישות",
+    shortcutHint: "קיצור מקלדת: Alt + A",
   },
   floatingWhatsapp: "צ'אט בוואטסאפ",
   langToggle: {

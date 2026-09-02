@@ -1,7 +1,7 @@
 import type { Language } from "@/types/language";
 import type { CollageLayout } from "@/lib/stills/collage-layout";
 
-/** DB row — video_categories */
+/** DB row - video_categories */
 export interface VideoCategory {
   id: string;
   title_en: string;
@@ -22,7 +22,7 @@ export interface PortfolioVideoCategory {
   initialVisibleCount: number;
 }
 
-/** DB row — video_works */
+/** DB row - video_works */
 export interface VideoWork {
   id: string;
   category_id: string | null;
@@ -51,7 +51,7 @@ export interface PortfolioVideoWork {
   sortOrder: number;
 }
 
-/** DB row — still_images */
+/** DB row - still_images */
 export interface StillImage {
   id: string;
   image_url: string;

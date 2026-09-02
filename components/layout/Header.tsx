@@ -1,6 +1,7 @@
 "use client";
 
 import { BrandLogoLink, HERO_BRAND_LOGO_ID } from "@/components/brand/BrandLogo";
+import { AccessibilityWidget } from "@/components/a11y/AccessibilityWidget";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
@@ -67,9 +68,15 @@ export function Header() {
           dir="ltr"
           className="container-wide flex h-16 items-center gap-4 px-4 sm:h-18 sm:px-6 lg:px-8"
         >
-          <LanguageToggle
-            className={cn("shrink-0", locale === "en" && "order-last ms-auto")}
-          />
+          <div
+            className={cn(
+              "flex shrink-0 items-center gap-2.5",
+              locale === "en" && "order-last ms-auto",
+            )}
+          >
+            <LanguageToggle />
+            <AccessibilityWidget panelAlign={locale === "en" ? "end" : "start"} />
+          </div>
           <div
             dir={dir}
             className={cn(

@@ -24,7 +24,7 @@ export interface LeadNotificationData {
 
 function formatServiceLabel(serviceType: string | null, language: Language): string {
   if (!serviceType?.trim()) {
-    return "—";
+    return "-";
   }
 
   const service = SERVICES.find((s) => s.id === serviceType.trim());
@@ -92,12 +92,12 @@ export function buildLeadNotificationEmail(lead: LeadNotificationData): {
   });
 
   const text = [
-    "New website lead — Lev Ari Productions",
+    "New website lead - Lev Ari Productions",
     "",
     `Name: ${lead.full_name.trim()}`,
     `Phone: ${lead.phone.trim()}`,
     `Email: ${lead.email.trim()}`,
-    `Service: ${lead.service_type?.trim() || "—"}`,
+    `Service: ${lead.service_type?.trim() || "-"}`,
     `Language: ${languageLabel(lead.language)}`,
     `Submitted: ${lead.created_at}`,
     `Message: ${lead.message?.trim() || "No message provided."}`,

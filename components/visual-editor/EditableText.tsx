@@ -6,14 +6,22 @@ import {
   VISUAL_FIELD_LABELS,
   type VisualContentKey,
 } from "@/lib/admin/visual-content-keys";
+import { resolveCmsSetting } from "@/lib/i18n/cms";
 import { useLanguage } from "@/lib/i18n/context";
+import {
+  parseVisualFieldStyles,
+  visualFieldStyleToCss,
+  VISUAL_FIELD_STYLES_CONTENT_KEY,
+} from "@/lib/visual-editor/field-styles";
 import { cn } from "@/lib/utils";
 import {
   useCallback,
   useId,
   useLayoutEffect,
+  useMemo,
   useRef,
   type ComponentPropsWithoutRef,
+  type CSSProperties,
   type ElementType,
 } from "react";
 
@@ -34,16 +42,20 @@ const editableFieldClass =
 function AutoSizeTextarea({
   value,
   onChange,
+  onFocus,
   dir,
   className,
   id,
+  style,
   "aria-label": ariaLabel,
 }: {
   value: string;
   onChange: (value: string) => void;
+  onFocus?: () => void;
   dir: "ltr" | "rtl";
   className?: string;
   id?: string;
+  style?: CSSProperties;
   "aria-label"?: string;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -62,7 +74,9 @@ function AutoSizeTextarea({
       dir={dir}
       rows={2}
       value={value}
+      style={style}
       onChange={(e) => onChange(e.target.value)}
+      onFocus={onFocus}
       aria-label={ariaLabel}
       className={cn(editableFieldClass, "resize-none overflow-hidden", className)}
     />
@@ -76,10 +90,18 @@ export function EditableText({
   multiline,
   className,
   id,
+  style,
   ...rest
 }: Props) {
-  const { isActive, getValue, updateField, locale } = useVisualEditor();
-  const { cms } = useLanguage();
+  const {
+    isActive,
+    getValue,
+    updateField,
+    locale,
+    setFocusedField,
+    getFieldStyle,
+  } = useVisualEditor();
+  const { cms, cmsMap } = useLanguage();
   const labelId = useId();
   const isMultiline = multiline ?? isVisualMultilineKey(contentKey);
   const value = isActive
@@ -87,6 +109,15 @@ export function EditableText({
     : cms(contentKey, fallback);
   const friendlyLabel = VISUAL_FIELD_LABELS[contentKey];
   const fieldDir = locale === "he" ? "rtl" : "ltr";
+  const cmsStyle = useMemo(
+    () =>
+      parseVisualFieldStyles(
+        resolveCmsSetting(cmsMap, VISUAL_FIELD_STYLES_CONTENT_KEY, ""),
+      )[contentKey],
+    [cmsMap, contentKey],
+  );
+  const fieldStyle = isActive ? getFieldStyle(contentKey) : cmsStyle;
+  const mergedStyle = { ...style, ...visualFieldStyleToCss(fieldStyle) };
 
   const handlePlainPaste = useCallback(
     (e: React.ClipboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -104,7 +135,7 @@ export function EditableText({
   if (!isActive) {
     const DisplayTag = Tag as ElementType;
     return (
-      <DisplayTag className={className} id={id} {...rest}>
+      <DisplayTag className={className} id={id} {...rest} style={mergedStyle}>
         {value}
       </DisplayTag>
     );
@@ -129,7 +160,9 @@ export function EditableText({
           id={id}
           dir={fieldDir}
           value={value}
+          style={mergedStyle}
           onChange={(v) => updateField(contentKey, v)}
+          onFocus={() => setFocusedField(contentKey)}
           aria-label={friendlyLabel}
           className={cn(editableFieldClass, className)}
         />
@@ -139,7 +172,9 @@ export function EditableText({
           id={id}
           dir={fieldDir}
           value={value}
+          style={mergedStyle}
           onChange={(e) => updateField(contentKey, e.target.value)}
+          onFocus={() => setFocusedField(contentKey)}
           onPaste={handlePlainPaste}
           aria-labelledby={labelId}
           aria-label={friendlyLabel}

@@ -1,6 +1,6 @@
 /**
  * Best-effort in-memory rate limit for contact submissions.
- * On serverless, limits apply per warm instance — still reduces burst spam.
+ * On serverless, limits apply per warm instance - still reduces burst spam.
  * For stronger protection, add Cloudflare Turnstile (see docs/launch-checklist.md).
  */
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { LegalDocument } from "@/components/legal/LegalDocument";
+import { PrivacyPreferencesCard } from "@/components/privacy/PrivacyPreferencesCard";
 import { LegalPageChrome } from "@/components/layout/LegalPageChrome";
 import {
   getAccessibilityStatementContent,
@@ -26,6 +27,7 @@ export function LegalPageClient({ kind }: { kind: LegalPageKind }) {
   return (
     <LegalPageChrome>
       <LegalDocument content={content} />
+      {kind === "privacy" ? <PrivacyPreferencesCard /> : null}
     </LegalPageChrome>
   );
 }

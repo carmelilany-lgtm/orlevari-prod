@@ -2,6 +2,7 @@ import "server-only";
 
 import { isValidEmail } from "@/lib/contact/validation";
 import { getResendClient } from "@/lib/resend/client";
+import { readEmailLogoAttachment } from "@/lib/resend/logo";
 import {
   getResendEnv,
   isNotificationEmailConfigured,
@@ -44,6 +45,7 @@ async function sendEmail(options: {
   }
 
   const replyTo = resolveReplyTo(emailFrom, options.replyTo);
+  const logo = readEmailLogoAttachment();
 
   const { data, error } = await resend.emails.send({
     from: emailFrom,
@@ -52,6 +54,7 @@ async function sendEmail(options: {
     html: options.html,
     text: options.text,
     ...(replyTo ? { replyTo } : {}),
+    ...(logo ? { attachments: [logo] } : {}),
   });
 
   if (error) {
@@ -68,14 +71,14 @@ export async function sendLeadNotificationEmail(
 ): Promise<EmailSendResult> {
   if (!isResendConfigured()) {
     console.warn(
-      "[lev-ari] Resend not configured — internal notification skipped.",
+      "[lev-ari] Resend not configured - internal notification skipped.",
     );
     return { ok: false, skipped: true, reason: "Resend not configured" };
   }
 
   if (!isNotificationEmailConfigured()) {
     console.warn(
-      "[lev-ari] CONTACT_NOTIFICATION_EMAIL missing — internal notification skipped.",
+      "[lev-ari] CONTACT_NOTIFICATION_EMAIL missing - internal notification skipped.",
     );
     return {
       ok: false,
@@ -105,7 +108,7 @@ export async function sendCustomerConfirmationEmail(
 ): Promise<EmailSendResult> {
   if (!isResendConfigured()) {
     console.warn(
-      "[lev-ari] Resend not configured — customer confirmation skipped.",
+      "[lev-ari] Resend not configured - customer confirmation skipped.",
     );
     return { ok: false, skipped: true, reason: "Resend not configured" };
   }

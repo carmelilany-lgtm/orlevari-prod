@@ -17,7 +17,6 @@ export const SITE_CONTENT_SECTIONS: {
     title: "About",
     keys: [
       "about_extended_title",
-      "about_extended_title_size",
       "about_extended_text",
       "about_extended_quote",
     ],
@@ -62,7 +61,6 @@ export const CONTENT_KEY_LABELS: Partial<Record<SiteContentKey, string>> = {
   hero_primary_button: "כפתור ראשי",
   hero_secondary_button: "כפתור משני",
   about_extended_title: "כותרת אודות",
-  about_extended_title_size: "גודל כותרת אודות",
   about_extended_text: "טקסט אודות",
   about_extended_quote: "ציטוט / משפט מסכם באודות",
   about_extended_image_url: "תמונת אודות",
@@ -92,10 +90,6 @@ const LONG_TEXT_KEYS = new Set<SiteContentKey>([
 
 export function isLongContentKey(key: SiteContentKey): boolean {
   return LONG_TEXT_KEYS.has(key);
-}
-
-export function isLocaleAgnosticContentKey(key: SiteContentKey): boolean {
-  return key === "about_extended_title_size";
 }
 
 export function contentKeyLabel(key: SiteContentKey): string {

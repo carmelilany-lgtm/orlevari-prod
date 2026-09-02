@@ -24,7 +24,7 @@ export interface VideoWorkItem {
   thumbnailLabel: string;
 }
 
-/** Supabase `still_works` row shape — snake_case matches DB columns */
+/** Supabase `still_works` row shape - snake_case matches DB columns */
 export interface StillWorkItem {
   id: string;
   /** Public URL from Supabase Storage */
@@ -33,7 +33,7 @@ export interface StillWorkItem {
   alt_he: string;
   width?: number;
   height?: number;
-  /** width / height — stored on upload or derived from dimensions */
+  /** width / height - stored on upload or derived from dimensions */
   aspect_ratio?: number;
   sort_order?: number;
   published?: boolean;

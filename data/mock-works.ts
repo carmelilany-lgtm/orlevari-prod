@@ -91,7 +91,7 @@ const STILL_ALTS_HE = [
   "פריים אופנה עריכתי",
 ];
 
-/** Realistic intrinsic sizes — layout follows width/height, not manual spans */
+/** Realistic intrinsic sizes - layout follows width/height, not manual spans */
 const STILL_MOCK_DIMENSIONS: { width: number; height: number }[] = [
   { width: 1080, height: 1620 },
   { width: 800, height: 520 },
@@ -153,8 +153,8 @@ export const MOCK_VIDEO_WORKS: VideoWorkItem[] = VIDEO_CATEGORIES.flatMap(
         id: `v-${category.id}-${index + 1}`,
         categoryId: category.id,
         title: {
-          en: `${category.label.en} — ${suffix.en}`,
-          he: `${category.label.he} — ${suffix.he}`,
+          en: `${category.label.en} - ${suffix.en}`,
+          he: `${category.label.he} - ${suffix.he}`,
         },
         thumbnailLabel: `${category.label.en} ${index + 1}`,
       };

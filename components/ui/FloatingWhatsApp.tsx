@@ -2,6 +2,13 @@
 
 import { useFloatingWhatsAppHref } from "@/lib/contact/use-public-contact";
 import { useLanguage } from "@/lib/i18n/context";
+import {
+  getPrivacyConsentServerSnapshot,
+  getPrivacyConsentSnapshot,
+  subscribePrivacyConsent,
+} from "@/lib/privacy/store";
+import { cn } from "@/lib/utils";
+import { useSyncExternalStore } from "react";
 
 /**
  * Site-wide floating WhatsApp launcher: official wa.me link, icon-only
@@ -10,6 +17,11 @@ import { useLanguage } from "@/lib/i18n/context";
 export function FloatingWhatsApp() {
   const { t } = useLanguage();
   const href = useFloatingWhatsAppHref();
+  const consent = useSyncExternalStore(
+    subscribePrivacyConsent,
+    getPrivacyConsentSnapshot,
+    getPrivacyConsentServerSnapshot,
+  );
 
   if (!href) return null;
 
@@ -19,7 +31,10 @@ export function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={t.floatingWhatsapp}
-      className="fixed bottom-6 end-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/40 transition hover:scale-105 hover:bg-[#20bd5a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
+      className={cn(
+        "fixed end-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/40 transition hover:scale-105 hover:bg-[#20bd5a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400",
+        consent.decided ? "bottom-6" : "bottom-[11.5rem] sm:bottom-[8.75rem]",
+      )}
     >
       <svg
         aria-hidden

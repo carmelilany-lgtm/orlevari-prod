@@ -8,13 +8,7 @@ import {
 } from "@/components/admin/admin-styles";
 import { saveSiteContent } from "@/lib/admin/actions/content";
 import {
-  ABOUT_TITLE_SIZE_LABELS,
-  ABOUT_TITLE_SIZES,
-  parseAboutTitleSize,
-} from "@/lib/about/title-size";
-import {
   contentKeyLabel,
-  isLocaleAgnosticContentKey,
   isLongContentKey,
   SITE_CONTENT_SECTIONS,
 } from "@/lib/admin/content-keys";
@@ -45,15 +39,10 @@ export function ContentEditor({ initialContent }: Props) {
     for (const section of SITE_CONTENT_SECTIONS) {
       for (const key of section.keys) {
         const row = initialMap[key];
-        if (isLocaleAgnosticContentKey(key)) {
-          const size = parseAboutTitleSize(row?.value_en ?? row?.value_he);
-          map[key] = { value_en: size, value_he: size };
-        } else {
-          map[key] = {
-            value_en: row?.value_en ?? "",
-            value_he: row?.value_he ?? "",
-          };
-        }
+        map[key] = {
+          value_en: row?.value_en ?? "",
+          value_he: row?.value_he ?? "",
+        };
       }
     }
     return map;
@@ -69,17 +58,11 @@ export function ContentEditor({ initialContent }: Props) {
     setError("");
     setSuccess("");
 
-    const updates = Object.entries(values).map(([key, v]) => {
-      if (isLocaleAgnosticContentKey(key as SiteContentKey)) {
-        const size = parseAboutTitleSize(v.value_en || v.value_he);
-        return { key, value_en: size, value_he: size };
-      }
-      return {
-        key,
-        value_en: v.value_en || null,
-        value_he: v.value_he || null,
-      };
-    });
+    const updates = Object.entries(values).map(([key, v]) => ({
+      key,
+      value_en: v.value_en || null,
+      value_he: v.value_he || null,
+    }));
 
     const result = await saveSiteContent(updates);
     setLoading(false);
@@ -119,34 +102,6 @@ export function ContentEditor({ initialContent }: Props) {
 
               const long = isLongContentKey(key as SiteContentKey);
               const v = values[key] ?? { value_en: "", value_he: "" };
-              if (isLocaleAgnosticContentKey(key)) {
-                const size = parseAboutTitleSize(v.value_en || v.value_he);
-                return (
-                  <div
-                    key={key}
-                    className="grid gap-4 border-t border-blue-950/60 pt-4 first:border-0 first:pt-0"
-                  >
-                    <AdminFormField
-                      as="select"
-                      dir="rtl"
-                      label={contentKeyLabel(key)}
-                      hint={adminCopy.content.aboutTitleSizeHint}
-                      value={size}
-                      onChange={(val) => {
-                        const next = parseAboutTitleSize(val);
-                        setValues((prev) => ({
-                          ...prev,
-                          [key]: { value_en: next, value_he: next },
-                        }));
-                      }}
-                      options={ABOUT_TITLE_SIZES.map((option) => ({
-                        value: option,
-                        label: ABOUT_TITLE_SIZE_LABELS[option],
-                      }))}
-                    />
-                  </div>
-                );
-              }
               return (
                 <div
                   key={key}

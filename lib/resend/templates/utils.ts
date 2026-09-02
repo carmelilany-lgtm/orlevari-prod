@@ -1,6 +1,6 @@
 import "server-only";
 
-import { absolutePublicUrl } from "@/lib/seo/site-url";
+import { resolveEmailLogoSrc } from "@/lib/resend/logo";
 
 const HTML_ESCAPE_MAP: Record<string, string> = {
   "&": "&amp;",
@@ -17,7 +17,7 @@ export function escapeHtml(value: string): string {
 
 export function formatOptionalValue(
   value: string | null | undefined,
-  emptyLabel = "—",
+  emptyLabel = "-",
 ): string {
   const trimmed = value?.trim();
   return trimmed ? escapeHtml(trimmed) : emptyLabel;
@@ -94,13 +94,22 @@ export function wrapEmailDocument(options: {
   dir: "ltr" | "rtl";
   title: string;
   bodyHtml: string;
+  /** When true, img uses cid: (file attached in sendEmail). */
+  inlineLogo?: boolean;
 }): string {
-  const { lang, dir, title, bodyHtml } = options;
-  const logoUrl = absolutePublicUrl("/brand/levari-productions-logo.png");
+  const { lang, dir, title, bodyHtml, inlineLogo = true } = options;
+  const logoAlign = dir === "rtl" ? "right" : "left";
+  const logoUrl = resolveEmailLogoSrc(inlineLogo);
   const brandHeader = logoUrl
-    ? `<img src="${escapeHtml(logoUrl)}" alt="Lev Ari Productions" width="220" height="49" style="display:block;height:48px;width:auto;max-width:220px;border:0;" />`
-    : `<p style="margin:0;font-size:18px;font-weight:700;color:#e2e8f0;">Lev Ari Productions</p>
-              <p style="margin:4px 0 0;font-size:13px;color:#94a3b8;">לב ארי הפקות</p>`;
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td align="${logoAlign}" style="text-align:${logoAlign};">
+                  <img src="${escapeHtml(logoUrl)}" alt="Lev Ari Productions" width="220" height="49" style="display:block;height:48px;width:auto;max-width:220px;border:0;outline:none;text-decoration:none;" />
+                </td>
+              </tr>
+            </table>`
+    : `<p style="margin:0;text-align:${logoAlign};font-size:18px;font-weight:700;color:#e2e8f0;">Lev Ari Productions</p>
+              <p style="margin:4px 0 0;text-align:${logoAlign};font-size:13px;color:#94a3b8;">לב ארי הפקות</p>`;
 
   return `<!DOCTYPE html>
 <html lang="${lang}" dir="${dir}">

@@ -128,7 +128,7 @@ export function LeadsManager({ initialLeads }: Props) {
                   <td className={adminTdClass} dir="ltr">
                     {row.phone}
                   </td>
-                  <td className={adminTdClass}>{row.service_type ?? "—"}</td>
+                  <td className={adminTdClass}>{row.service_type ?? "-"}</td>
                   <td className={adminTdClass}>{formatDate(row.created_at)}</td>
                   <td className={adminTdClass}>
                     <div className="flex gap-2">
@@ -186,12 +186,12 @@ export function LeadsManager({ initialLeads }: Props) {
               </div>
               <div>
                 <dt className="text-slate-500">{adminCopy.leads.service}</dt>
-                <dd className="text-slate-100">{selected.service_type ?? "—"}</dd>
+                <dd className="text-slate-100">{selected.service_type ?? "-"}</dd>
               </div>
               <div>
                 <dt className="text-slate-500">{adminCopy.leads.message}</dt>
                 <dd className="whitespace-pre-wrap text-slate-100">
-                  {selected.message ?? "—"}
+                  {selected.message ?? "-"}
                 </dd>
               </div>
               <div>

@@ -1,4 +1,4 @@
-# Live integrations setup — Lev Ari Productions
+# Live integrations setup - Lev Ari Productions
 
 Step-by-step guide to connect a real Supabase project and Resend account before production deploy (Step 5).
 
@@ -31,7 +31,7 @@ Step-by-step guide to connect a real Supabase project and Resend account before 
 
 ## B. Run database migration
 
-### Option A — Supabase CLI (recommended)
+### Option A - Supabase CLI (recommended)
 
 ```bash
 cd /Users/carmelilany/Projects/lev-ari-productions
@@ -40,7 +40,7 @@ supabase link --project-ref YOUR_PROJECT_REF
 supabase db push
 ```
 
-### Option B — SQL Editor
+### Option B - SQL Editor
 
 1. Dashboard → **SQL Editor** → New query.
 2. Paste and run the full file: `supabase/migrations/001_initial_schema.sql`.
@@ -104,7 +104,7 @@ If buckets are missing (partial migration), create them in **Storage → New buc
 
 ### 2. Allow-list in database
 
-**Option A — SQL (service role / SQL Editor as postgres):**
+**Option A - SQL (service role / SQL Editor as postgres):**
 
 ```sql
 INSERT INTO public.admin_users (email)
@@ -112,7 +112,7 @@ VALUES ('admin@yourdomain.com')
 ON CONFLICT (email) DO NOTHING;
 ```
 
-**Option B — Env bootstrap on first login**
+**Option B - Env bootstrap on first login**
 
 Add to `.env.local`:
 
@@ -149,7 +149,7 @@ On first successful login, the app calls `ensureAdminUserInDatabase()` and upser
    CONTACT_NOTIFICATION_EMAIL=or@yourdomain.com
    ```
 
-6. Run `npm run check:env` — Resend vars should show **present**.
+6. Run `npm run check:env` - Resend vars should show **present**.
 
 **Note:** Without Resend, the contact form still saves leads when Supabase is configured; emails are skipped with a server warning.
 
@@ -165,7 +165,7 @@ After Supabase is connected, the homepage loads **published** rows only (no mock
 | Phone, email, WhatsApp | `/admin/content` keys `phone`, `email`, `whatsapp_number`, `whatsapp_message_*` | Shown only when set; no fake placeholders on live site |
 | Services cards | `/admin/services` | Published, `sort_order`; section hidden if none published |
 | Videos / categories / stills | `/admin/videos`, `/admin/categories`, `/admin/stills` | Published only; empty categories hidden; `initial_visible_count` per category |
-| Contact service dropdown | — | Built from published service titles + Other/אחר |
+| Contact service dropdown | - | Built from published service titles + Other/אחר |
 
 **WhatsApp:** Controlled in `/admin/content` (number, EN/HE messages, contact + floating toggles). CMS `whatsapp_number` first, then optional `WHATSAPP_PHONE` in `.env.local`. Buttons stay hidden until a valid number exists. On an existing DB, run **[whatsapp-cms-upsert.sql](./whatsapp-cms-upsert.sql)** once, then set the number in admin and save.
 
@@ -255,7 +255,7 @@ Text visual mode (`visualEdit=1`) and stills collage mode (`editCollage=1`) are 
 ### Add images from the visual editor
 
 1. Open `/?visualEdit=1` as a signed-in admin.
-2. Scroll to the **Works / stills** section — use **Add images to gallery** (or Hebrew equivalent).
+2. Scroll to the **Works / stills** section - use **Add images to gallery** (or Hebrew equivalent).
 3. Choose one or more JPG/PNG/WebP files (≤ 10MB each). Upload runs via admin-protected server actions; visitors never see this control.
 4. New images appear in the gallery after upload (page refresh/revalidation).
 
@@ -325,7 +325,7 @@ Recommended: edit from a desktop/laptop (wide grid).
 |---------|----------------|
 | סוג הקובץ לא נתמך | Not JPG/PNG/WebP |
 | הקובץ גדול מדי | Over 10MB (or server action body limit misconfigured) |
-| העלאה ל־Storage נכשלה | Bucket/policy/MIME; check `/admin/integrations` |
+| העלאה ל-Storage נכשלה | Bucket/policy/MIME; check `/admin/integrations` |
 | שמירת התמונה במסד הנתונים נכשלה | DB insert after upload |
 | אין הרשאה להעלות תמונות | Not in `admin_users` (storage uses `is_admin()`) |
 

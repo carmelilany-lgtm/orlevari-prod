@@ -7,12 +7,7 @@ import {
   getAboutExtendedImageUrl,
   getAboutImageUrl,
 } from "@/lib/i18n/about-image";
-import {
-  ABOUT_TITLE_SIZE_CLASSES,
-  DEFAULT_ABOUT_TITLE_SIZE,
-  parseAboutTitleSize,
-} from "@/lib/about/title-size";
-import { resolveCmsSetting, resolveCmsText } from "@/lib/i18n/cms";
+import { resolveCmsText } from "@/lib/i18n/cms";
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
@@ -52,9 +47,6 @@ export function About() {
     t.about.extendedQuote,
   );
   const extendedQuote = withTypographicQuotes(quoteRaw);
-  const titleSize = parseAboutTitleSize(
-    resolveCmsSetting(cmsMap, "about_extended_title_size", DEFAULT_ABOUT_TITLE_SIZE),
-  );
 
   return (
     <section
@@ -83,10 +75,7 @@ export function About() {
                 id="about-heading"
                 contentKey="about_extended_title"
                 fallback={extendedTitle}
-                className={cn(
-                  "font-display font-semibold text-white",
-                  ABOUT_TITLE_SIZE_CLASSES[titleSize],
-                )}
+                className="font-display text-2xl font-semibold text-white sm:text-3xl lg:text-4xl"
               />
               <EditableText
                 as="p"

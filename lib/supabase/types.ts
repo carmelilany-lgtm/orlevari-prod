@@ -1,5 +1,5 @@
 /**
- * Hand-written Database types — replace with `supabase gen types typescript` when CLI is linked.
+ * Hand-written Database types - replace with `supabase gen types typescript` when CLI is linked.
  */
 export type Json =
   | string

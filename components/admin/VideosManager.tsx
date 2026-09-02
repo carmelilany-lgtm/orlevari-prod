@@ -346,11 +346,11 @@ export function VideosManager({ initialVideos, categories }: Props) {
                     {row.category_id
                       ? categoryAdminPrimary(
                           categoryMap.get(row.category_id) ?? {
-                            title_he: "—",
+                            title_he: "-",
                             title_en: "",
                           },
                         )
-                      : "—"}
+                      : "-"}
                   </td>
                   <td className={adminTdClass}>{row.sort_order}</td>
                   <td className={adminTdClass}>

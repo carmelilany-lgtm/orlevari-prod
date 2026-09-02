@@ -1,4 +1,4 @@
-# Deploy on Vercel — Lev Ari Productions
+# Deploy on Vercel - Lev Ari Productions
 
 Production deployment checklist. **Never commit `.env.local` or paste real secrets into docs.**
 
@@ -37,7 +37,7 @@ Production deployment checklist. **Never commit `.env.local` or paste real secre
    ```
 
    - `/admin/login` loads; protected routes redirect when logged out.
-   - Contact form saves leads (anon INSERT only — no `.select()` on insert).
+   - Contact form saves leads (anon INSERT only - no `.select()` on insert).
    - `npm run build` and `npm run lint` pass.
 
 ---
@@ -62,7 +62,7 @@ Production deployment checklist. **Never commit `.env.local` or paste real secre
 | `NEXT_PUBLIC_SITE_URL` | Yes | **Production URL**, e.g. `https://yourdomain.com` |
 | `WHATSAPP_PHONE` | Public-like | As configured locally |
 
-Copy values from `.env.local` except `NEXT_PUBLIC_SITE_URL` — use the real production domain on Vercel Production.
+Copy values from `.env.local` except `NEXT_PUBLIC_SITE_URL` - use the real production domain on Vercel Production.
 
 Deploy after env vars are set (recommended before first production deploy).
 
@@ -112,8 +112,8 @@ Run `npm run verify:setup` after creating the Auth user to confirm `admin_users`
 
 ## Legal pages (public)
 
-- `/privacy-policy` — bilingual (EN default, HE via site language toggle)
-- `/accessibility-statement` — same language behavior
+- `/privacy-policy` - bilingual (EN default, HE via site language toggle)
+- `/accessibility-statement` - same language behavior
 - Footer links point to these routes (not `#`)
 
 ---
@@ -122,8 +122,8 @@ Run `npm run verify:setup` after creating the Auth user to confirm `admin_users`
 
 - [ ] Production site loads at `NEXT_PUBLIC_SITE_URL`
 - [ ] `/privacy-policy` and `/accessibility-statement` load in EN and HE
-- [ ] `/admin/login` — sign in with Supabase Auth admin user
-- [ ] `/admin/integrations` — Supabase + Resend flags configured (no secret values shown)
+- [ ] `/admin/login` - sign in with Supabase Auth admin user
+- [ ] `/admin/integrations` - Supabase + Resend flags configured (no secret values shown)
 - [ ] Edit one category / service / CMS field
 - [ ] Add one YouTube video in admin
 - [ ] Upload one still (stills bucket + `still_images` row)

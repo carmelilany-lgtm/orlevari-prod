@@ -6,7 +6,7 @@ import type { Database } from "@/lib/supabase/types";
 /**
  * SERVER-ONLY admin client (service role).
  *
- * - Bypasses RLS — use only for trusted server operations (bootstrap, cron, admin APIs).
+ * - Bypasses RLS - use only for trusted server operations (bootstrap, cron, admin APIs).
  * - NEVER import this file from Client Components or any file with "use client".
  * - Do not expose SUPABASE_SERVICE_ROLE_KEY via NEXT_PUBLIC_*.
  */

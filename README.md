@@ -7,7 +7,7 @@ Cinematic bilingual portfolio website foundation (Next.js App Router, TypeScript
 ```bash
 cd /Users/carmelilany/Projects/lev-ari-productions
 npm install
-cp .env.example .env.local   # optional — not required for static UI
+cp .env.example .env.local   # optional - not required for static UI
 npm run dev
 ```
 
@@ -32,7 +32,7 @@ Copy `.env.example` to `.env.local` when connecting Supabase, Resend, and admin 
 | `ADMIN_ALLOWED_EMAILS` | No | Step 3 admin login fallback |
 | `NEXT_PUBLIC_SITE_URL` | No | Auth redirects, SEO `metadataBase`, Open Graph |
 | `WHATSAPP_PHONE` | No | Fallback WhatsApp number if CMS `whatsapp_number` is empty (server → public) |
-| `RESEND_API_KEY` | No | Server-only — contact form emails |
+| `RESEND_API_KEY` | No | Server-only - contact form emails |
 | `EMAIL_FROM` | No | Verified Resend sender (e.g. `Lev Ari Productions <noreply@yourdomain.com>`) |
 | `CONTACT_NOTIFICATION_EMAIL` | No | Or’s inbox for new lead notifications |
 
@@ -64,7 +64,7 @@ When a visitor submits the public contact form:
 3. Internal notification email → `CONTACT_NOTIFICATION_EMAIL`.
 4. Customer confirmation email → submitter’s address (English or Hebrew RTL by `language`).
 
-**If email sending fails after the lead is saved**, the API still returns success. Errors are logged server-side only — never exposed to the browser.
+**If email sending fails after the lead is saved**, the API still returns success. Errors are logged server-side only - never exposed to the browser.
 
 **If Resend env vars are missing**, leads still save when Supabase is configured; emails are skipped with a server warning.
 

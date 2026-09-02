@@ -1,7 +1,15 @@
 /** Hebrew copy for the public-site visual text editor toolbar (RTL). */
 export const visualEditorCopy = {
   modeLabel: "מצב עריכה חזותית",
-  languageHint: "אתה עורך את השפה הפעילה באתר.",
+  languageHint: "אתה עורך את השפה הפעילה באתר. שמירת טקסט ועיצוב נמצאת בסרגל למעלה.",
+  formatHint: "לחצו על טקסט כדי לשנות גודל, מודגש ונטוי.",
+  formatField: "עיצוב",
+  fontSize: "גודל",
+  decreaseSize: "הקטנת גופן",
+  increaseSize: "הגדלת גופן",
+  bold: "מודגש",
+  italic: "נטוי",
+  resetStyle: "איפוס עיצוב",
   save: "שמירה",
   saving: "שומר…",
   cancel: "ביטול",

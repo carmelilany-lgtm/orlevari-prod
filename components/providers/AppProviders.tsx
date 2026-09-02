@@ -1,6 +1,8 @@
 "use client";
 
 import { SiteDataProvider } from "@/components/providers/SiteDataProvider";
+import { ConsentedAnalytics } from "@/components/privacy/ConsentedAnalytics";
+import { PrivacyConsentBanner } from "@/components/privacy/PrivacyConsentBanner";
 import { VisualEditorShell } from "@/components/visual-editor/VisualEditorShell";
 import { LanguageProvider } from "@/lib/i18n/context";
 import type { SitePortfolioData } from "@/lib/data/site-data";
@@ -31,6 +33,8 @@ export function AppProviders({
     >
       <VisualEditorShell>
         <SiteDataProvider data={siteData}>{children}</SiteDataProvider>
+        <PrivacyConsentBanner />
+        <ConsentedAnalytics />
       </VisualEditorShell>
     </LanguageProvider>
   );

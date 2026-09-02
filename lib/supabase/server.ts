@@ -4,7 +4,7 @@ import type { Database } from "@/lib/supabase/types";
 
 /**
  * Server-side Supabase client for Server Components, Route Handlers, and Server Actions.
- * Uses the anon key with cookie session — RLS applies.
+ * Uses the anon key with cookie session - RLS applies.
  */
 export async function createServerSupabaseClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

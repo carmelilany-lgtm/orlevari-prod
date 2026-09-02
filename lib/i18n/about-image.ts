@@ -13,7 +13,7 @@ export function getAboutImageUrl(map: SiteContentMap | undefined): string | null
   return pickImageUrl(map?.about_image_url);
 }
 
-/** CMS extended about image URL — falls back handled in About section. */
+/** CMS extended about image URL - falls back handled in About section. */
 export function getAboutExtendedImageUrl(
   map: SiteContentMap | undefined,
 ): string | null {

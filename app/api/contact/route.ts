@@ -19,7 +19,7 @@ interface ContactBody {
   message?: string;
   language?: string;
   privacy_accepted?: boolean;
-  /** Honeypot — bots only; must stay empty */
+  /** Honeypot - bots only; must stay empty */
   company_website?: string;
 }
 
@@ -118,7 +118,7 @@ export async function POST(request: Request) {
     );
   } else if (!notificationResult.ok && notificationResult.skipped) {
     console.warn(
-      "[lev-ari] contact: internal notification skipped —",
+      "[lev-ari] contact: internal notification skipped -",
       notificationResult.reason,
     );
   }
@@ -131,7 +131,7 @@ export async function POST(request: Request) {
     );
   } else if (!confirmationResult.ok && confirmationResult.skipped) {
     console.warn(
-      "[lev-ari] contact: customer confirmation skipped —",
+      "[lev-ari] contact: customer confirmation skipped -",
       confirmationResult.reason,
     );
   }

@@ -1,5 +1,5 @@
 /**
- * Central typed mock data — used when Supabase env vars are not configured.
+ * Central typed mock data - used when Supabase env vars are not configured.
  * Replace consumption with lib/api/* on the server when loading live data.
  */
 import { MOCK_STILLS, MOCK_VIDEO_WORKS } from "@/data/mock-works";
@@ -40,7 +40,7 @@ export const MOCK_SERVICES: ServiceDisplay[] = SERVICES.map((s) => ({
   iconKey: s.id,
 }));
 
-/** @deprecated Use MOCK_PORTFOLIO_VIDEO_WORKS — kept for lib/api fallback name */
+/** @deprecated Use MOCK_PORTFOLIO_VIDEO_WORKS - kept for lib/api fallback name */
 export const MOCK_VIDEO_WORKS_PORTFOLIO = MOCK_PORTFOLIO_VIDEO_WORKS;
 
 export function toVideoWorkItems(works: PortfolioVideoWork[]): VideoWorkItem[] {

@@ -45,7 +45,7 @@ function envPresent(value: string | undefined): boolean {
   return Boolean(value?.trim());
 }
 
-/** Safe env presence checks — never returns secret values. */
+/** Safe env presence checks - never returns secret values. */
 export function getIntegrationConfigStatus(): IntegrationConfigStatus {
   const supabaseUrlConfigured = envPresent(process.env.NEXT_PUBLIC_SUPABASE_URL);
   const supabaseAnonKeyConfigured = envPresent(

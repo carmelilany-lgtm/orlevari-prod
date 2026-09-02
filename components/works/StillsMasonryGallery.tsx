@@ -3,6 +3,7 @@
 import { StillsLightboxPlaceholder } from "@/components/works/StillsLightboxPlaceholder";
 import { StillsCollageLiveEditor } from "@/components/works/StillsCollageLiveEditor";
 import { VisualStillsUpload } from "@/components/visual-editor/VisualStillsUpload";
+import { useVisualEditorActive } from "@/components/visual-editor/VisualEditorProvider";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
 import { usePublicAdmin } from "@/hooks/use-public-admin";
 import {
@@ -19,9 +20,9 @@ import {
 } from "@/lib/stills/collage-layout";
 import { CdnImage } from "@/components/media/CdnImage";
 import {
-  STILLS_MOBILE_INITIAL_VISIBLE,
-  STILLS_MOBILE_LOAD_MORE_STEP,
-} from "@/data/works-display-config";
+  stillsDesktopPaging,
+  stillsMobilePaging,
+} from "@/lib/stills/mobile-paging";
 import { STILL_TILE_SIZES } from "@/lib/images/cdn-sizes";
 import { cn } from "@/lib/utils";
 import {
@@ -30,7 +31,7 @@ import {
   type StillWorkItem,
 } from "@/types/works";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Layout } from "react-grid-layout/legacy";
 
 /** Spread aspect ratios so column heads are not all the same shape */
@@ -184,6 +185,36 @@ function StillTile({
   );
 }
 
+function StillsLoadMoreButton({
+  remaining,
+  step,
+  loadMoreLabel,
+  loadMoreCount,
+  onMore,
+}: {
+  remaining: number;
+  step: number;
+  loadMoreLabel: string;
+  loadMoreCount: (count: number) => string;
+  onMore: () => void;
+}) {
+  if (remaining <= 0) return null;
+  const nextBatch = Math.min(step, remaining);
+
+  return (
+    <div className="mt-6 flex justify-center">
+      <button
+        type="button"
+        onClick={onMore}
+        aria-label={loadMoreCount(nextBatch)}
+        className="min-h-11 rounded-full border border-blue-500/30 bg-blue-950/30 px-7 py-3 text-base text-slate-200 transition-all duration-300 hover:border-cyan-400/50 hover:bg-blue-900/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
+      >
+        {loadMoreLabel}
+      </button>
+    </div>
+  );
+}
+
 function MobileStillsGrid({
   items,
   locale,
@@ -201,10 +232,19 @@ function MobileStillsGrid({
   onSelect: (item: StillWorkItem) => void;
   preview?: boolean;
 }) {
-  const [visibleCount, setVisibleCount] = useState(STILLS_MOBILE_INITIAL_VISIBLE);
+  const { initial, step } = useMemo(
+    () => stillsMobilePaging(items.length),
+    [items.length],
+  );
+  const [visibleCount, setVisibleCount] = useState(initial);
+
+  useEffect(() => {
+    setVisibleCount(initial);
+  }, [initial]);
+
   const shown = items.slice(
     0,
-    preview ? Math.min(4, items.length) : visibleCount,
+    preview ? Math.min(initial, items.length) : visibleCount,
   );
   const remaining = preview ? 0 : Math.max(0, items.length - shown.length);
 
@@ -226,22 +266,15 @@ function MobileStillsGrid({
       <p className="sr-only" aria-live="polite">
         {shown.length} / {items.length}
       </p>
-      {remaining > 0 ? (
-        <div className="mt-6 flex justify-center">
-          <button
-            type="button"
-            onClick={() =>
-              setVisibleCount((count) =>
-                Math.min(count + STILLS_MOBILE_LOAD_MORE_STEP, items.length),
-              )
-            }
-            aria-label={loadMoreCount(remaining)}
-            className="min-h-11 rounded-full border border-blue-500/30 bg-blue-950/30 px-7 py-3 text-base text-slate-200 transition-all duration-300 hover:border-cyan-400/50 hover:bg-blue-900/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
-          >
-            {loadMoreLabel}
-          </button>
-        </div>
-      ) : null}
+      <StillsLoadMoreButton
+        remaining={remaining}
+        step={step}
+        loadMoreLabel={loadMoreLabel}
+        loadMoreCount={loadMoreCount}
+        onMore={() =>
+          setVisibleCount((count) => Math.min(count + step, items.length))
+        }
+      />
     </div>
   );
 }
@@ -254,6 +287,7 @@ export function StillsMasonryGallery() {
   const { locale, t } = useLanguage();
   const { stills } = useSiteData();
   const { isAdmin, loading: adminLoading } = usePublicAdmin();
+  const visualEdit = useVisualEditorActive();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -287,13 +321,21 @@ export function StillsMasonryGallery() {
     return interleaveForMasonry(sortedStills);
   }, [sortedStills, useCollageLayout]);
 
+  const desktopPaging = useMemo(
+    () => stillsDesktopPaging(sortedStills.length),
+    [sortedStills.length],
+  );
+  const [desktopVisibleCount, setDesktopVisibleCount] = useState(
+    desktopPaging.initial,
+  );
+
+  useEffect(() => {
+    setDesktopVisibleCount(desktopPaging.initial);
+  }, [desktopPaging.initial]);
+
   const editFromQuery =
     searchParams.get("editCollage") === "1" ||
     searchParams.get("editCollage") === "true";
-
-  const visualEditFromQuery =
-    searchParams.get("visualEdit") === "1" ||
-    searchParams.get("visualEdit") === "true";
 
   const collageCopy = t.works.collage;
 
@@ -302,8 +344,34 @@ export function StillsMasonryGallery() {
     (!adminLoading &&
       isAdmin &&
       editFromQuery &&
-      !visualEditFromQuery &&
+      !visualEdit &&
       sortedStills.length > 0);
+
+  const desktopCollageItems = editMode
+    ? sortedStills
+    : sortedStills.slice(0, desktopVisibleCount);
+  const desktopMasonryItems = editMode
+    ? visibleStills
+    : visibleStills.slice(0, desktopVisibleCount);
+  const desktopRemaining = editMode
+    ? 0
+    : Math.max(0, sortedStills.length - desktopVisibleCount);
+
+  const desktopLoadMore = (
+    <div className="hidden md:block">
+      <StillsLoadMoreButton
+        remaining={desktopRemaining}
+        step={desktopPaging.step}
+        loadMoreLabel={t.works.loadMore}
+        loadMoreCount={t.works.loadMoreCount}
+        onMore={() =>
+          setDesktopVisibleCount((count) =>
+            Math.min(count + desktopPaging.step, sortedStills.length),
+          )
+        }
+      />
+    </div>
+  );
 
   const layoutDraft =
     draftLayout ?? (editMode ? stillsToGridLayout(sortedStills) : null);
@@ -379,12 +447,12 @@ export function StillsMasonryGallery() {
 
   return (
     <div aria-label={t.works.stillsSectionLabel}>
-      {visualEditFromQuery ? <VisualStillsUpload /> : null}
+      {visualEdit ? <VisualStillsUpload /> : null}
       {isAdmin &&
         !adminLoading &&
         sortedStills.length > 0 &&
         !editMode &&
-        !visualEditFromQuery && (
+        !visualEdit && (
         <div className="mb-4 flex justify-end">
           <button
             type="button"
@@ -498,7 +566,7 @@ export function StillsMasonryGallery() {
       ) : useCollageLayout && usePositionalLayout ? (
         <>
           <div className="stills-collage-grid-positional hidden md:grid">
-            {sortedStills.map((item) => {
+            {desktopCollageItems.map((item) => {
               const layout = parseCollageLayout(item.collage_layout);
               if (!layout || layout.x == null || layout.y == null) return null;
               return (
@@ -519,6 +587,7 @@ export function StillsMasonryGallery() {
               );
             })}
           </div>
+          {desktopLoadMore}
           <MobileStillsGrid
             items={sortedStills}
             locale={locale}
@@ -531,7 +600,7 @@ export function StillsMasonryGallery() {
       ) : useCollageLayout ? (
         <>
           <div className="stills-collage-grid hidden md:grid">
-            {sortedStills.map((item) => {
+            {desktopCollageItems.map((item) => {
               const desktop = collageSpansForViewport(
                 item.collage_layout,
                 "desktop",
@@ -550,6 +619,7 @@ export function StillsMasonryGallery() {
               );
             })}
           </div>
+          {desktopLoadMore}
           <MobileStillsGrid
             items={sortedStills}
             locale={locale}
@@ -570,7 +640,7 @@ export function StillsMasonryGallery() {
             onSelect={openLightbox}
           />
           <div className="masonry-columns hidden md:block">
-            {visibleStills.map((item) => (
+            {desktopMasonryItems.map((item) => (
               <StillTile
                 key={item.id}
                 item={item}
@@ -580,6 +650,7 @@ export function StillsMasonryGallery() {
               />
             ))}
           </div>
+          {desktopLoadMore}
         </>
       )}
 

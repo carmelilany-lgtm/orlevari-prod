@@ -1,6 +1,6 @@
 import sharp from "sharp";
 
-/** Longest edge stored in Supabase — Vercel then serves even smaller tiles. */
+/** Longest edge stored in Supabase - Vercel then serves even smaller tiles. */
 export const MAX_PUBLIC_IMAGE_EDGE = 1920;
 
 export type OptimizedUpload = {
@@ -12,7 +12,7 @@ export type OptimizedUpload = {
 };
 
 /**
- * Resize and encode camera originals so the image CDN is not fetching 3–10MB files.
+ * Resize and encode camera originals so the image CDN is not fetching 3-10MB files.
  */
 export async function optimizeImageForPublicStorage(
   input: ArrayBuffer,

@@ -7,14 +7,14 @@ export function categoryAdminLabel(row: {
   const he = row.title_he.trim();
   const en = row.title_en.trim();
   if (he && en) return `${he} (${en})`;
-  return he || en || "—";
+  return he || en || "-";
 }
 
 export function categoryAdminPrimary(row: {
   title_he: string;
   title_en: string;
 }): string {
-  return row.title_he.trim() || row.title_en.trim() || "—";
+  return row.title_he.trim() || row.title_en.trim() || "-";
 }
 
 export function categoryAdminSecondary(row: {

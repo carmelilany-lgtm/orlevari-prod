@@ -1,4 +1,4 @@
-/** DB row — services */
+/** DB row - services */
 export interface Service {
   id: string;
   title_en: string;

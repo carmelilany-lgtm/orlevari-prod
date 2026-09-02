@@ -1,4 +1,4 @@
--- Lev Ari Productions — initial schema, RLS, storage, triggers
+-- Lev Ari Productions - initial schema, RLS, storage, triggers
 -- Run via Supabase CLI or SQL Editor after linking project.
 
 -- ---------------------------------------------------------------------------
@@ -10,7 +10,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- 2. Tables (all public tables before functions that reference them)
 -- ---------------------------------------------------------------------------
 
--- A. admin_users — approved admin emails only
+-- A. admin_users - approved admin emails only
 CREATE TABLE IF NOT EXISTS public.admin_users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email TEXT NOT NULL UNIQUE,
@@ -120,7 +120,7 @@ END;
 $$;
 
 -- Admin check (RLS helper)
--- Uses JWT email claim — do NOT use user_metadata for authorization.
+-- Uses JWT email claim - do NOT use user_metadata for authorization.
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN
 LANGUAGE sql

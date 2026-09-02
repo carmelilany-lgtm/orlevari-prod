@@ -41,7 +41,7 @@ export function normalizeImageMime(type: string): string | null {
   return null;
 }
 
-/** Storage path for still uploads — extension only from MIME/name, not original basename. */
+/** Storage path for still uploads - extension only from MIME/name, not original basename. */
 export function buildStillStoragePath(
   timestamp: number,
   index: number,

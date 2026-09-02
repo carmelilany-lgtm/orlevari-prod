@@ -6,7 +6,7 @@ export const SERVICES: ServiceItem[] = [
     title: { en: "Event Filming", he: "צילום אירועים" },
     description: {
       en: "Weddings, celebrations, and live events captured with cinematic precision.",
-      he: "חתונות, אירועים והופעות — בצילום קולנועי מדויק.",
+      he: "חתונות, אירועים והופעות - בצילום קולנועי מדויק.",
     },
   },
   {
@@ -22,7 +22,7 @@ export const SERVICES: ServiceItem[] = [
     title: { en: "Shows", he: "הופעות" },
     description: {
       en: "Live performances and stage productions brought to life on screen.",
-      he: "הופעות חיות והפקות במה — מועברות לקולנוע.",
+      he: "הופעות חיות והפקות במה - מועברות לקולנוע.",
     },
   },
   {

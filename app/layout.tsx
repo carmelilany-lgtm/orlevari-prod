@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Analytics } from "@vercel/analytics/next";
 import { Noto_Sans_Hebrew } from "next/font/google";
 import { LOCALE_BOOTSTRAP_SCRIPT } from "@/lib/i18n/locale-storage";
+import { A11Y_BOOTSTRAP_SCRIPT } from "@/lib/a11y/prefs";
 import { getRequestLocale } from "@/lib/i18n/request-locale";
 import {
   DEFAULT_DESCRIPTION,
@@ -23,8 +23,6 @@ const metadataBase = getMetadataBase();
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 /** Fallback for non-home routes; homepage overrides via generateMetadata */
@@ -68,11 +66,12 @@ export default async function RootLayout({
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: LOCALE_BOOTSTRAP_SCRIPT }}
         />
-        <>
-          {children}
-          {/* Vercel Analytics — active when deployed on Vercel */}
-          <Analytics />
-        </>
+        <Script
+          id="lev-ari-a11y-bootstrap"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: A11Y_BOOTSTRAP_SCRIPT }}
+        />
+        {children}
       </body>
     </html>
   );

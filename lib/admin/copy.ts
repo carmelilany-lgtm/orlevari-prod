@@ -51,7 +51,7 @@ export const adminCopy = {
     uploading: "מעלה…",
     publishOnUpload: "פרסום עם ההעלאה",
     saveAllContent: "שמירת כל התוכן",
-    none: "— ללא —",
+    none: "- ללא -",
   },
   publish: {
     published: "פעיל באתר",
@@ -71,7 +71,7 @@ export const adminCopy = {
   },
   dashboard: {
     pageHelper:
-      "כאן אפשר לעדכן תוכן, סרטונים ותמונות לבד — כרמל לא חייב לקבל הודעה על כל פסיק.",
+      "כאן אפשר לעדכן תוכן, סרטונים ותמונות לבד - כרמל לא חייב לקבל הודעה על כל פסיק.",
     publishedVideos: "סרטונים מפורסמים",
     videoCategories: "קטגוריות וידאו",
     stillImages: "תמונות סטילס",
@@ -104,7 +104,7 @@ export const adminCopy = {
     updated: "הקטגוריה עודכנה.",
     deleteTitle: "למחוק את הקטגוריה?",
     deleteMessage:
-      "לא ניתן לבטל פעולה זו. לא ניתן למחוק קטגוריה שיש בה סרטונים — יש להעביר או למחוק את הסרטונים קודם.",
+      "לא ניתן לבטל פעולה זו. לא ניתן למחוק קטגוריה שיש בה סרטונים - יש להעביר או למחוק את הסרטונים קודם.",
     tableTitle: "כותרת",
     tableTitleEn: "כותרת (EN)",
     tableSlug: "Slug",
@@ -125,7 +125,7 @@ export const adminCopy = {
     youtubeDetected: (id: string) => `מזהה שזוהה: ${id}`,
     youtubeHint: "הדביקו קישור YouTube תקין",
     youtubeInvalidInline:
-      "קישור לא תקין — השתמשו ב-watch, youtu.be, embed או shorts.",
+      "קישור לא תקין - השתמשו ב-watch, youtu.be, embed או shorts.",
     customCover: "קאבר מותאם (אופציונלי)",
     emptyTitle: "אין סרטונים עדיין.",
     emptyDesc: "הוסיפו סרטון YouTube ראשון לתיק העבודות.",
@@ -204,17 +204,16 @@ export const adminCopy = {
     aboutImageReplace: "החלפת תמונת גיבוי",
     aboutImageUploading: "מעלה תמונה...",
     aboutImageSaved: "תמונת האודות עודכנה בהצלחה",
-    aboutImageNoPreview: "לא הוגדרה תמונה — מוצגת תמונת ברירת מחדל באתר.",
+    aboutImageNoPreview: "לא הוגדרה תמונה - מוצגת תמונת ברירת מחדל באתר.",
     aboutExtendedImageTitle: "תמונת אודות מורחבת",
     aboutExtendedImageReplace: "החלפת תמונת אודות מורחבת",
     aboutExtendedImageSaved: "תמונת האודות המורחבת עודכנה בהצלחה",
     heroStillsNote:
-      "ניהול תמונות ההדר מתבצע דרך גלריית התמונות — סמנו תמונות כ׳מופיע בהדר׳.",
+      "ניהול תמונות ההדר מתבצע דרך גלריית התמונות - סמנו תמונות כ׳מופיע בהדר׳.",
     intro:
       "עריכת תוכן דו-לשוני ב-Supabase. כשערך ריק, האתר הציבורי משתמש בתרגומים המובנים.",
-    aboutTitleSizeHint: "גודל הכותרת באזור האודות באתר הציבורי.",
     aboutQuoteHint:
-      "מרכאות מתווספות אוטומטית באתר — אין צורך להוסיף אותן ידנית.",
+      "מרכאות מתווספות אוטומטית באתר - אין צורך להוסיף אותן ידנית.",
     saved:
       "תוכן האתר נשמר. האתר הציבורי ישתמש בערכי ה-CMS כשהם זמינים.",
     valueEn: "ערך באנגלית",
@@ -322,7 +321,7 @@ export const adminErrors = {
   processUploadFailed: "אירעה שגיאה בהעלאת חלק מהתמונות.",
   dimensionsUnreadable:
     "לא ניתן לקרוא את התמונה, אבל ננסה להעלות אותה ללא ממדים.",
-  storageUploadFailed: "העלאה ל־Storage נכשלה.",
+  storageUploadFailed: "העלאה ל-Storage נכשלה.",
   dbInsertFailed: "שמירת התמונה במסד הנתונים נכשלה.",
   aboutUploadFailed: "העלאת תמונת האודות נכשלה",
   invalidFileName: "שם הקובץ לא תקין",

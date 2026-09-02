@@ -1,4 +1,4 @@
-# Lev Ari Productions — Launch Checklist
+# Lev Ari Productions - Launch Checklist
 
 Use this checklist before and after deploying to production. Do not commit secrets (`.env`, `.env.local`, API keys).
 
@@ -12,7 +12,7 @@ Use this checklist before and after deploying to production. Do not commit secre
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - `SUPABASE_SERVICE_ROLE_KEY` (server only)
   - `ADMIN_ALLOWED_EMAILS`
-  - `NEXT_PUBLIC_SITE_URL` — production URL (HTTPS, no trailing slash), used for SEO `metadataBase`, sitemap, robots, auth redirects
+  - `NEXT_PUBLIC_SITE_URL` - production URL (HTTPS, no trailing slash), used for SEO `metadataBase`, sitemap, robots, auth redirects
   - `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_NOTIFICATION_EMAIL`
   - Optional: `WHATSAPP_PHONE`
 - [ ] `NEXT_PUBLIC_SITE_URL` matches the live domain
@@ -49,7 +49,7 @@ Use this checklist before and after deploying to production. Do not commit secre
 
 - [ ] Contact honeypot field remains hidden (`company_website`)
 - [ ] Server-side rate limit active on `POST /api/contact` (8 requests / 15 min / IP, best-effort on serverless)
-- [ ] If spam increases: add [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) or reCAPTCHA (documented future upgrade — no keys in repo)
+- [ ] If spam increases: add [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) or reCAPTCHA (documented future upgrade - no keys in repo)
 
 ---
 
@@ -95,7 +95,7 @@ Use this checklist before and after deploying to production. Do not commit secre
 1. Admin → **סרטונים** → **הוספת סרטון**
 2. Enter EN/HE titles, category, valid YouTube URL
 3. Set sort order; toggle **פעיל באתר** to publish
-4. Save — public homepage revalidates automatically
+4. Save - public homepage revalidates automatically
 
 ### Add a still image
 
@@ -108,7 +108,7 @@ Use this checklist before and after deploying to production. Do not commit secre
 
 1. Admin → **תוכן האתר**
 2. Edit bilingual fields (hero, about, works, services, contact, SEO)
-3. Save — empty CMS values fall back to built-in translations
+3. Save - empty CMS values fall back to built-in translations
 
 ### Check leads
 

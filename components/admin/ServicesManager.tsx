@@ -238,7 +238,7 @@ export function ServicesManager({ initialServices }: Props) {
               {services.map((row) => (
                 <tr key={row.id}>
                   <td className={adminTdClass}>{row.title_en}</td>
-                  <td className={adminTdClass}>{row.icon_key ?? "—"}</td>
+                  <td className={adminTdClass}>{row.icon_key ?? "-"}</td>
                   <td className={adminTdClass}>{row.sort_order}</td>
                   <td className={adminTdClass}>
                     <PublishToggle

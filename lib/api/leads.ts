@@ -75,7 +75,7 @@ export async function createLead(
     return { ok: false, error: "Contact form is not configured" };
   }
 
-  // Do not .select() after insert — anon has INSERT only on leads (no SELECT).
+  // Do not .select() after insert - anon has INSERT only on leads (no SELECT).
   const { error } = await supabase.from("leads").insert({
     full_name: input.full_name.trim(),
     phone: input.phone.trim(),

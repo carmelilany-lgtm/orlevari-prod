@@ -43,7 +43,7 @@ export function buildCustomerConfirmationEmail(
     : escapeHtml(emptyMessageLabel);
 
   if (lead.language === "he") {
-    const subject = "הפנייה שלך התקבלה — לב ארי הפקות";
+    const subject = "הפנייה שלך התקבלה - לב ארי הפקות";
     const bodyHtml = `
       <p style="margin:0 0 16px;">שלום ${name},</p>
       <p style="margin:0 0 16px;">תודה שפנית ללב ארי הפקות.<br />הפנייה שלך התקבלה בהצלחה ונחזור אליך בהקדם.</p>
@@ -77,7 +77,7 @@ export function buildCustomerConfirmationEmail(
     return { subject, html, text };
   }
 
-  const subject = "We received your message — Lev Ari Productions";
+  const subject = "We received your message - Lev Ari Productions";
   const bodyHtml = `
     <p style="margin:0 0 16px;">Hi ${name},</p>
     <p style="margin:0 0 16px;">Thank you for reaching out to Lev Ari Productions.<br />Your message was received successfully, and we'll get back to you soon.</p>

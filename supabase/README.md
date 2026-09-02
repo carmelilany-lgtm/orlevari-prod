@@ -1,4 +1,4 @@
-# Supabase — Lev Ari Productions
+# Supabase - Lev Ari Productions
 
 Backend foundation for the bilingual portfolio site: database schema, RLS, storage, and seed data.
 
@@ -12,9 +12,9 @@ Backend foundation for the bilingual portfolio site: database schema, RLS, stora
 |----------|------------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Browser + server (public) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser + server (public, RLS-scoped) |
-| `SUPABASE_SERVICE_ROLE_KEY` | **Server only** — never prefix with `NEXT_PUBLIC_` |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Server only** - never prefix with `NEXT_PUBLIC_` |
 | `ADMIN_ALLOWED_EMAILS` | Comma-separated fallback allow-list (Step 3 admin UI) |
-| `RESEND_API_KEY` | Server-only — contact form emails (Resend) |
+| `RESEND_API_KEY` | Server-only - contact form emails (Resend) |
 | `EMAIL_FROM` | Verified Resend sender address |
 | `CONTACT_NOTIFICATION_EMAIL` | Lead notification inbox for Or |
 | `NEXT_PUBLIC_SITE_URL` | Canonical site URL (e.g. `https://lev-ari.com`) |
@@ -23,7 +23,7 @@ Backend foundation for the bilingual portfolio site: database schema, RLS, stora
 
 ## 2. Run migrations
 
-### Option A — Supabase CLI (recommended)
+### Option A - Supabase CLI (recommended)
 
 ```bash
 cd /path/to/lev-ari-productions
@@ -32,7 +32,7 @@ supabase link --project-ref YOUR_PROJECT_REF
 supabase db push
 ```
 
-### Option B — SQL Editor
+### Option B - SQL Editor
 
 1. Open **SQL Editor** in the dashboard.
 2. Paste and run `supabase/migrations/001_initial_schema.sql`.
@@ -101,7 +101,7 @@ If buckets were not created (older project), create them in **Storage → New bu
 - `SELECT` on `admin_users`.
 - Storage upload/update/delete on `stills`, `covers`, `about`.
 
-**Service role:** Bypasses RLS — use only for bootstrapping (e.g. first admin row).
+**Service role:** Bypasses RLS - use only for bootstrapping (e.g. first admin row).
 
 Helper: `public.is_admin()` compares `auth.jwt()->>'email'` to `admin_users.email`.
 

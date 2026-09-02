@@ -17,7 +17,7 @@ function pickCmsValue(
   return he || en || null;
 }
 
-/** CMS value only — null when missing or whitespace-only */
+/** CMS value only - null when missing or whitespace-only */
 export function getCmsRawValue(
   map: SiteContentMap | undefined,
   key: SiteContentKey,
@@ -36,7 +36,7 @@ export function resolveCmsText(
   return getCmsRawValue(map, key, locale) ?? fallback;
 }
 
-/** Locale-agnostic CMS setting — prefers English, then Hebrew */
+/** Locale-agnostic CMS setting - prefers English, then Hebrew */
 export function resolveCmsSetting(
   map: SiteContentMap | undefined,
   key: SiteContentKey,

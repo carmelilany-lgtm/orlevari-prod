@@ -2,7 +2,7 @@ import type { Language } from "@/types/language";
 
 export const LEAD_MESSAGE_MAX_LENGTH = 2000;
 
-/** DB row — leads */
+/** DB row - leads */
 export interface Lead {
   id: string;
   full_name: string;

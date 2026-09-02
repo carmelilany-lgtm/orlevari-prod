@@ -2,6 +2,7 @@
 
 import { BrandLogoLink } from "@/components/brand/BrandLogo";
 import { Footer } from "@/components/layout/Footer";
+import { AccessibilityWidget } from "@/components/a11y/AccessibilityWidget";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
 import { useLanguage } from "@/lib/i18n/context";
@@ -29,6 +30,7 @@ export function LegalPageChrome({ children }: { children: React.ReactNode }) {
               {t.legal.backToHome}
             </Link>
             <LanguageToggle />
+            <AccessibilityWidget panelAlign="end" />
           </div>
         </div>
       </header>

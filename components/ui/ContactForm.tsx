@@ -439,29 +439,14 @@ export function ContactForm() {
               className="mt-1 h-4 w-4 shrink-0 rounded border-zinc-600 bg-zinc-900 text-blue-600 focus:ring-blue-500"
             />
             <span>
-              {isHebrew ? (
-                <>
-                  {t.contact.form.privacyAgree}{" "}
-                  <Link
-                    href="/privacy-policy"
-                    className="text-cyan-300/90 underline underline-offset-2 transition-colors hover:text-cyan-200"
-                  >
-                    {t.contact.form.privacyLink}
-                  </Link>
-                  .
-                </>
-              ) : (
-                <>
-                  I agree to the{" "}
-                  <Link
-                    href="/privacy-policy"
-                    className="text-cyan-300/90 underline underline-offset-2 transition-colors hover:text-cyan-200"
-                  >
-                    {t.contact.form.privacyLink}
-                  </Link>
-                  .
-                </>
-              )}
+              {t.contact.form.privacyAgree}{" "}
+              <Link
+                href="/privacy-policy"
+                className="text-cyan-300/90 underline underline-offset-2 transition-colors hover:text-cyan-200"
+              >
+                {t.contact.form.privacyLink}
+              </Link>
+              .
             </span>
           </label>
           <FieldError

@@ -25,7 +25,7 @@ VALUES
     'Event Filming',
     'צילום אירועים',
     'Weddings, celebrations, and live events captured with cinematic precision.',
-    'חתונות, אירועים והופעות — בצילום קולנועי מדויק.',
+    'חתונות, אירועים והופעות - בצילום קולנועי מדויק.',
     'events',
     1
   ),
@@ -41,7 +41,7 @@ VALUES
     'Shows',
     'הופעות',
     'Live performances and stage productions brought to life on screen.',
-    'הופעות חיות והפקות במה — מועברות לקולנוע.',
+    'הופעות חיות והפקות במה - מועברות לקולנוע.',
     'shows',
     3
   ),
@@ -82,8 +82,8 @@ VALUES
   ('hero_title', 'Lev Ari Productions', 'לב ארי הפקות'),
   (
     'hero_subtitle',
-    'Cinematic video production for businesses, events & artists — turning real moments into meaningful stories.',
-    'הפקות וידאו קולנועיות לעסקים, אירועים ואמנים — הופכים רגעים אמיתיים לסיפורים משמעותיים.'
+    'Cinematic video production for businesses, events & artists - turning real moments into meaningful stories.',
+    'הפקות וידאו קולנועיות לעסקים, אירועים ואמנים - הופכים רגעים אמיתיים לסיפורים משמעותיים.'
   ),
   ('hero_primary_button', 'View Our Work', 'לעבודות שלנו'),
   ('hero_secondary_button', 'Get in Touch', 'צור קשר'),
@@ -100,8 +100,8 @@ VALUES
   ('contact_title', 'Contact', 'צור קשר'),
   (
     'contact_intro',
-    'Tell us about your project — we''ll get back to you soon.',
-    'ספרו לנו על הפרויקט — נחזור אליכם בהקדם.'
+    'Tell us about your project - we''ll get back to you soon.',
+    'ספרו לנו על הפרויקט - נחזור אליכם בהקדם.'
   ),
   ('phone', '+972-50-000-0000', '+972-50-000-0000'),
   ('email', 'hello@lev-ari.com', 'hello@lev-ari.com'),
@@ -134,13 +134,13 @@ ON CONFLICT (key) DO UPDATE SET
   value_en = EXCLUDED.value_en,
   value_he = EXCLUDED.value_he;
 
--- About CMS extensions (insert only — does not overwrite existing edited content)
+-- About CMS extensions (insert only - does not overwrite existing edited content)
 INSERT INTO public.site_content (key, value_en, value_he)
 VALUES
   (
     'about_intro',
-    'Through my camera and creative craft, I tell stories that matter — with heart, precision, and a cinematic eye.',
-    'דרך המצלמה והיצירה, אני מספר סיפורים שיש להם משמעות — מתוך לב, דיוק וראייה קולנועית.'
+    'Through my camera and creative craft, I tell stories that matter - with heart, precision, and a cinematic eye.',
+    'דרך המצלמה והיצירה, אני מספר סיפורים שיש להם משמעות - מתוך לב, דיוק וראייה קולנועית.'
   ),
   (
     'about_extended_title',
@@ -149,8 +149,8 @@ VALUES
   ),
   (
     'about_extended_text',
-    'I''m a video creator and editor based in Israel, working with businesses, artists, and families who want their story told with clarity and cinematic quality. From concept to final cut, I handle filming, editing, and production with a fast, attentive workflow — so every project feels personal, polished, and true to the people behind it.',
-    'אני יוצר ועורך וידאו, עובד עם עסקים, אמנים ומשפחות שרוצים לספר את הסיפור שלהם בצורה ברורה, מדויקת וקולנועית. מהרעיון ועד הגזירה הסופית — צילום, עריכה והפקה מלאה, עם יחס אישי, זריזות ועין קולנועית שמביאה כל פרויקט לחיים.'
+    'I''m a video creator and editor based in Israel, working with businesses, artists, and families who want their story told with clarity and cinematic quality. From concept to final cut, I handle filming, editing, and production with a fast, attentive workflow - so every project feels personal, polished, and true to the people behind it.',
+    'אני יוצר ועורך וידאו, עובד עם עסקים, אמנים ומשפחות שרוצים לספר את הסיפור שלהם בצורה ברורה, מדויקת וקולנועית. מהרעיון ועד הגזירה הסופית - צילום, עריכה והפקה מלאה, עם יחס אישי, זריזות ועין קולנועית שמביאה כל פרויקט לחיים.'
   ),
   (
     'about_extended_quote',
@@ -159,5 +159,5 @@ VALUES
   ),
   ('about_extended_image_url', '', ''),
   ('about_extended_image_storage_path', '', ''),
-  ('about_extended_title_size', 'md', 'md')
+  ('visual_field_styles', '{}', '{}')
 ON CONFLICT (key) DO NOTHING;
