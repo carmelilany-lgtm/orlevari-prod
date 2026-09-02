@@ -117,14 +117,14 @@ types/                  # language, portfolio, content, services, leads, works
 
 - Contact **Service Type** dropdown: published services only (active language), plus “Other” / “אחר”.
 - WhatsApp priority: CMS `whatsapp_number` → `WHATSAPP_PHONE` env → hidden on live site if both missing.
-- Homepage SEO: `generateMetadata` uses CMS `seo_*` keys (Hebrew at `/he`, English at `/en`); `NEXT_PUBLIC_SITE_URL` sets `metadataBase` when set.
+- Homepage SEO: `generateMetadata` uses CMS `seo_*` keys (English at `/en`, Hebrew at `/he`); `NEXT_PUBLIC_SITE_URL` sets `metadataBase` when set.
 - Admin saves call `revalidatePath('/')`; homepage is `force-dynamic` for fresh public data.
 
 ## Languages
 
-- Default / `x-default`: Hebrew (`/he`, RTL)
-- English: `/en` (LTR)
-- Unprefixed public URLs (`/`, `/privacy-policy`, …) redirect to the Hebrew URL
+- Default / `x-default`: English (`/en`, LTR)
+- Hebrew: `/he` (RTL)
+- Unprefixed public URLs (`/`, `/privacy-policy`, …) redirect to the English URL
 - Toggle in header; preference stored in `localStorage` (`lev-ari-locale`) and the URL prefix
 
 ## Deploy (Vercel)

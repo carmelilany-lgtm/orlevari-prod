@@ -43,7 +43,7 @@ Use this checklist before and after deploying to production. Do not commit secre
 
 - [ ] `https://<domain>/sitemap.xml` lists `/he`, `/en`, and the localized legal pages (no `/admin`)
 - [ ] `https://<domain>/robots.txt` allows public site, disallows `/admin` and `/api/`, references sitemap
-- [ ] Unprefixed `/` redirects to `/he`; `/en` serves English metadata (`hreflang` he-IL / en-US / x-default)
+- [ ] Unprefixed `/` redirects to `/en`; `/he` serves Hebrew metadata (`hreflang` he-IL / en-US / x-default)
 - [ ] Page titles/descriptions, Open Graph, and JSON-LD render in the page language
 - [ ] Google Search Console: domain or URL-prefix property matches `NEXT_PUBLIC_SITE_URL`; sitemap submitted; `GOOGLE_SITE_VERIFICATION` set if using the HTML-tag method
 - [ ] Custom 404 page (`app/not-found.tsx`) loads for unknown public URLs

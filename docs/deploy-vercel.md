@@ -115,7 +115,7 @@ Run `npm run verify:setup` after creating the Auth user to confirm `admin_users`
 
 - `/he/privacy-policy` and `/en/privacy-policy` - Hebrew and English
 - `/he/accessibility-statement` and `/en/accessibility-statement`
-- Unprefixed `/privacy-policy` redirects to the Hebrew URL
+- Unprefixed `/privacy-policy` redirects to the English URL
 
 ---
 

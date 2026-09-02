@@ -18,7 +18,7 @@ function languageMap(
   return {
     "he-IL": `${base}${withLocalePrefix("he", path)}`,
     "en-US": `${base}${withLocalePrefix("en", path)}`,
-    "x-default": `${base}${withLocalePrefix("he", path)}`,
+    "x-default": `${base}${withLocalePrefix("en", path)}`,
   };
 }
 

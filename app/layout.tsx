@@ -42,16 +42,16 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: {
       default: DEFAULT_TITLE,
-      template: "%s | לב ארי הפקות",
+      template: "%s | Lev Ari Productions",
     },
     description: DEFAULT_DESCRIPTION,
     icons: SITE_ICONS,
     ...googleVerificationMetadata(),
     ...(metadataBase ? { metadataBase } : {}),
     openGraph: {
-      siteName: "לב ארי הפקות",
+      siteName: "Lev Ari Productions",
       type: "website",
-      ...localeOpenGraph("he"),
+      ...localeOpenGraph("en"),
       images: [SITE_SHARE_IMAGE],
     },
     twitter: {

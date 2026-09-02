@@ -13,8 +13,8 @@ import {
 import { absolutePublicUrl, resolveCrawlerOrigin, resolvePublicOrigin } from "@/lib/seo/site-url";
 import type { Locale } from "@/types/i18n";
 
-const DEFAULT_TITLE = `${DEFAULT_SEO_TITLE_HE} | ${DEFAULT_SEO_TITLE_EN}`;
-const DEFAULT_DESCRIPTION = `${DEFAULT_SEO_DESCRIPTION_HE} ${DEFAULT_SEO_DESCRIPTION_EN}`;
+const DEFAULT_TITLE = `${DEFAULT_SEO_TITLE_EN} | ${DEFAULT_SEO_TITLE_HE}`;
+const DEFAULT_DESCRIPTION = `${DEFAULT_SEO_DESCRIPTION_EN} ${DEFAULT_SEO_DESCRIPTION_HE}`;
 
 export { DEFAULT_TITLE, DEFAULT_DESCRIPTION };
 
@@ -75,8 +75,8 @@ export function hreflangAlternates(
   return {
     ...(canonical ? { canonical } : {}),
     languages: {
-      ...(he ? { "he-IL": he, "x-default": he } : {}),
-      ...(en ? { "en-US": en } : {}),
+      ...(en ? { "en-US": en, "x-default": en } : {}),
+      ...(he ? { "he-IL": he } : {}),
     },
   };
 }
