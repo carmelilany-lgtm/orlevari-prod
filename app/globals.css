@@ -447,7 +447,8 @@ html.a11y-contrast-invert picture,
 html.a11y-contrast-invert iframe {
   filter: invert(1) hue-rotate(180deg);
 }
-html.a11y-contrast-invert #a11y-widget-root {
+html.a11y-contrast-invert #a11y-widget-root,
+html.a11y-contrast-invert #a11y-widget-panel {
   filter: invert(1) hue-rotate(180deg);
 }
 

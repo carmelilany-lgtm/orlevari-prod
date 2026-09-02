@@ -17,7 +17,16 @@ import {
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { createPortal } from "react-dom";
 
 function AccessibilityIcon() {
   return (
@@ -53,10 +62,12 @@ export function AccessibilityWidget({
   useEffect(() => {
     if (!open) return;
     function onPointer(event: MouseEvent) {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
       const root = document.getElementById("a11y-widget-root");
-      if (root && !root.contains(event.target as Node)) {
-        setOpen(false);
-      }
+      const panel = document.getElementById(A11Y_WIDGET_ID);
+      if (root?.contains(target) || panel?.contains(target)) return;
+      setOpen(false);
     }
     document.addEventListener("mousedown", onPointer);
     return () => document.removeEventListener("mousedown", onPointer);
@@ -105,6 +116,38 @@ export function AccessibilityWidget({
     return () => document.removeEventListener("keydown", onKey);
   }, [open, close]);
 
+  useLayoutEffect(() => {
+    if (!open) return;
+
+    function place() {
+      const trigger = triggerRef.current;
+      const panel = panelRef.current;
+      if (!trigger || !panel) return;
+      const rect = trigger.getBoundingClientRect();
+      const width = Math.min(320, window.innerWidth - 16);
+      const maxHeight = Math.min(window.innerHeight - 24, 480);
+      let left =
+        panelAlign === "end" ? rect.right - width : rect.left;
+      left = Math.max(8, Math.min(left, window.innerWidth - width - 8));
+      let top = rect.bottom + 10;
+      if (top + 160 > window.innerHeight) {
+        top = Math.max(8, rect.top - 10 - Math.min(panel.offsetHeight, maxHeight));
+      }
+      panel.style.width = `${width}px`;
+      panel.style.left = `${left}px`;
+      panel.style.top = `${top}px`;
+      panel.style.maxHeight = `${maxHeight}px`;
+    }
+
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
+  }, [open, panelAlign, prefs.textSize, prefs.lineSpacing, dir]);
+
   const contrastLabel =
     prefs.contrast === "high"
       ? copy.contrastHigh
@@ -142,18 +185,18 @@ export function AccessibilityWidget({
       >
         <AccessibilityIcon />
       </button>
-      {open ? (
-        <div
-          ref={panelRef}
-          id={A11Y_WIDGET_ID}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={titleId}
-          className={cn(
-            "absolute top-[calc(100%+0.65rem)] z-[70] w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-blue-500/25 bg-[#0a1020]/95 p-3.5 shadow-2xl shadow-black/50 backdrop-blur-md",
-            panelAlign === "end" ? "end-0" : "start-0",
-          )}
-        >
+      {open && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              ref={panelRef}
+              id={A11Y_WIDGET_ID}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
+              dir={dir}
+              lang={locale}
+              className="fixed z-[80] overflow-y-auto rounded-2xl border border-blue-500/25 bg-[#0a1020]/95 p-3.5 shadow-2xl shadow-black/50 backdrop-blur-md"
+            >
           <div className="mb-4 flex items-start justify-between gap-3">
             <div>
               <h2 id={titleId} className="text-base font-semibold text-white">
@@ -235,10 +278,12 @@ export function AccessibilityWidget({
             </Link>
           </div>
           <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
-            {copy.shortcutHint}
-          </p>
-        </div>
-      ) : null}
+              {copy.shortcutHint}
+            </p>
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }
