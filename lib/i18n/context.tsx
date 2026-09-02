@@ -17,6 +17,7 @@ import {
   writeLocaleToStorage,
 } from "@/lib/i18n/locale-storage";
 import {
+  parseLocaleFromPathname,
   stripLocalePrefix,
   withLocalePrefix,
 } from "@/lib/i18n/locale-path";
@@ -70,6 +71,18 @@ function persistLocale(locale: Locale) {
   localeListeners.forEach((listener) => listener());
 }
 
+function currentLocationUrl(): string {
+  return `${window.location.pathname}${window.location.search}${window.location.hash}`;
+}
+
+function urlForLocale(locale: Locale): string {
+  const nextPath = withLocalePrefix(
+    locale,
+    stripLocalePrefix(window.location.pathname),
+  );
+  return `${nextPath}${window.location.search}${window.location.hash}`;
+}
+
 export function LanguageProvider({
   children,
   cmsMap,
@@ -98,24 +111,33 @@ export function LanguageProvider({
     );
   }, [locale, cmsMap]);
 
+  useEffect(() => {
+    const onPopState = () => {
+      const fromPath = parseLocaleFromPathname(window.location.pathname);
+      if (!fromPath) return;
+      persistLocale(fromPath);
+      document.title = documentTitleForPath(
+        window.location.pathname,
+        fromPath,
+        cmsMap,
+      );
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [cmsMap]);
+
   const setLocale = useCallback(
     (next: Locale) => {
       persistLocale(next);
-      const nextPath = withLocalePrefix(
-        next,
-        stripLocalePrefix(window.location.pathname),
-      );
-      const nextUrl = `${nextPath}${window.location.search}${window.location.hash}`;
-      const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-      if (nextUrl !== current) {
-        window.location.assign(nextUrl);
-        return;
-      }
       document.title = documentTitleForPath(
         window.location.pathname,
         next,
         cmsMap,
       );
+      const nextUrl = urlForLocale(next);
+      if (nextUrl !== currentLocationUrl()) {
+        window.history.pushState(window.history.state, "", nextUrl);
+      }
     },
     [cmsMap],
   );

@@ -28,7 +28,9 @@ export function LanguageToggle({ className }: { className?: string }) {
           ) : null}
           <button
             type="button"
-            onClick={() => setLocale(opt.value)}
+            onClick={() => {
+              if (locale !== opt.value) setLocale(opt.value);
+            }}
             aria-label={opt.name}
             aria-pressed={locale === opt.value}
             className={cn(
