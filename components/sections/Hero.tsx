@@ -12,7 +12,6 @@ import {
   HERO_FEATURE_SIZES,
 } from "@/lib/images/cdn-sizes";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
 
 const COLLAGE_CELLS = 6;
 
@@ -35,12 +34,6 @@ type HeroProps = {
 export function Hero({ heroCells }: HeroProps) {
   const { t, locale, dir } = useLanguage();
   const visualEdit = useVisualEditorActive();
-  const [featureReady, setFeatureReady] = useState(false);
-
-  useEffect(() => {
-    const id = window.setTimeout(() => setFeatureReady(true), 1600);
-    return () => window.clearTimeout(id);
-  }, []);
 
   return (
     <section
@@ -59,7 +52,7 @@ export function Hero({ heroCells }: HeroProps) {
         dir={dir}
         className="container-wide relative z-10 flex min-h-[100svh] flex-col items-center justify-center gap-12 px-4 pb-16 pt-28 sm:px-6 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 lg:pt-32"
       >
-        <div className="hero-enter flex w-full flex-col items-center text-center lg:max-w-xl lg:items-start lg:text-start">
+        <div className="flex w-full flex-col items-center text-center lg:max-w-xl lg:items-start lg:text-start">
           <BrandLogoLink
             id={HERO_BRAND_LOGO_ID}
             href="#hero"
@@ -67,7 +60,7 @@ export function Hero({ heroCells }: HeroProps) {
             priority
             heightClassName="h-16 sm:h-18 lg:h-20"
             sizes="(max-width: 640px) 288px, (max-width: 1024px) 352px, 384px"
-            className="mb-8 self-center"
+            className="hero-enter mb-8 self-center"
             imageClassName="max-w-[min(100%,18rem)] sm:max-w-[22rem] lg:max-w-[24rem]"
           />
           <EditableText
@@ -75,9 +68,9 @@ export function Hero({ heroCells }: HeroProps) {
             id="hero-title"
             contentKey="hero_subtitle"
             fallback={t.hero.subtitle}
-            className="font-display max-w-4xl text-center text-2xl font-medium leading-snug tracking-tight text-slate-200 sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-tight"
+            className="hero-enter hero-enter-delay-1 font-display max-w-4xl text-center text-2xl font-medium leading-snug tracking-tight text-slate-200 sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-tight"
           />
-          <div className="mt-10 flex w-full flex-wrap justify-center gap-4">
+          <div className="hero-enter hero-enter-delay-2 mt-10 flex w-full flex-wrap justify-center gap-4">
             {visualEdit ? (
               <>
                 <span
@@ -136,8 +129,6 @@ export function Hero({ heroCells }: HeroProps) {
               const still = heroCells[i];
               const hasImage = Boolean(still?.image_url);
               const isFeature = i === 0;
-              const showImage =
-                hasImage && still?.image_url && (isFeature || featureReady);
 
               return (
                 <div
@@ -147,17 +138,15 @@ export function Hero({ heroCells }: HeroProps) {
                     isFeature && "col-span-2 row-span-2",
                   )}
                 >
-                  {showImage && still?.image_url ? (
+                  {hasImage && still?.image_url ? (
                     <CdnImage
                       src={still.image_url}
                       alt={stillAlt(still, locale)}
                       fill
                       sizes={isFeature ? HERO_FEATURE_SIZES : HERO_CELL_SIZES}
-                      priority={isFeature}
-                      fetchPriority={isFeature ? "high" : "low"}
+                      priority
+                      fetchPriority={isFeature ? "high" : "auto"}
                       className="object-cover"
-                      onLoad={isFeature ? () => setFeatureReady(true) : undefined}
-                      onError={isFeature ? () => setFeatureReady(true) : undefined}
                     />
                   ) : (
                     <div
