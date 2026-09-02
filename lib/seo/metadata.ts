@@ -9,7 +9,7 @@ import {
   resolveSeoDescription,
   resolveSeoTitle,
 } from "@/lib/seo/document-title";
-import { absolutePublicUrl, getMetadataBase } from "@/lib/seo/site-url";
+import { absolutePublicUrl, resolvePublicOrigin } from "@/lib/seo/site-url";
 
 const DEFAULT_TITLE = `${DEFAULT_SEO_TITLE_EN} | ${DEFAULT_SEO_TITLE_HE}`;
 const DEFAULT_DESCRIPTION = `${DEFAULT_SEO_DESCRIPTION_EN} ${DEFAULT_SEO_DESCRIPTION_HE}`;
@@ -46,13 +46,16 @@ type PublicPageMetaInput = {
 };
 
 /** Shared Open Graph, Twitter, and canonical for public static pages */
-export function buildPublicPageMetadata({
+export async function buildPublicPageMetadata({
   title,
   description,
   path,
-}: PublicPageMetaInput): Metadata {
-  const metadataBase = getMetadataBase();
-  const canonical = absolutePublicUrl(path);
+}: PublicPageMetaInput): Promise<Metadata> {
+  const origin = await resolvePublicOrigin();
+  const metadataBase = origin ? new URL(origin) : undefined;
+  const canonical = origin
+    ? `${origin}${path.startsWith("/") ? path : `/${path}`}`
+    : absolutePublicUrl(path);
 
   return {
     title,
@@ -79,17 +82,17 @@ export function buildPublicPageMetadata({
 
 /** Homepage metadata for the request locale, with CMS overrides */
 export async function buildHomeMetadata(): Promise<Metadata> {
-  const [cmsMap, locale] = await Promise.all([
+  const [cmsMap, locale, origin] = await Promise.all([
     getSiteContentMap(),
     getRequestLocale(),
+    resolvePublicOrigin(),
   ]);
-  const metadataBase = getMetadataBase();
+  const metadataBase = origin ? new URL(origin) : undefined;
+  const canonical = origin ? `${origin}/` : undefined;
 
   const title = resolveSeoTitle(cmsMap, locale);
   const description = resolveSeoDescription(cmsMap, locale);
   const siteName = locale === "he" ? "לב ארי הפקות" : "Lev Ari Productions";
-
-  const canonical = absolutePublicUrl("/");
 
   return {
     title: {

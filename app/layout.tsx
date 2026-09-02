@@ -16,7 +16,7 @@ import {
   SITE_ICONS,
   SITE_SHARE_IMAGE,
 } from "@/lib/seo/metadata";
-import { getMetadataBase } from "@/lib/seo/site-url";
+import { getMetadataBase, resolvePublicOrigin } from "@/lib/seo/site-url";
 import { cookies } from "next/headers";
 import "./globals.css";
 
@@ -27,34 +27,37 @@ const notoSansHebrew = Noto_Sans_Hebrew({
   display: "swap",
 });
 
-const metadataBase = getMetadataBase();
-
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
 };
 
 /** Fallback for non-home routes; homepage overrides via generateMetadata */
-export const metadata: Metadata = {
-  title: {
-    default: DEFAULT_TITLE,
-    template: "%s | Lev Ari Productions",
-  },
-  description: DEFAULT_DESCRIPTION,
-  icons: SITE_ICONS,
-  ...(metadataBase ? { metadataBase } : {}),
-  openGraph: {
-    siteName: "Lev Ari Productions",
-    type: "website",
-    locale: "en_US",
-    alternateLocale: ["he_IL"],
-    images: [SITE_SHARE_IMAGE],
-  },
-  twitter: {
-    card: "summary_large_image",
-    images: [SITE_SHARE_IMAGE.url],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const origin = await resolvePublicOrigin();
+  const metadataBase = origin ? new URL(origin) : getMetadataBase();
+
+  return {
+    title: {
+      default: DEFAULT_TITLE,
+      template: "%s | Lev Ari Productions",
+    },
+    description: DEFAULT_DESCRIPTION,
+    icons: SITE_ICONS,
+    ...(metadataBase ? { metadataBase } : {}),
+    openGraph: {
+      siteName: "Lev Ari Productions",
+      type: "website",
+      locale: "en_US",
+      alternateLocale: ["he_IL"],
+      images: [SITE_SHARE_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: [SITE_SHARE_IMAGE.url],
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
