@@ -11,6 +11,7 @@ import { getSiteContentMap } from "@/lib/api/content";
 import { loadSitePortfolioData } from "@/lib/data/site-data";
 import { getRequestLocale } from "@/lib/i18n/request-locale";
 import { buildHomeMetadata } from "@/lib/seo/metadata";
+import { pickHeroStillImagesRandom } from "@/lib/stills/hero-stills";
 
 export async function generateMetadata() {
   return buildHomeMetadata();
@@ -37,7 +38,9 @@ export default async function HomePage() {
     >
       <Header />
       <main id="main-content">
-        <Hero />
+        <Hero
+          heroCells={pickHeroStillImagesRandom(siteData.stills, 6)}
+        />
         <About />
         <Services />
         <Works />

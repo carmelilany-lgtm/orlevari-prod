@@ -16,6 +16,7 @@ import {
   readLocaleFromStorage,
   writeLocaleToStorage,
 } from "@/lib/i18n/locale-storage";
+import { documentTitleForPath } from "@/lib/seo/document-title";
 import { DEFAULT_LOCALE, LOCALE_STORAGE_KEY, type Locale } from "@/types/i18n";
 
 interface LanguageContextValue {
@@ -86,11 +87,24 @@ export function LanguageProvider({
 
   useEffect(() => {
     applyDocumentLocale(locale);
-  }, [locale]);
+    document.title = documentTitleForPath(
+      window.location.pathname,
+      locale,
+      cmsMap,
+    );
+  }, [locale, cmsMap]);
 
-  const setLocale = useCallback((next: Locale) => {
-    persistLocale(next);
-  }, []);
+  const setLocale = useCallback(
+    (next: Locale) => {
+      persistLocale(next);
+      document.title = documentTitleForPath(
+        window.location.pathname,
+        next,
+        cmsMap,
+      );
+    },
+    [cmsMap],
+  );
 
   const cms = useCallback(
     (key: SiteContentKey, fallback: string) =>

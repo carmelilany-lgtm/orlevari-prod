@@ -42,7 +42,9 @@ function shuffleInPlace<T>(arr: T[]): void {
 }
 
 /**
- * Random hero order - call only after mount (client) to avoid hydration mismatch.
+ * Random hero order. Run on the server (homepage) and pass the result into
+ * the client Hero so the first paint matches hydration — shuffling after
+ * mount wasted the LCP preload and made the large tile load last.
  */
 export function pickHeroStillImagesRandom(
   stills: StillWorkItem[],

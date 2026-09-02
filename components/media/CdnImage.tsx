@@ -20,7 +20,8 @@ export function CdnImage({
   ...rest
 }: CdnImageProps) {
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
-  const loaded = loadedSrc === src;
+  const isPriority = Boolean(rest.priority);
+  const loaded = isPriority || loadedSrc === src;
   const fill = Boolean(rest.fill);
 
   function handleLoad(event: SyntheticEvent<HTMLImageElement>) {

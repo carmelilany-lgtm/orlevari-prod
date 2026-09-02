@@ -3,33 +3,16 @@
 import { BrandLogoLink, HERO_BRAND_LOGO_ID } from "@/components/brand/BrandLogo";
 import { EditableText } from "@/components/visual-editor/EditableText";
 import { useVisualEditorActive } from "@/components/visual-editor/VisualEditorProvider";
-import { useSiteData } from "@/components/providers/SiteDataProvider";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/lib/i18n/context";
-import {
-  pickHeroStillImagesForRender,
-  pickHeroStillImagesRandom,
-} from "@/lib/stills/hero-stills";
-import { stillAlt } from "@/types/works";
+import { stillAlt, type StillWorkItem } from "@/types/works";
 import { CdnImage } from "@/components/media/CdnImage";
 import {
   HERO_CELL_SIZES,
   HERO_FEATURE_SIZES,
 } from "@/lib/images/cdn-sizes";
 import { cn } from "@/lib/utils";
-import { useMemo, useSyncExternalStore } from "react";
-
-function subscribeNoop() {
-  return () => {};
-}
-
-function getClientSnapshot() {
-  return true;
-}
-
-function getServerSnapshot() {
-  return false;
-}
+import { useEffect, useState } from "react";
 
 const COLLAGE_CELLS = 6;
 
@@ -45,24 +28,19 @@ const cellGradients = [
 const heroButtonClass =
   "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-semibold transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400";
 
-export function Hero() {
+type HeroProps = {
+  heroCells: StillWorkItem[];
+};
+
+export function Hero({ heroCells }: HeroProps) {
   const { t, locale, dir } = useLanguage();
   const visualEdit = useVisualEditorActive();
-  const { stills } = useSiteData();
+  const [featureReady, setFeatureReady] = useState(false);
 
-  const isClient = useSyncExternalStore(
-    subscribeNoop,
-    getClientSnapshot,
-    getServerSnapshot,
-  );
-
-  const heroCells = useMemo(
-    () =>
-      isClient
-        ? pickHeroStillImagesRandom(stills, COLLAGE_CELLS)
-        : pickHeroStillImagesForRender(stills, COLLAGE_CELLS),
-    [stills, isClient],
-  );
+  useEffect(() => {
+    const id = window.setTimeout(() => setFeatureReady(true), 1600);
+    return () => window.clearTimeout(id);
+  }, []);
 
   return (
     <section
@@ -81,7 +59,7 @@ export function Hero() {
         dir={dir}
         className="container-wide relative z-10 flex min-h-[100svh] flex-col items-center justify-center gap-12 px-4 pb-16 pt-28 sm:px-6 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 lg:pt-32"
       >
-        <div className="flex w-full flex-col items-center text-center lg:max-w-xl lg:items-start lg:text-start">
+        <div className="hero-enter flex w-full flex-col items-center text-center lg:max-w-xl lg:items-start lg:text-start">
           <BrandLogoLink
             id={HERO_BRAND_LOGO_ID}
             href="#hero"
@@ -89,7 +67,7 @@ export function Hero() {
             priority
             heightClassName="h-16 sm:h-18 lg:h-20"
             sizes="(max-width: 640px) 288px, (max-width: 1024px) 352px, 384px"
-            className="hero-enter mb-8 self-center"
+            className="mb-8 self-center"
             imageClassName="max-w-[min(100%,18rem)] sm:max-w-[22rem] lg:max-w-[24rem]"
           />
           <EditableText
@@ -97,9 +75,9 @@ export function Hero() {
             id="hero-title"
             contentKey="hero_subtitle"
             fallback={t.hero.subtitle}
-            className="hero-enter hero-enter-delay-1 font-display max-w-4xl text-center text-2xl font-medium leading-snug tracking-tight text-slate-200 sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-tight"
+            className="font-display max-w-4xl text-center text-2xl font-medium leading-snug tracking-tight text-slate-200 sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-tight"
           />
-          <div className="hero-enter hero-enter-delay-2 mt-10 flex w-full flex-wrap justify-center gap-4">
+          <div className="mt-10 flex w-full flex-wrap justify-center gap-4">
             {visualEdit ? (
               <>
                 <span
@@ -149,7 +127,7 @@ export function Hero() {
         </div>
 
         <div
-          className="hero-enter hero-enter-delay-3 relative aspect-[4/3] w-full max-lg:max-h-[50vh] lg:aspect-square"
+          className="relative aspect-[4/3] w-full max-lg:max-h-[50vh] lg:aspect-square"
           role="img"
           aria-label={t.hero.collageLabel}
         >
@@ -157,23 +135,29 @@ export function Hero() {
             {Array.from({ length: COLLAGE_CELLS }).map((_, i) => {
               const still = heroCells[i];
               const hasImage = Boolean(still?.image_url);
+              const isFeature = i === 0;
+              const showImage =
+                hasImage && still?.image_url && (isFeature || featureReady);
+
               return (
                 <div
-                  key={still?.id ?? `placeholder-${i}`}
+                  key={still ? `${still.id}-${i}` : `placeholder-${i}`}
                   className={cn(
                     "hero-collage-cell relative overflow-hidden rounded-lg ring-1 ring-blue-500/10",
-                    i === 0 && "col-span-2 row-span-2",
+                    isFeature && "col-span-2 row-span-2",
                   )}
                 >
-                  {hasImage && still?.image_url ? (
+                  {showImage && still?.image_url ? (
                     <CdnImage
                       src={still.image_url}
                       alt={stillAlt(still, locale)}
                       fill
-                      sizes={i === 0 ? HERO_FEATURE_SIZES : HERO_CELL_SIZES}
-                      priority={i === 0}
-                      fetchPriority={i === 0 ? "high" : "low"}
+                      sizes={isFeature ? HERO_FEATURE_SIZES : HERO_CELL_SIZES}
+                      priority={isFeature}
+                      fetchPriority={isFeature ? "high" : "low"}
                       className="object-cover"
+                      onLoad={isFeature ? () => setFeatureReady(true) : undefined}
+                      onError={isFeature ? () => setFeatureReady(true) : undefined}
                     />
                   ) : (
                     <div

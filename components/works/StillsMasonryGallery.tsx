@@ -271,9 +271,7 @@ function MobileStillsGrid({
         step={step}
         loadMoreLabel={loadMoreLabel}
         loadMoreCount={loadMoreCount}
-        onMore={() =>
-          setVisibleCount((count) => Math.min(count + step, items.length))
-        }
+        onMore={() => setVisibleCount(items.length)}
       />
     </div>
   );
@@ -364,11 +362,7 @@ export function StillsMasonryGallery() {
         step={desktopPaging.step}
         loadMoreLabel={t.works.loadMore}
         loadMoreCount={t.works.loadMoreCount}
-        onMore={() =>
-          setDesktopVisibleCount((count) =>
-            Math.min(count + desktopPaging.step, sortedStills.length),
-          )
-        }
+        onMore={() => setDesktopVisibleCount(sortedStills.length)}
       />
     </div>
   );

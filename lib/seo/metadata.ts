@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
 import { getSiteContentMap } from "@/lib/api/content";
-import { resolveCmsText } from "@/lib/i18n/cms";
+import { getRequestLocale } from "@/lib/i18n/request-locale";
+import {
+  DEFAULT_SEO_DESCRIPTION_EN,
+  DEFAULT_SEO_DESCRIPTION_HE,
+  DEFAULT_SEO_TITLE_EN,
+  DEFAULT_SEO_TITLE_HE,
+  resolveSeoDescription,
+  resolveSeoTitle,
+} from "@/lib/seo/document-title";
 import { absolutePublicUrl, getMetadataBase } from "@/lib/seo/site-url";
 
-const DEFAULT_TITLE = "Lev Ari Productions | לב ארי הפקות";
-const DEFAULT_DESCRIPTION =
-  "Cinematic video production for businesses, events & artists. הפקות וידאו קולנועיות לעסקים, אירועים ואמנים.";
+const DEFAULT_TITLE = `${DEFAULT_SEO_TITLE_EN} | ${DEFAULT_SEO_TITLE_HE}`;
+const DEFAULT_DESCRIPTION = `${DEFAULT_SEO_DESCRIPTION_EN} ${DEFAULT_SEO_DESCRIPTION_HE}`;
 
 export { DEFAULT_TITLE, DEFAULT_DESCRIPTION };
 
@@ -44,30 +51,24 @@ export function buildPublicPageMetadata({
   };
 }
 
-/** English-default homepage metadata with CMS overrides */
+/** Homepage metadata for the request locale, with CMS overrides */
 export async function buildHomeMetadata(): Promise<Metadata> {
-  const cmsMap = await getSiteContentMap();
+  const [cmsMap, locale] = await Promise.all([
+    getSiteContentMap(),
+    getRequestLocale(),
+  ]);
   const metadataBase = getMetadataBase();
 
-  const title = resolveCmsText(
-    cmsMap,
-    "seo_title_en",
-    "en",
-    DEFAULT_TITLE,
-  );
-  const description = resolveCmsText(
-    cmsMap,
-    "seo_description_en",
-    "en",
-    DEFAULT_DESCRIPTION,
-  );
+  const title = resolveSeoTitle(cmsMap, locale);
+  const description = resolveSeoDescription(cmsMap, locale);
+  const siteName = locale === "he" ? "לב ארי הפקות" : "Lev Ari Productions";
 
   const canonical = absolutePublicUrl("/");
 
   return {
     title: {
       default: title,
-      template: "%s | Lev Ari Productions",
+      template: `%s | ${siteName}`,
     },
     description,
     ...(metadataBase ? { metadataBase } : {}),
@@ -75,10 +76,10 @@ export async function buildHomeMetadata(): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      siteName: "Lev Ari Productions",
+      siteName,
       type: "website",
-      locale: "en_US",
-      alternateLocale: ["he_IL"],
+      locale: locale === "he" ? "he_IL" : "en_US",
+      alternateLocale: [locale === "he" ? "en_US" : "he_IL"],
       ...(canonical ? { url: canonical } : {}),
     },
     twitter: {

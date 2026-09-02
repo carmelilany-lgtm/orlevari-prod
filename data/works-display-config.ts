@@ -10,5 +10,5 @@ export const VIDEO_CATEGORY_LOAD_MORE_STEP = 3;
 /** Max mock items per category - mirrors future admin cap per category */
 export const VIDEO_CATEGORY_MOCK_COUNT = 6;
 
-/** Mock stills count; public gallery paginates (see lib/stills/mobile-paging.ts) */
+/** Mock stills count; public gallery shows a first batch, then all remaining on one click */
 export const STILLS_MOCK_COUNT = 40;
