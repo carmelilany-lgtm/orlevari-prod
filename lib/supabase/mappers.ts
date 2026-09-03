@@ -10,6 +10,7 @@ import {
   parseYoutubeId,
   resolveVideoYoutubeId,
 } from "@/lib/youtube/client";
+import { toCachedMediaUrl } from "@/lib/images/public-media-url";
 import { parseCollageLayout } from "@/lib/stills/collage-layout";
 import type { StillWorkItem, VideoWorkItem } from "@/types/works";
 import type { VideoCategoryId } from "@/types/works";
@@ -52,8 +53,12 @@ export function toPortfolioVideoWork(
     title: { en: row.title_en, he: row.title_he },
     youtubeUrl: row.youtube_url,
     youtubeId,
-    thumbnailUrl: row.thumbnail_url ?? undefined,
-    customCoverUrl: row.custom_cover_url ?? undefined,
+    thumbnailUrl: row.thumbnail_url
+      ? toCachedMediaUrl(row.thumbnail_url)
+      : undefined,
+    customCoverUrl: row.custom_cover_url
+      ? toCachedMediaUrl(row.custom_cover_url)
+      : undefined,
     thumbnailLabel: row.title_en,
     sortOrder: row.sort_order,
   };
@@ -81,7 +86,7 @@ export function toVideoWorkItem(work: PortfolioVideoWork): VideoWorkItem {
 export function toStillWorkItem(row: StillImage): StillWorkItem {
   return {
     id: row.id,
-    image_url: row.image_url,
+    image_url: toCachedMediaUrl(row.image_url),
     alt_en: row.alt_en ?? "",
     alt_he: row.alt_he ?? "",
     width: row.width ?? undefined,

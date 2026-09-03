@@ -1,3 +1,4 @@
+import { toCachedMediaUrl } from "@/lib/images/public-media-url";
 import type { SiteContentMap } from "@/types/content";
 
 function pickImageUrl(
@@ -5,7 +6,7 @@ function pickImageUrl(
 ): string | null {
   if (!row) return null;
   const url = row.value_en?.trim() || row.value_he?.trim();
-  return url || null;
+  return url ? toCachedMediaUrl(url) : null;
 }
 
 /** CMS about section image URL (locale-agnostic; prefers value_en). */

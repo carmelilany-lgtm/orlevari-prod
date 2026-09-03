@@ -82,8 +82,8 @@ function HeroCollageGrid({ heroCells, locale }: HeroCollageGridProps) {
                 alt={stillAlt(still, locale)}
                 fill
                 sizes={isFeature ? HERO_FEATURE_SIZES : HERO_CELL_SIZES}
-                priority
-                fetchPriority="high"
+                priority={isFeature}
+                fetchPriority={isFeature ? "high" : "auto"}
                 revealed={collageReady}
                 className="object-cover"
                 onLoad={() => markCellSettled(i)}

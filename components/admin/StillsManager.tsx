@@ -10,6 +10,7 @@ import {
   adminBtnSecondary,
   adminCardClass,
 } from "@/components/admin/admin-styles";
+import { CdnImage } from "@/components/media/CdnImage";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import { PublishToggle } from "@/components/admin/PublishToggle";
 import {
@@ -418,12 +419,16 @@ export function StillsManager({ initialStills }: Props) {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredStills.map((row) => (
             <div key={row.id} className={`${adminCardClass} space-y-3`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={row.image_url}
-                alt={row.alt_en ?? "תמונה"}
-                className="max-h-48 w-full rounded-lg object-contain bg-black/20"
-              />
+              <div className="relative max-h-48 min-h-32 w-full overflow-hidden rounded-lg bg-black/20">
+                <CdnImage
+                  src={row.image_url}
+                  alt={row.alt_en ?? "תמונה"}
+                  width={row.width ?? 800}
+                  height={row.height ?? 600}
+                  sizes="(max-width: 640px) 100vw, 33vw"
+                  className="max-h-48 w-full object-contain"
+                />
+              </div>
               <p className="text-xs text-slate-500">
                 {row.width && row.height
                   ? `${row.width} × ${row.height}`

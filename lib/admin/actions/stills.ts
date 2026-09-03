@@ -6,6 +6,7 @@ import { adminErrors } from "@/lib/admin/copy";
 import { revalidateSiteAndAdminMedia } from "@/lib/admin/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { optimizeImageForPublicStorage } from "@/lib/images/optimize-upload";
+import { STORAGE_CACHE_CONTROL } from "@/lib/images/storage-cache-control";
 import { buildStillStoragePath } from "@/lib/images/sanitize-file-name";
 import { resolveImageMime } from "@/lib/images/still-upload-validation";
 import { ensureAdminUserInDatabase } from "@/lib/auth/ensure-admin-user";
@@ -181,6 +182,7 @@ export async function uploadStillImage(formData: FormData): Promise<
     .from(STILLS_BUCKET)
     .upload(storagePath, uploadBody, {
       contentType: uploadType,
+      cacheControl: STORAGE_CACHE_CONTROL,
       upsert: false,
     });
 

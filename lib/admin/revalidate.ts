@@ -1,7 +1,10 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { SITE_CACHE_TAGS } from "@/lib/cache/site-tags";
 
 /** Revalidate public homepage after CMS / portfolio mutations. */
 export function revalidatePublicSite() {
+  revalidateTag(SITE_CACHE_TAGS.publicData, "max");
+  revalidateTag(SITE_CACHE_TAGS.media, "max");
   revalidatePath("/");
 }
 

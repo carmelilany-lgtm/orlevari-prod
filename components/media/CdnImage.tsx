@@ -3,6 +3,7 @@
 import Image, { type ImageProps } from "next/image";
 import { useState, type SyntheticEvent } from "react";
 import { canOptimizeImageSrc } from "@/lib/images/can-optimize-src";
+import { toCachedMediaUrl } from "@/lib/images/public-media-url";
 import { cn } from "@/lib/utils";
 
 type CdnImageProps = Omit<ImageProps, "src"> & {
@@ -24,21 +25,22 @@ export function CdnImage({
   revealed,
   ...rest
 }: CdnImageProps) {
+  const resolvedSrc = toCachedMediaUrl(src);
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
   const isPriority = Boolean(rest.priority);
   const loaded =
     revealed !== undefined
       ? revealed
-      : isPriority || loadedSrc === src;
+      : isPriority || loadedSrc === resolvedSrc;
   const fill = Boolean(rest.fill);
 
   function handleLoad(event: SyntheticEvent<HTMLImageElement>) {
-    setLoadedSrc(src);
+    setLoadedSrc(resolvedSrc);
     onLoad?.(event);
   }
 
   function handleError(event: SyntheticEvent<HTMLImageElement>) {
-    setLoadedSrc(src);
+    setLoadedSrc(resolvedSrc);
     onError?.(event);
   }
 
@@ -63,13 +65,13 @@ export function CdnImage({
     />
   );
 
-  if (!canOptimizeImageSrc(src)) {
+  if (!canOptimizeImageSrc(resolvedSrc)) {
     return (
       <span className={frameClassName}>
         {skeleton}
         {/* eslint-disable-next-line @next/next/no-img-element -- local blob/data preview */}
         <img
-          src={src}
+          src={resolvedSrc}
           alt={alt}
           className={cn(
             fill && "absolute inset-0 h-full w-full object-cover",
@@ -89,7 +91,7 @@ export function CdnImage({
       <Image
         quality={70}
         {...rest}
-        src={src}
+        src={resolvedSrc}
         alt={alt}
         className={imageClassName}
         onLoad={handleLoad}

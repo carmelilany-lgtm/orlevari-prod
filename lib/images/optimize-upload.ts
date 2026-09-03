@@ -1,7 +1,7 @@
 import sharp from "sharp";
 
 /** Longest edge stored in Supabase - Vercel then serves even smaller tiles. */
-export const MAX_PUBLIC_IMAGE_EDGE = 1920;
+export const MAX_PUBLIC_IMAGE_EDGE = 1280;
 
 export type OptimizedUpload = {
   buffer: Buffer;
@@ -22,7 +22,7 @@ export async function optimizeImageForPublicStorage(
     fit: "inside",
     withoutEnlargement: true,
   });
-  const buffer = await resized.webp({ quality: 78, effort: 4 }).toBuffer();
+  const buffer = await resized.webp({ quality: 72, effort: 4 }).toBuffer();
   const meta = await sharp(buffer).metadata();
 
   return {

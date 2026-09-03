@@ -20,9 +20,6 @@ export async function generateMetadata() {
   return buildHomeMetadata();
 }
 
-/** Fresh homepage data after admin revalidatePath('/') */
-export const dynamic = "force-dynamic";
-
 export default async function HomePage() {
   const [siteData, cmsMap, initialLocale, origin] = await Promise.all([
     loadSitePortfolioData(),

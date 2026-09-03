@@ -7,6 +7,7 @@ import { revalidateSiteAndAdminMedia } from "@/lib/admin/revalidate";
 import { requireAdmin, type AdminContext } from "@/lib/admin/require-admin";
 import { ensureAdminUserInDatabase } from "@/lib/auth/ensure-admin-user";
 import { optimizeImageForPublicStorage } from "@/lib/images/optimize-upload";
+import { STORAGE_CACHE_CONTROL } from "@/lib/images/storage-cache-control";
 import { buildMediaStoragePath } from "@/lib/images/sanitize-file-name";
 import { resolveImageMime } from "@/lib/images/still-upload-validation";
 
@@ -77,6 +78,7 @@ async function uploadAboutBucketImage(
     .from(ABOUT_BUCKET)
     .upload(storagePath, uploadBody, {
       contentType: uploadType,
+      cacheControl: STORAGE_CACHE_CONTROL,
       upsert: false,
     });
 

@@ -10,7 +10,27 @@ function supabaseHostname(): string | undefined {
   }
 }
 
+function supabaseStoragePattern(hostname: string) {
+  return {
+    protocol: "https" as const,
+    hostname,
+    port: "",
+    pathname: "/storage/v1/object/public/**",
+    search: "",
+  };
+}
+
 const projectSupabaseHost = supabaseHostname();
+/** Production project ref — org id from billing emails is not this hostname. */
+const PRODUCTION_SUPABASE_HOST = "usqloxzkisnloafhddcb.supabase.co";
+
+const supabaseHosts = [
+  ...new Set(
+    [projectSupabaseHost, PRODUCTION_SUPABASE_HOST].filter(
+      (host): host is string => Boolean(host),
+    ),
+  ),
+];
 
 const nextConfig: NextConfig = {
   turbopack: {
@@ -23,25 +43,9 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
-      ...(projectSupabaseHost
-        ? [
-            {
-              protocol: "https" as const,
-              hostname: projectSupabaseHost,
-              pathname: "/storage/v1/object/public/**",
-            },
-          ]
-        : []),
-      {
-        protocol: "https",
-        hostname: "*.supabase.co",
-        pathname: "/storage/v1/object/public/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.supabase.in",
-        pathname: "/storage/v1/object/public/**",
-      },
+      ...supabaseHosts.map(supabaseStoragePattern),
+      supabaseStoragePattern("**.supabase.co"),
+      supabaseStoragePattern("**.supabase.in"),
       { protocol: "https", hostname: "i.ytimg.com", pathname: "/**" },
       { protocol: "https", hostname: "img.youtube.com", pathname: "/**" },
     ],

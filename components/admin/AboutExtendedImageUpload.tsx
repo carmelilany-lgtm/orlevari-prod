@@ -1,5 +1,6 @@
 "use client";
 
+import { CdnImage } from "@/components/media/CdnImage";
 import { AdminAlert } from "@/components/admin/AdminAlert";
 import { uploadAboutExtendedImage } from "@/lib/admin/actions/media";
 import { getAboutExtendedImageUrl } from "@/lib/i18n/about-image";
@@ -77,10 +78,12 @@ export function AboutExtendedImageUpload({ content }: Props) {
       <AdminAlert variant="error" message={error} />
       <AdminAlert variant="success" message={success} />
       {displayUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <CdnImage
           src={displayUrl}
           alt={adminCopy.content.aboutExtendedImageTitle}
+          width={800}
+          height={500}
+          sizes="448px"
           className="max-h-56 w-full max-w-md rounded-lg border border-blue-900/40 object-cover"
         />
       ) : (
