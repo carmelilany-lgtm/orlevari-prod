@@ -2,8 +2,6 @@ import { SITE_CACHE_TAGS, SITE_MEDIA_REVALIDATE_SECONDS } from "@/lib/cache/site
 import { isPublicMediaBucketName } from "@/lib/images/public-media-url";
 import { NextResponse } from "next/server";
 
-export const revalidate = SITE_MEDIA_REVALIDATE_SECONDS;
-
 type RouteContext = {
   params: Promise<{ bucket: string; path: string[] }>;
 };
